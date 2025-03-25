@@ -2,6 +2,8 @@ import { lazy, Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import PropTypes from 'prop-types';
 import WindowCanvasNavigationControls from '../containers/WindowCanvasNavigationControls';
+import GlobalStyles from '@mui/material/GlobalStyles';
+import globalWindowViewerStyles from '../styles/window-viewer-component';
 
 const OSDViewer = lazy(() => import('../containers/OpenSeadragonViewer'));
 
@@ -11,15 +13,17 @@ const OSDViewer = lazy(() => import('../containers/OpenSeadragonViewer'));
  */
 export function WindowViewer({ windowId }) {
   return (
+    <>
+    <GlobalStyles styles={{ ...globalWindowViewerStyles }} />
     <ErrorBoundary fallback={null}>
       <Suspense fallback={<div />}>
-        <OSDViewer
-          windowId={windowId}
-        >
-          <WindowCanvasNavigationControls windowId={windowId} />
-        </OSDViewer>
+      <div style={{width: '100%', height: '100%'}}>
+        <WindowCanvasNavigationControls windowId={windowId} />
+        <OSDViewer windowId={windowId}></OSDViewer>
+      </div>
       </Suspense>
     </ErrorBoundary>
+    </>
   );
 }
 

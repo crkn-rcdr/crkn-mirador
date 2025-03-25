@@ -128,44 +128,8 @@ export const CompanionWindow = forwardRef((props, innerRef) => {
             className={[ns('companion-window-header'), size.width < 370 ? 'test' : null].join(' ')}
             disableGutters
           >
-            <StyledTitle variant="h3">{title}</StyledTitle>
-            {
-              position === 'left'
-                ? updateCompanionWindow
-                && (
-                  <MiradorMenuButton
-                    aria-label={t('openInCompanionWindow')}
-                    onClick={() => { updateCompanionWindow({ position: 'right' }); }}
-                  >
-                    <OpenInNewIcon style={openInNewStyle} />
-                  </MiradorMenuButton>
-                )
-                : (
-                  <>
-                    {
-                      updateCompanionWindow && (
-                        <StyledPositionButton
-                          aria-label={position === 'bottom' ? t('moveCompanionWindowToRight') : t('moveCompanionWindowToBottom')}
-                          onClick={() => { updateCompanionWindow({ position: position === 'bottom' ? 'right' : 'bottom' }); }}
-                        >
-                          <MoveIcon />
-                        </StyledPositionButton>
-                      )
-                    }
-                    <StyledCloseButton
-                      sx={{
-                        ...(size.width < 370 && {
-                          order: 'unset',
-                        }),
-                      }}
-                      aria-label={t('closeCompanionWindow')}
-                      onClick={onCloseClick}
-                    >
-                      <CloseIcon />
-                    </StyledCloseButton>
-                  </>
-                )
-            }
+            <StyledTitle style={{padding: "12px 0"}}variant="h3">{title}</StyledTitle>
+            
             {
               titleControls && (
                 <StyledTitleControls

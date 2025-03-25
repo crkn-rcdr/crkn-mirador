@@ -17,17 +17,20 @@ import { PluginHook } from './PluginHook';
 
 const Root = styled(Paper, { name: 'WindowCanvasNavigationControls', slot: 'root' })(({ theme }) => ({
   alignItems: 'center',
-  backgroundColor: alpha(theme.palette.background.paper, 0.5),
-  bottom: 0,
+  backgroundColor: theme.palette.background.paper,
+  top: 0,
   cursor: 'default',
   display: 'flex',
-  flexDirection: 'column',
+  flexDirection: 'row',
   flexWrap: 'wrap',
-  justifyContent: 'center',
-  position: 'absolute',
-  textAlign: 'center',
+  justifyContent: 'flex-start',
+  position: 'relative',
+  textAlign: 'left',
   width: '100%',
+  height: '4rem',
   zIndex: 50,
+  paddingLeft: '1rem',
+  border: `1px solid ${theme.palette.shades?.dark}`
 }));
 
 /**
@@ -65,12 +68,12 @@ export const WindowCanvasNavigationControls = forwardRef(({
         divider={<Divider orientation={canvasNavControlsAreStacked ? 'horizontal' : 'vertical'} variant="middle" flexItem />}
         spacing={0}
       >
-        { showZoomControls && <ZoomControls windowId={windowId} zoomToWorld={zoomToWorld} /> }
         <ViewerNavigation windowId={windowId} />
       </Stack>
       <ViewerInfo windowId={windowId} />
 
       <PluginHook {...pluginProps} />
+      { showZoomControls && <ZoomControls windowId={windowId} zoomToWorld={zoomToWorld} /> }
     </Root>
   );
 });

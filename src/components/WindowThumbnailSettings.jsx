@@ -44,7 +44,6 @@ export function WindowThumbnailSettings({
 
   return (
     <>
-      <ListSubheader role="presentation" disableSticky>{t('thumbnails')}</ListSubheader>
       <StyledMenuList role="menubar">
         <ThumbnailOption
           aria-checked={thumbnailNavigationPosition === 'off'}

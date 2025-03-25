@@ -28,31 +28,10 @@ export function WindowTopMenu({
   const pluginProps = arguments[0]; // eslint-disable-line prefer-rest-params
 
   return (
-    <Popover
-      container={container?.current}
-      anchorOrigin={{
-        horizontal: 'right',
-        vertical: 'bottom',
-      }}
-      transformOrigin={{
-        horizontal: 'right',
-        vertical: 'top',
-      }}
-      onClose={handleClose}
-      TransitionProps={{
-        onEntering: toggleDraggingEnabled,
-        onExit: toggleDraggingEnabled,
-      }}
-      orientation="horizontal"
-      anchorEl={anchorEl}
-      open={open}
-      role="menu"
-    >
+    <div>
       <WindowViewSettings windowId={windowId} handleClose={handleClose} />
-      {showThumbnailNavigationSettings
-        && <WindowThumbnailSettings windowId={windowId} handleClose={handleClose} />}
-      <PluginHookWithHeader {...pluginProps} />
-    </Popover>
+    </div>
+    
   );
 }
 

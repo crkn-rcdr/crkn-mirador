@@ -6,7 +6,7 @@ import Toolbar from '@mui/material/Toolbar';
 import AppBar from '@mui/material/AppBar';
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
-import WindowTopMenuButton from '../containers/WindowTopMenuButton';
+import WindowTopMenu from '../containers/WindowTopMenu';
 import WindowTopBarPluginArea from '../containers/WindowTopBarPluginArea';
 import WindowTopBarPluginMenu from '../containers/WindowTopBarPluginMenu';
 import WindowTopBarTitle from '../containers/WindowTopBarTitle';
@@ -66,7 +66,10 @@ export function WindowTopBar({
           windowId={windowId}
         />
         {allowTopMenuButton && (
-          <WindowTopMenuButton windowId={windowId} className={ns('window-menu-btn')} />
+          <WindowTopMenu
+          windowId={windowId}
+          open={true}
+          />
         )}
         <WindowTopBarPluginArea windowId={windowId} />
         <WindowTopBarPluginMenu windowId={windowId} />

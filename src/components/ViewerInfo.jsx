@@ -10,8 +10,7 @@ const StyledOsdInfo = styled('div')(() => ({
   paddingBottom: 0.5,
   textOverflow: 'ellipsis',
   unicodeBidi: 'plaintext',
-  whiteSpace: 'nowrap',
-  width: '100%',
+  whiteSpace: 'nowrap'
 }));
 
 /**

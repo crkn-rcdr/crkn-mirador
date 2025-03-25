@@ -25,6 +25,7 @@ export function WindowSideBarInfoPanel({
   const { t } = useTranslation();
   return (
     <CompanionWindow
+      updateCompanionWindow={false}
       title={t('aboutThisItem')}
       paperClassName={ns('window-sidebar-info-panel')}
       windowId={windowId}

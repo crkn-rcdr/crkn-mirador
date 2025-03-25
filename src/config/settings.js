@@ -36,10 +36,10 @@ export default {
     palette: {
       mode: 'light',
       primary: {
-        main: '#1967d2', // Controls the color of the Add button and current window indicator
+        main: '#009688',
       },
       secondary: {
-        main: '#1967d2', // Controls the color of Selects and FormControls
+        main: '#424242',
       },
       shades: { // Shades that can be used to offset color areas of the Workspace / Window
         dark: '#eeeeee',
@@ -73,6 +73,33 @@ export default {
         selected: { fillStyle: '#ffff00', globalAlpha: 0.3 },
       }
     },
+    shadows: [
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+      'none',
+    ],
     typography: {
       body1: {
         fontSize: "1rem",
@@ -167,6 +194,9 @@ export default {
         lineHeight: "1.75em",
       },
       useNextVariants: true // set so that console deprecation warning is removed
+    },
+    shape: {
+      borderRadius: 4
     },
     components: {
       MuiMenuItem: {

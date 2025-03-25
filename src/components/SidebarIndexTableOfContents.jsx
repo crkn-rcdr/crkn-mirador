@@ -5,6 +5,8 @@ import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { ScrollTo } from './ScrollTo';
+import Alert from '@mui/material/Alert';
+import { useTranslation } from 'react-i18next';
 
 const StyledVisibleNode = styled('div')(() => ({
 }));
@@ -65,6 +67,9 @@ export function SidebarIndexTableOfContents({
   treeStructure, visibleNodeIds, expandedNodeIds, containerRef, nodeIdToScrollTo,
 }) {
   /** */
+  
+  const { t } = useTranslation();
+
   const handleNodeSelect = (event, itemId) => {
     if (event.key === ' ' || event.key === 'Spacebar') {
       toggleNode(itemId);
@@ -139,7 +144,7 @@ export function SidebarIndexTableOfContents({
     >
       {Array.isArray(treeStructure.nodes) && treeStructure.nodes.length > 0
         ? treeStructure.nodes.map(n => renderTree(n))
-        : <p>No items found</p>}
+        : <Alert severity="error">{t('noTableOfContents')}</Alert>}
     </SimpleTreeView>
   );
 }

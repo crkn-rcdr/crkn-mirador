@@ -4,7 +4,8 @@ import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
 import MiradorMenuButton from '../containers/MiradorMenuButton';
 import ns from '../config/css-ns';
-
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
 /**
  */
 export function ViewerNavigation({
@@ -38,8 +39,15 @@ export function ViewerNavigation({
   return (
     <div
       className={classNames(ns('osd-navigation'))}
+      style={{ display: "inline-flex", alignItems: "center" }}
       dir={htmlDir}
     >
+      <Autocomplete
+        disablePortal
+        options={["1", "2"]}
+        sx={{ width: 100, display: "inline-block", marginRight: "1rem" }}
+        renderInput={(params) => <TextField {...params} label="Canvas" />}
+      />
       <MiradorMenuButton
         aria-label={t('previousCanvas')}
         className={ns('previous-canvas-button')}

@@ -76,7 +76,6 @@ export function WindowViewSettings({
   if (viewTypes.length === 0) return null;
   return (
     <>
-      <ListSubheader role="presentation" disableSticky>{t('view')}</ListSubheader>
       <StyledMenuList role="menubar">
         { viewTypes.map(value => menuItem({ Icon: iconMap[value], value })) }
       </StyledMenuList>

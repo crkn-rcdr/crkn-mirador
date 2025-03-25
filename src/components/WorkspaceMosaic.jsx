@@ -19,10 +19,11 @@ const StyledMosaic = styled(Mosaic)({
     boxShadow: 'none',
   },
   '& .mosaic-tile': {
-    boxShadow: '0 1px 3px 0 rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .2), 0 2px 1px -1px rgba(0, 0, 0, .2)',
+    boxShadow: 'none',
   },
   '& .mosaic-window': {
     boxShadow: 'none',
+    borderRadius: '4px'
   },
   '& .mosaic-window-toolbar': {
     display: 'none !important',

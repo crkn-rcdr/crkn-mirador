@@ -6,11 +6,16 @@ import { useTranslation } from 'react-i18next';
 import RestoreZoomIcon from './icons/RestoreZoomIcon';
 import MiradorMenuButton from '../containers/MiradorMenuButton';
 
-const StyledZoomControlsWrapper = styled('div')({
+const StyledZoomControlsWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'center',
-});
+  position: 'absolute',
+  background: theme.palette.background.paper,
+  borderRadius: '25px',
+  left: '1rem',
+  top: '5rem'
+}));
 
 /**
  */
