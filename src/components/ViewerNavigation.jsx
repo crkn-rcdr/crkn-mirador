@@ -6,17 +6,24 @@ import MiradorMenuButton from '../containers/MiradorMenuButton';
 import ns from '../config/css-ns';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import { useState } from 'react';
 /**
  */
 export function ViewerNavigation({
+  canvases, 
+  canvasIndex,
   hasNextCanvas = false, hasPreviousCanvas = false,
   setNextCanvas = () => {}, setPreviousCanvas = () => {},
+  setCanvas = () => {},
   viewingDirection = '',
 }) {
+  console.log("Cnavasss", canvases)
   const { t } = useTranslation();
   let htmlDir = 'ltr';
   let previousIconStyle = {};
   let nextIconStyle = {};
+  let canvasSelectOptions = canvases.map((el, i) => { return (i+1).toString() });
+  const [canvasSelectValue, setCanvasSelectValue] = useState((canvasIndex+1).toString());
   switch (viewingDirection) {
     case 'top-to-bottom':
       previousIconStyle = { transform: 'rotate(270deg)' };
@@ -44,7 +51,12 @@ export function ViewerNavigation({
     >
       <Autocomplete
         disablePortal
-        options={["1", "2"]}
+        value={canvasSelectValue}
+        onChange={(event, newValue) => {
+          setCanvasSelectValue(newValue);
+          setCanvas(canvases[parseInt(newValue)-1].id)
+        }}
+        options={canvasSelectOptions}
         sx={{ width: 100, display: "inline-block", marginRight: "1rem" }}
         renderInput={(params) => <TextField {...params} label={t('canvasIndex')} />}
       />
@@ -69,6 +81,7 @@ export function ViewerNavigation({
 }
 
 ViewerNavigation.propTypes = {
+  canvases: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
   hasNextCanvas: PropTypes.bool,
   hasPreviousCanvas: PropTypes.bool,
   setNextCanvas: PropTypes.func,

@@ -6,11 +6,15 @@ import {
   getSequenceViewingDirection,
   getNextCanvasGrouping,
   getPreviousCanvasGrouping,
+  getCanvases,
+  getCanvasIndex
 } from '../state/selectors';
 import { ViewerNavigation } from '../components/ViewerNavigation';
 
 /** */
 const mapStateToProps = (state, { windowId }) => ({
+  canvases: getCanvases(state, { windowId }),
+  canvasIndex: getCanvasIndex(state, { windowId }),
   hasNextCanvas: !!getNextCanvasGrouping(state, { windowId }),
   hasPreviousCanvas: !!getPreviousCanvasGrouping(state, { windowId }),
   viewingDirection: getSequenceViewingDirection(state, { windowId }),
@@ -24,6 +28,7 @@ const mapStateToProps = (state, { windowId }) => ({
 const mapDispatchToProps = (dispatch, { windowId }) => ({
   setNextCanvas: (...args) => dispatch(actions.setNextCanvas(windowId)),
   setPreviousCanvas: (...args) => dispatch(actions.setPreviousCanvas(windowId)),
+  setCanvas: (...args) => dispatch(actions.setCanvas(windowId, ...args)),
 });
 
 const enhance = compose(
