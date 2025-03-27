@@ -46,7 +46,7 @@ export function ViewerNavigation({
         disablePortal
         options={["1", "2"]}
         sx={{ width: 100, display: "inline-block", marginRight: "1rem" }}
-        renderInput={(params) => <TextField {...params} label="Canvas" />}
+        renderInput={(params) => <TextField {...params} label={t('canvasIndex')} />}
       />
       <MiradorMenuButton
         aria-label={t('previousCanvas')}
