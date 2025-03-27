@@ -3,7 +3,7 @@ const globalWindowViewerStyles = {
     height: '100%'
   },
   '.mirador-canvas-nav + .mirador-osd-container': {
-    height: 'calc(100% - 4rem)'
+    height: 'calc(100% - 5rem)'
   },
 };
 export default globalWindowViewerStyles;

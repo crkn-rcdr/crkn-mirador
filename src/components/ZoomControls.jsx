@@ -14,7 +14,7 @@ const StyledZoomControlsWrapper = styled('div')(({ theme }) => ({
   background: theme.palette.background.paper,
   borderRadius: '25px',
   left: '1rem',
-  top: '5rem'
+  top: '6rem'
 }));
 
 /**
