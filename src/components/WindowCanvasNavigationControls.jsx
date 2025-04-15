@@ -27,7 +27,7 @@ const Root = styled(Paper, { name: 'WindowCanvasNavigationControls', slot: 'root
   position: 'relative',
   textAlign: 'left',
   width: '100%',
-  height: '5rem',
+  height: '4rem',
   zIndex: 50,
   paddingLeft: '1rem',
   border: `1px solid ${theme.palette.shades?.dark}`

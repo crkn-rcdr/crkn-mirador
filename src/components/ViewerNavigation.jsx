@@ -49,6 +49,7 @@ export function ViewerNavigation({
       dir={htmlDir}
     >
       <Autocomplete
+        size="small"
         disablePortal
         value={(canvasIndex+1).toString()}
         onChange={(event, newValue) => {

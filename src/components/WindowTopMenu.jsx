@@ -21,7 +21,7 @@ function PluginHookWithHeader(props) {
 /**
  */
 export function WindowTopMenu({
-  handleClose, showThumbnailNavigationSettings = true,
+  handleClose, showThumbnailNavigationSettings = false,
   toggleDraggingEnabled, windowId, anchorEl = null, open = false,
 }) {
   const container = useContext(WorkspaceContext);
@@ -34,6 +34,11 @@ export function WindowTopMenu({
     
   );
 }
+/**
+ * 
+      {showThumbnailNavigationSettings
+        && <WindowThumbnailSettings windowId={windowId} handleClose={handleClose} />}
+ */
 
 WindowTopMenu.propTypes = {
   anchorEl: PropTypes.object, // eslint-disable-line react/forbid-prop-types

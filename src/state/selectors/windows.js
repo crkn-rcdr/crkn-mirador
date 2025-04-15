@@ -76,7 +76,7 @@ export const getWindowViewType = createSelector(
  * Returns the window view type for a given window.
  * @param {object} state
  * @param {string} windowId
- * @returns {string} 'single' | 'book' | 'scroll' | 'gallery'
+ * @returns {string} 'single' | 'book' | 'scroll' 
  */
 export const getAllowedWindowViewTypes = createSelector(
   [

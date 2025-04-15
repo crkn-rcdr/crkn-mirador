@@ -518,7 +518,6 @@ export default {
       { key: 'single', behaviors: ['individuals'] },
       { key: 'book', behaviors: ['paged'] },
       { key: 'scroll', behaviors: ['continuous'] },
-      { key: 'gallery' },
     ],
     elastic: {
       height: 400,
@@ -542,6 +541,11 @@ export default {
     preferredFormats: ['jpg', 'png', 'webp', 'tif'],
   },
   thumbnailNavigation: {
+    defaultPosition: 'off', // Which position for the thumbnail navigation to be be displayed. Other possible values are "far-bottom" or "far-right"
+    displaySettings: true, // Display the settings for this in WindowTopMenu
+    height: 130, // height of entire ThumbnailNavigation area when position is "far-bottom"
+    showThumbnailLabels: true, // Configure if thumbnail labels should be displayed
+    width: 100, // width of one canvas (doubled for book view) in ThumbnailNavigation area when position is "far-right"
   },
   workspace: {
     allowNewWindows: true,

@@ -48,13 +48,13 @@ export function WindowViewSettings({
 
   const iconMap = {
     book: BookViewIcon,
-    gallery: GalleryViewIcon,
     scroll: ScrollViewIcon,
     single: SingleIcon,
   };
 
   /** Suspiciously similar to a component, yet if it is invoked through JSX
-      none of the click handlers work? */
+      none of the click handlers work? 
+              label={t(value)}*/
   const menuItem = ({ value, Icon }) => (
     <ViewOption
       aria-checked={windowViewType === value}
@@ -67,7 +67,6 @@ export function WindowViewSettings({
       <FormControlLabel
         value={value}
         control={<Icon fill="currentcolor" color={windowViewType === value ? 'secondary' : undefined} />}
-        label={t(value)}
         labelPlacement="bottom"
       />
     </ViewOption>

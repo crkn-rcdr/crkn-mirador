@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
-import Paper from '@mui/material/Paper';
 import GalleryViewThumbnail from '../containers/GalleryViewThumbnail';
 
-const Root = styled(Paper, { name: 'GalleryView', slot: 'root' })(({ theme }) => ({
+const Root = styled('div', { name: 'GalleryView', slot: 'root' })(({ theme }) => ({
   alignItems: 'flex-start',
   display: 'flex',
   flexDirection: 'row',
@@ -11,7 +10,8 @@ const Root = styled(Paper, { name: 'GalleryView', slot: 'root' })(({ theme }) =>
   overflowX: 'hidden',
   overflowY: 'scroll',
   padding: '50px 0 50px 20px',
-  width: '100%',
+  backgroundColor:  theme.palette.background.paper,
+  height: "90%"
 }));
 
 /**
@@ -21,7 +21,6 @@ export function GalleryView({ canvases, viewingDirection = '', windowId }) {
   const htmlDir = viewingDirection === 'right-to-left' ? 'rtl' : 'ltr';
   return (
     <Root
-      component="section"
       aria-label="gallery section"
       dir={htmlDir}
       square

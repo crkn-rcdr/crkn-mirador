@@ -56,7 +56,6 @@ export function WindowThumbnailSettings({
             control={
               <ThumbnailsOffIcon color={thumbnailNavigationPosition === 'off' ? 'secondary' : undefined} fill="currentcolor" />
             }
-            label={t('off')}
             labelPlacement="bottom"
             value="off"
           />
@@ -72,7 +71,6 @@ export function WindowThumbnailSettings({
             control={
               <ThumbnailNavigationBottomIcon color={thumbnailNavigationPosition === 'far-bottom' ? 'secondary' : undefined} fill="currentcolor" />
             }
-            label={t('bottom')}
             labelPlacement="bottom"
             value="far-bottom"
           />
@@ -92,7 +90,6 @@ export function WindowThumbnailSettings({
                 style={direction === 'rtl' ? { transform: 'rotate(180deg)' } : {}}
               />
             )}
-            label={t('right')}
             labelPlacement="bottom"
             value="far-right"
           />
@@ -102,6 +99,13 @@ export function WindowThumbnailSettings({
 
   );
 }
+
+/**
+ * 
+            label={t('off')}
+            label={t('right')}
+            label={t('bottom')}
+ */
 
 WindowThumbnailSettings.propTypes = {
   direction: PropTypes.string.isRequired,

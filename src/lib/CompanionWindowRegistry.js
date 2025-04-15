@@ -1,4 +1,4 @@
-import ThumbnailNavigation from '../containers/ThumbnailNavigation';
+//import ThumbnailNavigation from '../containers/ThumbnailNavigation';
 import WindowSideBarAnnotationsPanel from '../containers/WindowSideBarAnnotationsPanel';
 import WindowSideBarInfoPanel from '../containers/WindowSideBarInfoPanel';
 import WindowSideBarCanvasPanel from '../containers/WindowSideBarCanvasPanel';
@@ -17,7 +17,7 @@ const map = {
   info: WindowSideBarInfoPanel,
   layers: LayersPanel,
   search: SearchPanel,
-  thumbnailNavigation: ThumbnailNavigation,
+  //thumbnailNavigation: ThumbnailNavigation,
 };
 
 export default map;

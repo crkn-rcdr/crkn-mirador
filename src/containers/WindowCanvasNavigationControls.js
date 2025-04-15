@@ -7,7 +7,7 @@ import { WindowCanvasNavigationControls } from '../components/WindowCanvasNaviga
 /** */
 const mapStateToProps = (state, { windowId }) => ({
   showZoomControls: getShowZoomControlsConfig(state),
-  visible: getWorkspace(state).focusedWindowId === windowId,
+  visible: true,
 });
 
 const enhance = compose(
