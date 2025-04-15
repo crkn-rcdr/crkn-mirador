@@ -16,7 +16,7 @@ export function WindowViewer({ windowId }) {
     <GlobalStyles styles={{ ...globalWindowViewerStyles }} />
     <ErrorBoundary fallback={null}>
       <Suspense fallback={<div />}>
-      <div className="viewer-mosaic">
+      <div className='viewer-wrap'>
         <WindowCanvasNavigationControls windowId={windowId} />
         <OSDViewer windowId={windowId}></OSDViewer>
       </div>

@@ -28,7 +28,6 @@ const Root = styled(Paper, { name: 'WindowCanvasNavigationControls', slot: 'root
   textAlign: 'left',
   width: '100%',
   height: '4rem',
-  zIndex: 50,
   paddingLeft: '1rem',
   border: `1px solid ${theme.palette.shades?.dark}`
 }));
@@ -49,7 +48,7 @@ export const WindowCanvasNavigationControls = forwardRef(({
   */
   const canvasNavControlsAreStacked = (size && size.width && size.width <= 253);
 
-  if (!visible) return (<Typography style={visuallyHidden} component="div"><ViewerInfo windowId={windowId} /></Typography>);
+  if (!visible) return (<Typography style={visuallyHidden} component='div'><ViewerInfo windowId={windowId} /></Typography>);
 
   return (
     <Root
@@ -63,16 +62,23 @@ export const WindowCanvasNavigationControls = forwardRef(({
       elevation={0}
       ref={mergeRefs(ref, sizeRef)}
     >
+      <div style={{
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'center'
+      }}>
       <Stack
         direction={canvasNavControlsAreStacked ? 'column' : 'row'}
-        divider={<Divider orientation={canvasNavControlsAreStacked ? 'horizontal' : 'vertical'} variant="middle" flexItem />}
+        divider={<Divider orientation={canvasNavControlsAreStacked ? 'horizontal' : 'vertical'} variant='middle' flexItem />}
         spacing={0}
       >
         <ViewerNavigation windowId={windowId} />
       </Stack>
       <ViewerInfo windowId={windowId} />
-
       <PluginHook {...pluginProps} />
+      </div>
+
       { showZoomControls && <ZoomControls windowId={windowId} zoomToWorld={zoomToWorld} /> }
     </Root>
   );

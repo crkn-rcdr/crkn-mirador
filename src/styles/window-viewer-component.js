@@ -8,7 +8,7 @@ const globalWindowViewerStyles = {
   '.mirador-canvas-nav + .mirador-osd-container': {
     height: 'calc(100% - 4rem)'
   },
-  '.viewer-mosaic' : {
+  '.viewer-wrap' : {
     width: '100%'
   },
 };

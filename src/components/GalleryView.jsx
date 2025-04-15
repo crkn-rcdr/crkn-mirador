@@ -11,9 +11,11 @@ const Root = styled('div', { name: 'GalleryView', slot: 'root' })(({ theme }) =>
   overflowY: 'auto',
   padding: '0',
   backgroundColor:  theme.palette.background.paper,
-  height: "100%",
-  justifyContent: "space-around",
-  alignContent: "flex-start"
+  height: '100%',
+  justifyContent: 'space-around',
+  alignContent: 'flex-start',
+  position: 'relative',
+  zIndex: 51
 }));
 
 /**
@@ -23,7 +25,7 @@ export function GalleryView({ canvases, viewingDirection = '', windowId }) {
   const htmlDir = viewingDirection === 'right-to-left' ? 'rtl' : 'ltr';
   return (
     <Root
-      aria-label="gallery section"
+      aria-label='gallery section'
       dir={htmlDir}
       square
       elevation={0}

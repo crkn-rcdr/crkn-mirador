@@ -20,7 +20,7 @@ import {
 const GalleryView = lazy(() => import('../containers/GalleryView'));
 
 const StyledMosaic = styled(Mosaic)({
-  height: "100%",
+  height: '100%',
 
   '& .mosaic-preview': {
     boxShadow: 'none',
@@ -34,16 +34,7 @@ const StyledMosaic = styled(Mosaic)({
   },
   '& .mosaic-window-toolbar': {
     display: 'none !important',
-  },
-  '& .mosaic-root .mosaic-tile:first-of-type' : {
-    inset: "0% calc(100% - (100% - 130px)) 0% 0%"
-  },
-  '& .mosaic-root .mosaic-tile:nth-of-type(2)' : {
-    inset: "0% calc(100% - 130px) 0% 0%"
   }
-  // mosaic tile 1 .mosaic-tile "calc(100% - (100% - 100px))", - inset: 0% 5% 0% 0%;
-  // mosaic tile 2 .mosaic-tile "calc(100% - (100% - 100px))", - inset: 50% 0% 0% 95%;
-  // .mosaic-split .-column - inset: 50% 0% 0% 95%;
 });
 
 const rowMixin = {
@@ -142,7 +133,7 @@ export function Window({
       <Root
         onFocus={focusWindow}
         ownerState={ownerState}
-        component="section"
+        component='section'
         elevation={1}
         id={windowId}
         className={ns('window')}
@@ -168,14 +159,14 @@ export function Window({
                 minimumPaneSizePercentage: 1
               }}
             />
-            <StyledCompanionAreaBottom windowId={windowId} position="bottom" />
+            <StyledCompanionAreaBottom windowId={windowId} position='bottom' />
           </ContentColumn>
           <StyledCompanionAreaRight>
-            <CompanionArea windowId={windowId} position="right" />
-            <CompanionArea windowId={windowId} position="far-right" />
+            <CompanionArea windowId={windowId} position='right' />
+            <CompanionArea windowId={windowId} position='far-right' />
           </StyledCompanionAreaRight>
         </ContentRow>
-        <CompanionArea windowId={windowId} position="far-bottom" />
+        <CompanionArea windowId={windowId} position='far-bottom' />
         <PluginHook {...ownerState} />
       </Root>
     </ErrorBoundary>
