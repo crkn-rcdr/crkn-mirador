@@ -8,10 +8,12 @@ const Root = styled('div', { name: 'GalleryView', slot: 'root' })(({ theme }) =>
   flexDirection: 'row',
   flexWrap: 'wrap',
   overflowX: 'hidden',
-  overflowY: 'scroll',
-  padding: '50px 0 50px 20px',
+  overflowY: 'auto',
+  padding: '0',
   backgroundColor:  theme.palette.background.paper,
-  height: "90%"
+  height: "100%",
+  justifyContent: "space-around",
+  alignContent: "flex-start"
 }));
 
 /**
