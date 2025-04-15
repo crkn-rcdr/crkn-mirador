@@ -1,4 +1,4 @@
-import { useContext, useCallback } from 'react';
+import { lazy, useContext, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
@@ -13,6 +13,38 @@ import MinimalWindow from '../containers/MinimalWindow';
 import ErrorContent from '../containers/ErrorContent';
 import IIIFAuthentication from '../containers/IIIFAuthentication';
 import { PluginHook } from './PluginHook';
+import {
+  Mosaic
+} from 'react-mosaic-component2';
+
+const GalleryView = lazy(() => import('../containers/GalleryView'));
+
+const StyledMosaic = styled(Mosaic)({
+  height: "100%",
+
+  '& .mosaic-preview': {
+    boxShadow: 'none',
+  },
+  '& .mosaic-tile': {
+    boxShadow: 'none',
+  },
+  '& .mosaic-window': {
+    boxShadow: 'none',
+    borderRadius: '4px'
+  },
+  '& .mosaic-window-toolbar': {
+    display: 'none !important',
+  },
+  '& .mosaic-root .mosaic-tile:first-of-type' : {
+    inset: "0% calc(100% - (100% - 130px)) 0% 0%"
+  },
+  '& .mosaic-root .mosaic-tile:nth-of-type(2)' : {
+    inset: "0% calc(100% - 130px) 0% 0%"
+  }
+  // mosaic tile 1 .mosaic-tile "calc(100% - (100% - 100px))", - inset: 0% 5% 0% 0%;
+  // mosaic tile 2 .mosaic-tile "calc(100% - (100% - 100px))", - inset: 50% 0% 0% 95%;
+  // .mosaic-split .-column - inset: 50% 0% 0% 95%;
+});
 
 const rowMixin = {
   display: 'flex',
@@ -53,7 +85,7 @@ const ContentColumn = styled('div', { name: 'Window', slot: 'column' })(() => ({
 
 const StyledPrimaryWindow = styled(PrimaryWindow, { name: 'Window', slot: 'primary' })(() => ({
   ...rowMixin,
-  height: '300px',
+  height: '100%',
   position: 'relative',
 }));
 
@@ -93,6 +125,18 @@ export function Window({
     </MinimalWindow>
   ), [windowId]);
 
+  
+  const ELEMENT_MAP = {
+    a: <StyledPrimaryWindow
+        view={view}
+        windowId={windowId}
+        isFetching={isFetching}
+        sideBarOpen={sideBarOpen}
+      />,
+    b: <GalleryView windowId={windowId}/>
+  };
+
+    
   return (
     <ErrorBoundary FallbackComponent={ErrorWindow}>
       <Root
@@ -113,11 +157,16 @@ export function Window({
         { manifestError && <ErrorContent error={{ stack: manifestError }} windowId={windowId} /> }
         <ContentRow>
           <ContentColumn>
-            <StyledPrimaryWindow
-              view={view}
-              windowId={windowId}
-              isFetching={isFetching}
-              sideBarOpen={sideBarOpen}
+            <StyledMosaic
+              renderTile={(id) => ELEMENT_MAP[id]}
+              initialValue={{
+                direction: 'row',
+                first: 'a',
+                second: 'b',
+              }}
+              resize={{
+                minimumPaneSizePercentage: 1
+              }}
             />
             <StyledCompanionAreaBottom windowId={windowId} position="bottom" />
           </ContentColumn>
