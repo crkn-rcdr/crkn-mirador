@@ -41,7 +41,6 @@ export function ViewerNavigation({
       previousIconStyle = { transform: 'rotate(180deg)' };
       nextIconStyle = {};
   }
-
   return (
     <div
       className={classNames(ns('osd-navigation'))}
@@ -57,7 +56,7 @@ export function ViewerNavigation({
           setCanvas(canvases[parseInt(newValue)-1].id)
         }}
         options={canvasSelectOptions}
-        sx={{ width: 100, display: "inline-block", marginRight: "1rem" }}
+        sx={{ width: 100, display: "inline-block", marginRight: "1rem"}}
         renderInput={(params) => <TextField {...params} label={t('canvasIndex')} />}
       />
       <MiradorMenuButton

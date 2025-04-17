@@ -11,5 +11,10 @@ const globalWindowViewerStyles = {
   '.viewer-wrap' : {
     width: '100%'
   },
+  
+  '.MuiInputBase-sizeSmall' : {
+    paddingTop: '1px !important',
+    paddingBottom: '1px !important'
+  }
 };
 export default globalWindowViewerStyles;
