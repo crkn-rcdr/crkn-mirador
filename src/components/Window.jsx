@@ -1,4 +1,4 @@
-import { lazy, useContext, useCallback, useEffect, useState } from 'react';
+import { lazy, useContext, useCallback, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
@@ -124,12 +124,21 @@ export function Window({
     b: <GalleryView windowId={windowId}/>
   };
 
+
+  const componentRef = useRef(null); // Create a ref for the component
+
   const [splitPercentage, setSplitPercentage] = useState(() => {
-    const storedPercentage = localStorage.getItem('splitPercentage');
+    const storedPercentage = localStorage.getItem('splitPercentage'); 
     return storedPercentage ? Number(JSON.parse(storedPercentage)) > 0 ?  Number(JSON.parse(storedPercentage)) : 40 : 40; // Default value
   });
 
+  const [minimumPaneSizePercentage, setMinimumPaneSizePercentage] = useState(0);
+
   useEffect(() => {
+    const width = componentRef.current?.getBoundingClientRect().width;
+    if (width) {
+      setMinimumPaneSizePercentage((160 / width)*100); // Calculate the minimum size percentage - 160px minimum  Set the calculated minimum percentage
+    }
     localStorage.setItem('splitPercentage', JSON.stringify(splitPercentage));
   }, [splitPercentage]);
 
@@ -141,6 +150,7 @@ export function Window({
   return (
     <ErrorBoundary FallbackComponent={ErrorWindow}>
       <Root
+        ref={componentRef}
         onFocus={focusWindow}
         ownerState={ownerState}
         component='section'
@@ -168,7 +178,7 @@ export function Window({
               }}
               onChange={handleChangeSplit}
               resize={{
-                minimumPaneSizePercentage: 1
+                minimumPaneSizePercentage: minimumPaneSizePercentage,
               }}
             />
             <StyledCompanionAreaBottom windowId={windowId} position='bottom' />
