@@ -137,7 +137,11 @@ export function Window({
   useEffect(() => {
     const width = componentRef.current?.getBoundingClientRect().width;
     if (width) {
-      setMinimumPaneSizePercentage((160 / width)*100); // Calculate the minimum size percentage - 160px minimum  Set the calculated minimum percentage
+      const minimum = (160 / width) * 100; // Calculate minimum size percentage  - 160px minimum
+      setMinimumPaneSizePercentage(minimum); // Set the calculated minimum percentage
+      if (splitPercentage <= 0) {
+        setSplitPercentage(minimum); // Use minimum if splitPercentage is not set
+      }
     }
     localStorage.setItem('splitPercentage', JSON.stringify(splitPercentage));
   }, [splitPercentage]);
