@@ -1,8 +1,8 @@
-import { lazy, useContext, useCallback } from 'react';
+import { lazy, useContext, useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
-import { MosaicWindowContext } from 'react-mosaic-component2';
+import { MosaicWindowContext, Mosaic } from 'react-mosaic-component2';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import ns from '../config/css-ns';
@@ -13,9 +13,6 @@ import MinimalWindow from '../containers/MinimalWindow';
 import ErrorContent from '../containers/ErrorContent';
 import IIIFAuthentication from '../containers/IIIFAuthentication';
 import { PluginHook } from './PluginHook';
-import {
-  Mosaic
-} from 'react-mosaic-component2';
 
 const GalleryView = lazy(() => import('../containers/GalleryView'));
 
@@ -127,6 +124,19 @@ export function Window({
     b: <GalleryView windowId={windowId}/>
   };
 
+  const [splitPercentage, setSplitPercentage] = useState(() => {
+    const storedPercentage = localStorage.getItem('splitPercentage');
+    return storedPercentage ? Number(JSON.parse(storedPercentage)) > 0 ?  Number(JSON.parse(storedPercentage)) : 40 : 40; // Default value
+  });
+
+  useEffect(() => {
+    localStorage.setItem('splitPercentage', JSON.stringify(splitPercentage));
+  }, [splitPercentage]);
+
+
+ const handleChangeSplit = (newSplit) => {
+    setSplitPercentage(newSplit?.splitPercentage);
+  };
     
   return (
     <ErrorBoundary FallbackComponent={ErrorWindow}>
@@ -154,7 +164,9 @@ export function Window({
                 direction: 'row',
                 first: 'a',
                 second: 'b',
+                splitPercentage: splitPercentage
               }}
+              onChange={handleChangeSplit}
               resize={{
                 minimumPaneSizePercentage: 1
               }}
