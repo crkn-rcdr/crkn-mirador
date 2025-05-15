@@ -127,9 +127,10 @@ export function Window({
 
   const componentRef = useRef(null); // Create a ref for the component
 
+  // Initialize splitPercentage based on minimumPaneSizePercentage
   const [splitPercentage, setSplitPercentage] = useState(() => {
-    const storedPercentage = localStorage.getItem('splitPercentage'); 
-    return storedPercentage ? Number(JSON.parse(storedPercentage)) > 0 ?  Number(JSON.parse(storedPercentage)) : 40 : 40; // Default value
+    const storedPercentage = localStorage.getItem('splitPercentage');
+    return storedPercentage ? Number(JSON.parse(storedPercentage)) : 0; // Start with 0 if no stored value
   });
 
   const [minimumPaneSizePercentage, setMinimumPaneSizePercentage] = useState(0);
@@ -140,7 +141,7 @@ export function Window({
       const minimum = (160 / width) * 100; // Calculate minimum size percentage  - 160px minimum
       setMinimumPaneSizePercentage(minimum); // Set the calculated minimum percentage
       if (splitPercentage <= 0) {
-        setSplitPercentage(minimum); // Use minimum if splitPercentage is not set
+        setSplitPercentage(100-minimum); // Use minimum if splitPercentage is not set
       }
     }
     localStorage.setItem('splitPercentage', JSON.stringify(splitPercentage));
