@@ -102040,7 +102040,8 @@ const z3e = he("div", { name: "GalleryView", slot: "thumbnail" })(({ ownerState:
   overflow: "hidden",
   padding: t.spacing(0.5),
   position: "relative",
-  width: "min-content"
+  width: "min-content",
+  borderRadius: "7px"
 })), B3e = he("div", { name: "GalleryView", slot: "chipArea" })(({ theme: e }) => ({
   display: "flex",
   flexDirection: "column",

@@ -30,6 +30,7 @@ const Root = styled('div', { name: 'GalleryView', slot: 'thumbnail' })(({ ownerS
   padding: theme.spacing(0.5),
   position: 'relative',
   width: 'min-content',
+  borderRadius: '7px'
 }));
 
 const StyledChipsContainer = styled('div', { name: 'GalleryView', slot: 'chipArea' })(({ theme }) => ({
