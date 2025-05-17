@@ -13,7 +13,7 @@ const Root = styled('div', { name: 'CompanionArea', slot: 'root' })(({ ownerStat
   ...((ownerState.position === 'bottom' || ownerState.position === 'far-bottom') && {
     flexDirection: 'column',
     width: '100%',
-  }),
+  })
 }));
 
 const Container = styled('div', { name: 'CompanionArea', slot: 'container' })(({ ownerState }) => ({

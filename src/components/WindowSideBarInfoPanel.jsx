@@ -8,6 +8,7 @@ import ManifestInfo from '../containers/ManifestInfo';
 import CollectionInfo from '../containers/CollectionInfo';
 import ManifestRelatedLinks from '../containers/ManifestRelatedLinks';
 import ns from '../config/css-ns';
+import GlobalStyles from '@mui/material/GlobalStyles';
 
 /**
  * WindowSideBarInfoPanel

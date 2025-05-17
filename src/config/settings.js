@@ -1,3 +1,4 @@
+import { borderRadius } from '@mui/system';
 import { v4 as uuid } from 'uuid';
 
 export default {
@@ -244,13 +245,14 @@ export default {
             flexDirection: 'column',
             minHeight: 0,
             ...(ownerState?.position === 'right' && {
-              borderLeft: '0.5px solid rgba(0, 0, 0, 0.125)'
+              borderLeft: 'none'
             }),
             ...(ownerState?.position === 'left' && {
-              borderRight: '0.5px solid rgba(0, 0, 0, 0.125)'
+              marginRight: '0.5rem',
+              borderRadius: "0 7px 7px 0"
             }),
             ...(ownerState?.position === 'bottom' && {
-              borderTop: '0.5px solid rgba(0, 0, 0, 0.125)'
+              borderTop: 'none'
             }),
           }),
           title: ({ theme }) => ({
@@ -272,7 +274,7 @@ export default {
       CompanionWindowSection: {
         styleOverrides: {
           root: {
-            borderBlockEnd: '.5px solid rgba(0, 0, 0, 0.25)'
+            borderBlockEnd: '.5px solid #eee'
           },
         },
       },

@@ -8,11 +8,16 @@ const Root = styled(Drawer, { name: 'WindowSideBar', slot: 'root' })(({ theme })
   flexShrink: 0,
   order: -1000,
   zIndex: theme.zIndex.appBar - 1,
+  border: "none !important",
+  borderRadius: "0 7px 7px 0",
+  boxShadow: "0px 10px 15px -3px rgba(0,0,0,0.1)"
 }));
 
 const Nav = styled('nav', { name: 'WindowSideBar', slot: 'nav' })({
   position: 'relative !important',
   width: 48,
+  border: "none !important",
+  borderRadius: "7px 0 0 7px"
 });
 
 /**

@@ -19,7 +19,10 @@ import LocaleContext from '../contexts/LocaleContext';
 import { getCompanionWindowLocale } from '../state/selectors/companionWindows';
 
 const Root = styled(Paper, { name: 'CompanionWindow', slot: 'root' })({});
-const StyledToolbar = styled(Toolbar, { name: 'CompanionWindow', slot: 'toolbar' })({});
+const StyledToolbar = styled(Toolbar, { name: 'CompanionWindow', slot: 'toolbar' })({
+  background: "#ffffff !important",
+  borderBottom: "1px solid #eee"
+});
 const StyledTitle = styled(Typography, { name: 'CompanionWindow', slot: 'title' })({});
 const StyledTitleControls = styled('div', { name: 'CompanionWindow', slot: 'controls' })({});
 const Contents = styled(Paper, { name: 'CompanionWindow', slot: 'contents' })({});

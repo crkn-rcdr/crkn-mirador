@@ -1,5 +1,3 @@
-import { borderRadius } from "@mui/system";
-
 const globalWindowViewerStyles = {
   '.mirador-osd-container': {
     height: '100%',
