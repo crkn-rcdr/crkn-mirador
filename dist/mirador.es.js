@@ -30223,13 +30223,14 @@ const Vm = {
             flexDirection: "column",
             minHeight: 0,
             ...(e == null ? void 0 : e.position) === "right" && {
-              borderLeft: "0.5px solid rgba(0, 0, 0, 0.125)"
+              borderLeft: "none"
             },
             ...(e == null ? void 0 : e.position) === "left" && {
-              borderRight: "0.5px solid rgba(0, 0, 0, 0.125)"
+              marginRight: "0.5rem",
+              borderRadius: "0 7px 7px 0"
             },
             ...(e == null ? void 0 : e.position) === "bottom" && {
-              borderTop: "0.5px solid rgba(0, 0, 0, 0.125)"
+              borderTop: "none"
             }
           }),
           title: ({ theme: e }) => ({
@@ -30251,7 +30252,7 @@ const Vm = {
       CompanionWindowSection: {
         styleOverrides: {
           root: {
-            borderBlockEnd: ".5px solid rgba(0, 0, 0, 0.25)"
+            borderBlockEnd: ".5px solid #eee"
           }
         }
       },
@@ -48837,7 +48838,10 @@ function wQ() {
     });
   };
 }
-const HU = tv(), n0e = he(zi, { name: "CompanionWindow", slot: "root" })({}), r0e = he(G0, { name: "CompanionWindow", slot: "toolbar" })({}), i0e = he(Nt, { name: "CompanionWindow", slot: "title" })({}), o0e = he("div", { name: "CompanionWindow", slot: "controls" })({}), a0e = he(zi, { name: "CompanionWindow", slot: "contents" })({}), s0e = he(BU, { name: "CompanionWindow", slot: "resize" })({});
+const HU = tv(), n0e = he(zi, { name: "CompanionWindow", slot: "root" })({}), r0e = he(G0, { name: "CompanionWindow", slot: "toolbar" })({
+  background: "#ffffff !important",
+  borderBottom: "1px solid #eee"
+}), i0e = he(Nt, { name: "CompanionWindow", slot: "title" })({}), o0e = he("div", { name: "CompanionWindow", slot: "controls" })({}), a0e = he(zi, { name: "CompanionWindow", slot: "contents" })({}), s0e = he(BU, { name: "CompanionWindow", slot: "resize" })({});
 he(Wr, { name: "CompanionWindow", slot: "positionButton" })({});
 he(Wr, { name: "CompanionWindow", slot: "closeButton" })({});
 const UU = QR((e, t) => {
@@ -86984,10 +86988,15 @@ const L4e = (e, { windowId: t }) => ({
 ), z4e = j4e(uie), B4e = he(RF, { name: "WindowSideBar", slot: "root" })(({ theme: e }) => ({
   flexShrink: 0,
   order: -1e3,
-  zIndex: e.zIndex.appBar - 1
+  zIndex: e.zIndex.appBar - 1,
+  border: "none !important",
+  borderRadius: "0 7px 7px 0",
+  boxShadow: "0px 10px 15px -3px rgba(0,0,0,0.1)"
 })), H4e = he("nav", { name: "WindowSideBar", slot: "nav" })({
   position: "relative !important",
-  width: 48
+  width: 48,
+  border: "none !important",
+  borderRadius: "7px 0 0 7px"
 });
 function die({
   classes: e = {},
@@ -102173,7 +102182,9 @@ const H3e = (e, { canvas: t, windowId: n }) => {
   justifyContent: "space-around",
   alignContent: "flex-start",
   position: "relative",
-  zIndex: 51
+  zIndex: 51,
+  borderRadius: "7px",
+  boxShadow: "box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1)"
 }));
 function Wie({ canvases: e, viewingDirection: t = "", windowId: n }) {
   const r = t === "right-to-left" ? "rtl" : "ltr";
@@ -103978,7 +103989,8 @@ const Kqe = he("div")(({ theme: e }) => ({
   borderRadius: "25px",
   left: "1rem",
   top: "4.5rem",
-  zIndex: "50"
+  zIndex: "50",
+  boxShadow: "0px 10px 15px -3px rgba(0,0,0,0.1)"
 }));
 function aoe({
   windowId: e = "",
@@ -104157,25 +104169,24 @@ const o6e = (e, { windowId: t }) => ({
   Mt(o6e, a6e),
   Ot("ViewerNavigation")
   // further HOC go here
-), l6e = s6e(loe), c6e = he(zi, { name: "WindowCanvasNavigationControls", slot: "root" })(({ theme: e }) => {
-  var t;
-  return {
-    alignItems: "center",
-    backgroundColor: e.palette.background.paper,
-    top: 0,
-    cursor: "default",
-    display: "flex",
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "flex-start",
-    position: "relative",
-    textAlign: "left",
-    width: "100%",
-    height: "3.5rem",
-    paddingLeft: "1rem",
-    border: `1px solid ${(t = e.palette.shades) == null ? void 0 : t.dark}`
-  };
-}), hD = QR(({
+), l6e = s6e(loe), c6e = he(zi, { name: "WindowCanvasNavigationControls", slot: "root" })(({ theme: e }) => ({
+  alignItems: "center",
+  backgroundColor: e.palette.background.paper,
+  top: 0,
+  cursor: "default",
+  display: "flex",
+  flexDirection: "row",
+  flexWrap: "wrap",
+  justifyContent: "flex-start",
+  position: "relative",
+  textAlign: "left",
+  width: "100%",
+  height: "3.5rem",
+  paddingLeft: "1rem",
+  border: "none",
+  borderRadius: "7px",
+  boxShadow: "0px 10px 15px -3px rgba(0,0,0,0.1)"
+})), hD = QR(({
   showZoomControls: e = !1,
   visible: t = !0,
   windowId: n,
@@ -105245,7 +105256,8 @@ voe.propTypes = {
 };
 const U6e = {
   ".mirador-osd-container": {
-    height: "100%"
+    height: "100%",
+    marginTop: "0.5rem"
   },
   ".mirador-canvas-nav": {
     boxSizing: "border-box"
