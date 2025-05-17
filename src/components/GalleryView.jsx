@@ -15,7 +15,9 @@ const Root = styled('div', { name: 'GalleryView', slot: 'root' })(({ theme }) =>
   justifyContent: 'space-around',
   alignContent: 'flex-start',
   position: 'relative',
-  zIndex: 51
+  zIndex: 51,
+  borderRadius: "7px",
+  boxShadow: "box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1)"
 }));
 
 /**

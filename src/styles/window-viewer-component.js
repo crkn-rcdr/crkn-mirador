@@ -1,6 +1,9 @@
+import { borderRadius } from "@mui/system";
+
 const globalWindowViewerStyles = {
   '.mirador-osd-container': {
-    height: '100%'
+    height: '100%',
+    marginTop: "0.5rem"
   },
   '.mirador-canvas-nav' : {
     boxSizing: 'border-box'
