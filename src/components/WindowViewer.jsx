@@ -18,7 +18,8 @@ export function WindowViewer({ windowId }) {
       <Suspense fallback={<div />}>
       <div className='viewer-wrap'>
         <WindowCanvasNavigationControls windowId={windowId} />
-        <OSDViewer windowId={windowId}></OSDViewer>
+        <OSDViewer windowId={windowId}>
+        </OSDViewer>
       </div>
       </Suspense>
     </ErrorBoundary>

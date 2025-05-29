@@ -14,16 +14,20 @@ const StyledZoomControlsWrapper = styled('div')(({ theme }) => ({
   background: theme.palette.background.paper,
   borderRadius: '25px',
   left: '1rem',
-  top: '4.5rem',
+  top: '0rem',
   zIndex: '50',
   boxShadow: "0px 10px 15px -3px rgba(0,0,0,0.1)"
 }));
 
+
 /**
  */
 export function ZoomControls({
-  windowId = '', updateViewport = () => {}, viewer = {}, zoomToWorld,
+  windowId = '', updateViewport = () => {}, viewer = {}, zoomToWorld, showZoomControls = true, 
 }) {
+  const pluginProps = { // 
+    showZoomControls, 
+  };
   const { t } = useTranslation();
   /** */
   const handleZoomInClick = () => {
@@ -39,7 +43,7 @@ export function ZoomControls({
     });
   };
 
-  return (
+  return  showZoomControls ? 
     <StyledZoomControlsWrapper>
       <MiradorMenuButton aria-label={t('zoomIn')} onClick={handleZoomInClick}>
         <AddCircleIcon />
@@ -50,11 +54,11 @@ export function ZoomControls({
       <MiradorMenuButton aria-label={t('zoomReset')} onClick={() => zoomToWorld(false)}>
         <RestoreZoomIcon />
       </MiradorMenuButton>
-    </StyledZoomControlsWrapper>
-  );
+    </StyledZoomControlsWrapper> : <></>;
 }
-
 ZoomControls.propTypes = {
+  showZoomControls: PropTypes.bool,
+  visible: PropTypes.bool,
   updateViewport: PropTypes.func,
   viewer: PropTypes.shape({
     x: PropTypes.number,
@@ -63,4 +67,9 @@ ZoomControls.propTypes = {
   }),
   windowId: PropTypes.string,
   zoomToWorld: PropTypes.func.isRequired,
+};
+
+ZoomControls.defaultProps = {
+  showZoomControls: false,
+  visible: true,
 };

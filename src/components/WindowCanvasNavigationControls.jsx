@@ -9,7 +9,6 @@ import Typography from '@mui/material/Typography';
 import { visuallyHidden } from '@mui/utils';
 import { useElementSize } from '@custom-react-hooks/use-element-size';
 import mergeRefs from 'merge-refs';
-import ZoomControls from '../containers/ZoomControls';
 import ViewerInfo from '../containers/ViewerInfo';
 import ViewerNavigation from '../containers/ViewerNavigation';
 import ns from '../config/css-ns';
@@ -37,13 +36,13 @@ const Root = styled(Paper, { name: 'WindowCanvasNavigationControls', slot: 'root
 /**
  * Represents the viewer controls in the mirador workspace.
  */
-export const WindowCanvasNavigationControls = forwardRef(({
-  showZoomControls = false, visible = true, windowId, zoomToWorld, ...rest
+export const WindowCanvasNavigationControls = forwardRef(({ //showZoomControls = false, zoomToWorld,
+   visible = true, windowId,  ...rest
 }, ref) => {
   const [sizeRef, size] = useElementSize();
 
-  const pluginProps = {
-    showZoomControls, size, visible, windowId, ...rest,
+  const pluginProps = { //showZoomControls, 
+    size, visible, windowId, ...rest,
   };
   /**
    * Determine if canvasNavControls are stacked (based on a hard-coded width)
@@ -70,18 +69,16 @@ export const WindowCanvasNavigationControls = forwardRef(({
         justifyContent: 'flex-start',
         alignItems: 'center'
       }}>
-      <Stack
-        direction={canvasNavControlsAreStacked ? 'column' : 'row'}
-        divider={<Divider orientation={canvasNavControlsAreStacked ? 'horizontal' : 'vertical'} variant='middle' flexItem />}
-        spacing={0}
-      >
-        <ViewerNavigation windowId={windowId} />
-      </Stack>
-      <ViewerInfo windowId={windowId} />
-      <PluginHook {...pluginProps} />
+        <Stack
+          direction={canvasNavControlsAreStacked ? 'column' : 'row'}
+          divider={<Divider orientation={canvasNavControlsAreStacked ? 'horizontal' : 'vertical'} variant='middle' flexItem />}
+          spacing={0}
+        >
+          <ViewerNavigation windowId={windowId} />
+        </Stack>
+        <ViewerInfo windowId={windowId} />
+        <PluginHook {...pluginProps} />
       </div>
-
-      { showZoomControls && <ZoomControls windowId={windowId} zoomToWorld={zoomToWorld} /> }
     </Root>
   );
 });

@@ -4,6 +4,7 @@ import { withPlugins } from '../extend/withPlugins';
 import * as actions from '../state/actions';
 import { getViewer } from '../state/selectors';
 import { ZoomControls } from '../components/ZoomControls';
+import { getShowZoomControlsConfig } from '../state/selectors';
 
 /**
  * mapStateToProps - to hook up connect
@@ -13,6 +14,8 @@ import { ZoomControls } from '../components/ZoomControls';
 const mapStateToProps = (state, { windowId }) => (
   {
     viewer: getViewer(state, { windowId }),
+    showZoomControls: getShowZoomControlsConfig(state),
+    visible: true,
   }
 );
 

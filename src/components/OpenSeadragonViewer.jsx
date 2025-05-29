@@ -13,6 +13,7 @@ import { PluginHook } from './PluginHook';
 import { OSDReferences } from '../plugins/OSDReferences';
 import OpenSeadragonComponent from './OpenSeadragonComponent';
 import TileSource from './OpenSeadragonTileSource';
+import ZoomControls from '../containers/ZoomControls';
 
 const StyledSection = styled('section')({
   cursor: 'grab',
@@ -138,6 +139,7 @@ export function OpenSeadragonViewer({
           && <AnnotationsOverlay viewer={viewer} windowId={windowId} /> }
       { enhancedChildren }
       <PluginHook viewer={viewer} {...pluginProps} />
+      <ZoomControls windowId={windowId} zoomToWorld={zoomToWorld} />
     </OpenSeadragonComponent>
   );
 }
