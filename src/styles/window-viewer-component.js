@@ -10,12 +10,13 @@ const globalWindowViewerStyles = {
     boxSizing: 'border-box',
     width: 'fit-content !important',
     padding: '0 1rem !important',
-    right: '0',
+    right: '0.5rem',
     borderRadius: "50px !important",
     zIndex: "10000"
   },
   '.mirador-canvas-nav + .mirador-osd-container': {
     height: '100%',
+    marginTop: '0'
   },
   '.viewer-wrap': {
     width: '100%',
@@ -85,8 +86,9 @@ const globalWindowViewerStyles = {
     borderRadius: '50px !important',
     overflow: 'hidden !important',
     margin: '0.5rem !important',
-    maxHeight: "50px",
-    top: "calc(100% - 67px) !important",
+    top: "0 !important",
+    display: "flex !important",
+    right: "0 !important"
   },
 
   

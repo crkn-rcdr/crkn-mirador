@@ -17,7 +17,7 @@ import { PluginHook } from './PluginHook';
 const Root = styled(Paper, { name: 'WindowCanvasNavigationControls', slot: 'root' })(({ theme }) => ({
   alignItems: 'center',
   backgroundColor: theme.palette.background.paper,
-  bottom: 0,
+  bottom: '0.5rem',
   cursor: 'default',
   display: 'flex',
   flexDirection: 'row',
