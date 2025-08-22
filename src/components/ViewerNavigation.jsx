@@ -47,6 +47,23 @@ export function ViewerNavigation({
       style={{ display: "inline-flex", alignItems: "center" }}
       dir={htmlDir}
     >
+      
+      <MiradorMenuButton
+        aria-label={t('previousCanvas')}
+        className={ns('previous-canvas-button')}
+        disabled={!hasPreviousCanvas}
+        onClick={() => { hasPreviousCanvas && setPreviousCanvas(); }}
+      >
+        <i className="bi bi-arrow-left"></i>
+      </MiradorMenuButton>
+      <MiradorMenuButton
+        aria-label={t('nextCanvas')}
+        className={ns('next-canvas-button')}
+        disabled={!hasNextCanvas}
+        onClick={() => { hasNextCanvas && setNextCanvas(); }}
+      >
+        <i className="bi bi-arrow-right"></i>
+      </MiradorMenuButton>
       <Autocomplete
         size="small"
         disablePortal
@@ -59,22 +76,6 @@ export function ViewerNavigation({
         sx={{ width: 100, display: "inline-block", marginRight: "1rem"}}
         renderInput={(params) => <TextField {...params} label={t('canvasIndex')} />}
       />
-      <MiradorMenuButton
-        aria-label={t('previousCanvas')}
-        className={ns('previous-canvas-button')}
-        disabled={!hasPreviousCanvas}
-        onClick={() => { hasPreviousCanvas && setPreviousCanvas(); }}
-      >
-        <NavigationIcon style={previousIconStyle} />
-      </MiradorMenuButton>
-      <MiradorMenuButton
-        aria-label={t('nextCanvas')}
-        className={ns('next-canvas-button')}
-        disabled={!hasNextCanvas}
-        onClick={() => { hasNextCanvas && setNextCanvas(); }}
-      >
-        <NavigationIcon style={nextIconStyle} />
-      </MiradorMenuButton>
     </div>
   );
 }

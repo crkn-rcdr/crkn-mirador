@@ -114,14 +114,13 @@ export function OpenSeadragonViewer({
       renderer: 'canvas',
 
       /* Built-in controls (all of them) */
-      showNavigationControl: true,
       showZoomControl: true,
       showHomeControl: true,
       showFullPageControl: true,
       showRotationControl: true,
       showFlipControl: true,
-      showSequenceControl: true,
       showNavigator: false,
+      showSequenceControl: true,
 
       /* Make zoom feel snappy and allow enough headroom */
       blendTime: 0,

@@ -1,3 +1,6 @@
+import zIndex from "@mui/material/styles/zIndex";
+import { borderRadius } from "@mui/system";
+
 const globalWindowViewerStyles = {
   '.mirador-osd-container': {
     height: '100%',
@@ -5,9 +8,14 @@ const globalWindowViewerStyles = {
   },
   '.mirador-canvas-nav': {
     boxSizing: 'border-box',
+    width: 'fit-content !important',
+    padding: '0 1rem !important',
+    right: '0',
+    borderRadius: "50px !important",
+    zIndex: "100000000000"
   },
   '.mirador-canvas-nav + .mirador-osd-container': {
-    height: 'calc(100% - 4rem)',
+    height: '100%',
   },
   '.viewer-wrap': {
     width: '100%',
@@ -51,10 +59,10 @@ const globalWindowViewerStyles = {
   'div[title="Toggle full page"]::before': {
     content: '"\\f14a"', // bi-arrows-fullscreen
   },
-  'div[title="Previous page"]::before': {
+  'div[title="Previous page"]::before, .nav-prev': {
     content: '"\\f12c"', // bi-arrow-left-circle
   },
-  'div[title="Next page"]::before': {
+  'div[title="Next page"]::before, .nav-prev': {
     content: '"\\f138"', // bi-arrow-right-circle
   },
   'div[title="Rotate left"]::before': {
@@ -77,7 +85,14 @@ const globalWindowViewerStyles = {
     borderRadius: '50px !important',
     overflow: 'hidden !important',
     margin: '0.5rem !important',
-    maxHeight: "50px"
+    maxHeight: "50px",
+    top: "calc(100% - 67px) !important",
+  },
+
+  
+  /* Toolbar container styling */
+  '.openseadragon-canvas + div > div': {
+    boxShadow: "0px 10px 15px -3px rgba(0, 0, 0, 0.1)"
   },
   
   // Common toolbar button styles
@@ -91,6 +106,9 @@ const globalWindowViewerStyles = {
     pointerEvents: 'none',
     background: 'center/contain no-repeat',
     color: "#707070"
+  },
+  '.mirador-next-canvas-button' : {
+    marginRight: "1rem !important;"
   }
 
 };
