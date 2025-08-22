@@ -4,11 +4,13 @@ import { styled } from '@mui/material/styles';
 import OpenSeadragon from 'openseadragon';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import ns from '../config/css-ns';
 import AnnotationsOverlay from '../containers/AnnotationsOverlay';
 import CanvasWorld from '../lib/CanvasWorld';
 import { PluginHook } from './PluginHook';
 import { OSDReferences } from '../plugins/OSDReferences';
+import { getCanvasIndex } from '../state/selectors';
 
 const StyledSection = styled('section')({
   cursor: 'grab',
@@ -33,19 +35,22 @@ export function OpenSeadragonViewer({
   nonTiledImages = [],
   updateViewport,
   setCanvas,
+  onCanvasIndexChange,
   ...rest
 }) {
   const { t } = useTranslation();
   const viewerRef = useRef(null);
   const containerRef = useRef(null);
   const [tileSources, setTileSources] = useState([]);
-  const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [internalIndex, setInternalIndex] = useState(0);
 
-  // Build stable IDs to prevent unnecessary rebuilds
-  const canvasIds = canvases.map(c => c.id).join('|');
-  const nonTiledIds = nonTiledImages.map(c => c.id).join('|');
+  // Get canvasIndex from Redux
+  const canvasIndex = useSelector(state => getCanvasIndex(state, { windowId }));
 
-  /** Fetch and build tileSources once manifest changes */
+  const canvasKeys = canvases.map(c => c.id).join('|');
+  const nonTiledKeys = nonTiledImages.map(c => c.id).join('|');
+
+  /** Fetch tile sources */
   useEffect(() => {
     let cancelled = false;
     const infoCache = {};
@@ -67,7 +72,6 @@ export function OpenSeadragonViewer({
 
     async function buildSources() {
       const sources = [];
-
       const infoResponsesByCanvas = await Promise.all(
         canvases.map(async canvas => {
           const services = canvas.imageServiceIds || [];
@@ -75,8 +79,7 @@ export function OpenSeadragonViewer({
         })
       );
 
-      const infoResponses = infoResponsesByCanvas.flat().filter(Boolean);
-      infoResponses.forEach(resp => sources.push(resp.json));
+      infoResponsesByCanvas.flat().filter(Boolean).forEach(resp => sources.push(resp.json));
 
       nonTiledImages.forEach(cr => {
         const type = cr.getProperty('type');
@@ -90,7 +93,7 @@ export function OpenSeadragonViewer({
 
     buildSources();
     return () => { cancelled = true; };
-  }, [canvasIds, nonTiledIds]);
+  }, [canvasKeys, nonTiledKeys]);
 
   /** Report viewport changes */
   const onViewportChange = useCallback(() => {
@@ -105,15 +108,15 @@ export function OpenSeadragonViewer({
     });
   }, [updateViewport, windowId]);
 
-  /** Initialize OSD once */
+  /** Initialize OSD */
   useEffect(() => {
     if (!containerRef.current) return;
+
     const viewer = OpenSeadragon({
       element: containerRef.current,
       prefixUrl: '/openseadragon/images/',
       crossOriginPolicy: 'Anonymous',
       renderer: 'canvas',
-
       showZoomControl: true,
       showHomeControl: true,
       showFullPageControl: true,
@@ -122,7 +125,6 @@ export function OpenSeadragonViewer({
       showNavigator: false,
       showSequenceControl: true,
       sequenceMode: true,
-
       blendTime: 0,
       immediateRender: true,
       preserveOverlays: true,
@@ -139,36 +141,47 @@ export function OpenSeadragonViewer({
 
     viewer.addHandler('viewport-change', onViewportChange);
 
-    // Sync page changes with Mirador state
     viewer.addHandler('page', event => {
-      setCurrentPageIndex(event.page);
-      if (canvases[event.page] && setCanvas) setCanvas(canvases[event.page].id);
+      const index = event.page;
+      setInternalIndex(index);
+      if (setCanvas) setCanvas(canvases[index]?.id);
+      if (onCanvasIndexChange) onCanvasIndexChange(index);
     });
 
     return () => {
       viewer.destroy();
       viewerRef.current = null;
     };
-  }, [windowId, osdConfig, onViewportChange, canvases, setCanvas]);
+  }, [windowId, osdConfig, onViewportChange, canvases, setCanvas, onCanvasIndexChange]);
 
-  /** Open sources and go to current page */
+  /** Open sources and set initial page */
   useEffect(() => {
     if (!viewerRef.current || tileSources.length === 0) return;
 
     viewerRef.current.open(tileSources);
+
     viewerRef.current.addOnceHandler('open', () => {
       const world = viewerRef.current.world;
       if (world.getItemCount() > 0) {
         viewerRef.current.viewport.fitBounds(world.getHomeBounds(), true);
         viewerRef.current.viewport.minZoomLevel = viewerRef.current.viewport.getZoom() * 0.5;
         viewerRef.current.viewport.maxZoomLevel = viewerRef.current.viewport.getZoom() * 40;
-        // Restore current page after open
-        if (currentPageIndex < tileSources.length) {
-          viewerRef.current.goToPage(currentPageIndex);
-        }
+
+        if (canvasIndex >= 0) viewerRef.current.goToPage(canvasIndex);
+        setInternalIndex(canvasIndex);
       }
     });
-  }, [tileSources, currentPageIndex]);
+  }, [tileSources, canvases, canvasIndex]);
+
+  /** Sync external canvasIndex updates */
+  useEffect(() => {
+    if (!viewerRef.current || tileSources.length === 0) return;
+
+    if (canvasIndex !== internalIndex && canvasIndex >= 0) {
+      viewerRef.current.goToPage(canvasIndex);
+      setInternalIndex(canvasIndex);
+    }
+  }, [canvasIndex, internalIndex, tileSources]);
 
   const pluginProps = {
     canvasWorld,
@@ -203,6 +216,7 @@ OpenSeadragonViewer.propTypes = {
   osdConfig: PropTypes.object,
   updateViewport: PropTypes.func.isRequired,
   setCanvas: PropTypes.func,
+  onCanvasIndexChange: PropTypes.func,
   viewerConfig: PropTypes.object,
   windowId: PropTypes.string.isRequired,
 };

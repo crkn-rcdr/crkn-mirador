@@ -12,7 +12,8 @@ import {
   getConfig,
   getCompanionWindowsForContent,
   getCurrentCanvasWorld,
-  getCanvases
+  getCanvases,
+  getCanvasIndex
 } from '../state/selectors';
 
 /**
@@ -36,6 +37,7 @@ const mapStateToProps = (state, { windowId }) => {
     nonTiledImages: getVisibleCanvasNonTiledResources(state, { windowId }),
     osdConfig: getConfig(state).osdConfig,
     viewerConfig: getViewer(state, { windowId }),
+    canvasIndex: getCanvasIndex(state, { windowId }),
   };
 };
 
