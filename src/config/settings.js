@@ -493,7 +493,7 @@ export default {
   },
   window: { //global window defaults
     allowClose: true, // Configure if windows can be closed or not
-    allowFullscreen: false, // Configure to show a "fullscreen" button in the WindowTopBar
+    allowFullscreen: true, // Configure to show a "fullscreen" button in the WindowTopBar
     allowMaximize: true, // Configure if windows can be maximized or not
     allowTopMenuButton: true, // Configure if window view and thumbnail display menu are visible or not
     allowWindowSideBar: true, // Configure if side bar menu is visible or not
@@ -576,7 +576,7 @@ export default {
     blendTime: 0.1,
     preserveImageSizeOnResize: true,
     preserveViewport: true,
-    showNavigationControl: false,
+    showNavigationControl: true,
     zoomPerClick: 1, // disable zoom-to-click
     zoomPerDoubleClick: 2.0
   },

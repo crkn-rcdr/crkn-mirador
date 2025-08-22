@@ -30480,7 +30480,7 @@ const Vm = {
     //global window defaults
     allowClose: !0,
     // Configure if windows can be closed or not
-    allowFullscreen: !1,
+    allowFullscreen: 1,
     // Configure to show a "fullscreen" button in the WindowTopBar
     allowMaximize: !0,
     // Configure if windows can be maximized or not

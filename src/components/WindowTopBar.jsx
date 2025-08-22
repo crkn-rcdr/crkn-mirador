@@ -73,15 +73,6 @@ export function WindowTopBar({
         )}
         <WindowTopBarPluginArea windowId={windowId} />
         <WindowTopBarPluginMenu windowId={windowId} />
-        {allowMaximize && (
-          <MiradorMenuButton
-            aria-label={(maximized ? t('minimizeWindow') : t('maximizeWindow'))}
-            className={classNames(ns('window-maximize'), ns('window-menu-btn'))}
-            onClick={(maximized ? minimizeWindow : maximizeWindow)}
-          >
-            {(maximized ? <WindowMinIcon /> : <WindowMaxIcon />)}
-          </MiradorMenuButton>
-        )}
         {allowFullscreen && (
           <FullScreenButton className={ns('window-menu-btn')} />
         )}

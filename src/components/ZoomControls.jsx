@@ -1,9 +1,9 @@
 import AddCircleIcon from '@mui/icons-material/AddCircleOutlineSharp';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircleOutlineSharp';
+import RestoreZoomIcon from './icons/RestoreZoomIcon';
 import { styled } from '@mui/material/styles';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import RestoreZoomIcon from './icons/RestoreZoomIcon';
 import MiradorMenuButton from '../containers/MiradorMenuButton';
 
 const StyledZoomControlsWrapper = styled('div')(({ theme }) => ({
@@ -15,61 +15,52 @@ const StyledZoomControlsWrapper = styled('div')(({ theme }) => ({
   borderRadius: '25px',
   left: '1rem',
   top: '0rem',
-  zIndex: '50',
-  boxShadow: "0px 10px 15px -3px rgba(0,0,0,0.1)"
+  zIndex: 50,
+  boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
 }));
 
-
-/**
- */
-export function ZoomControls({
-  windowId = '', updateViewport = () => {}, viewer = {}, zoomToWorld, showZoomControls = true, 
-}) {
-  const pluginProps = { // 
-    showZoomControls, 
-  };
+export function ZoomControls({ viewer, zoomToWorld, showZoomControls = true }) {
   const { t } = useTranslation();
-  /** */
-  const handleZoomInClick = () => {
-    updateViewport(windowId, {
-      zoom: viewer.zoom * 2,
-    });
+
+  if (!showZoomControls || !viewer) return null;
+
+  const handleZoomIn = () => {
+    if (!viewer.viewport) return;
+    viewer.viewport.zoomBy(1.2);
+    viewer.viewport.applyConstraints();
   };
 
-  /** */
-  const handleZoomOutClick = () => {
-    updateViewport(windowId, {
-      zoom: viewer.zoom / 2,
-    });
+  const handleZoomOut = () => {
+    if (!viewer.viewport) return;
+    viewer.viewport.zoomBy(0.8);
+    viewer.viewport.applyConstraints();
   };
 
-  return  showZoomControls ? 
+  const handleReset = () => {
+    if (zoomToWorld) zoomToWorld();
+  };
+
+  return (
     <StyledZoomControlsWrapper>
-      <MiradorMenuButton aria-label={t('zoomIn')} onClick={handleZoomInClick}>
+      <MiradorMenuButton aria-label={t('zoomIn')} onClick={handleZoomIn}>
         <AddCircleIcon />
       </MiradorMenuButton>
-      <MiradorMenuButton aria-label={t('zoomOut')} onClick={handleZoomOutClick}>
+      <MiradorMenuButton aria-label={t('zoomOut')} onClick={handleZoomOut}>
         <RemoveCircleIcon />
       </MiradorMenuButton>
-      <MiradorMenuButton aria-label={t('zoomReset')} onClick={() => zoomToWorld(false)}>
+      <MiradorMenuButton aria-label={t('zoomReset')} onClick={handleReset}>
         <RestoreZoomIcon />
       </MiradorMenuButton>
-    </StyledZoomControlsWrapper> : <></>;
+    </StyledZoomControlsWrapper>
+  );
 }
+
 ZoomControls.propTypes = {
-  showZoomControls: PropTypes.bool,
-  visible: PropTypes.bool,
-  updateViewport: PropTypes.func,
-  viewer: PropTypes.shape({
-    x: PropTypes.number,
-    y: PropTypes.number,
-    zoom: PropTypes.number,
-  }),
-  windowId: PropTypes.string,
+  viewer: PropTypes.object,
   zoomToWorld: PropTypes.func.isRequired,
+  showZoomControls: PropTypes.bool,
 };
 
 ZoomControls.defaultProps = {
-  showZoomControls: false,
-  visible: true,
+  showZoomControls: true,
 };

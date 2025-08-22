@@ -1,6 +1,7 @@
 import init from './init';
 import state from './state';
 
+import 'bootstrap-icons/font/bootstrap-icons.css';
 export * from './state';
 export * from './components';
 export * from './containers';
