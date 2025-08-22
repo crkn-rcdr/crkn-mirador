@@ -59,10 +59,10 @@ const globalWindowViewerStyles = {
   'div[title="Toggle full page"]::before': {
     content: '"\\f14a"', // bi-arrows-fullscreen
   },
-  'div[title="Previous page"]::before, .nav-prev': {
+  'div[title="Previous page"]::before': {
     content: '"\\f12c"', // bi-arrow-left-circle
   },
-  'div[title="Next page"]::before, .nav-prev': {
+  'div[title="Next page"]::before': {
     content: '"\\f138"', // bi-arrow-right-circle
   },
   'div[title="Rotate left"]::before': {
@@ -74,12 +74,16 @@ const globalWindowViewerStyles = {
   'div[title="Flip Horizontally"]::before': {
     content: '"\\f6a2"', // bi-arrow-left-right
   },
-
   /* Fullscreen override when active */
   '.mirador-osd-container.fullpage div[title="Toggle full page"]::before': {
     content: '"\\f149"', // bi-arrows-angle-contract
   },
-
+  '.mirador-osd-container .openseadragon-container > div:nth-child(2) > div:nth-child(2)': {
+    display: 'none !important', // bi-arrow-right-circle
+  },
+  '.mirador-osd-container.fullpage .openseadragon-container > div:nth-child(2) > div:nth-child(2)': {
+    display: 'inline-block !important', 
+  },
   /* Toolbar container styling */
   '.openseadragon-canvas + div': {
     borderRadius: '50px !important',
