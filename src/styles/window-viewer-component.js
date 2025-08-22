@@ -89,14 +89,14 @@ const globalWindowViewerStyles = {
     display: "flex !important",
     flexDirection: "column",
     left: "calc(100% - 67px) !important",
-    width: "50px",
-    backgroundColor: 'rgba(255, 255, 255, 0.85) !important',
+    width: "50px"
   },
 
   
   /* Toolbar container styling */
   '.openseadragon-canvas + div > div': {
-    boxShadow: "0px 10px 15px -3px rgba(0, 0, 0, 0.1)"
+    boxShadow: "0px 10px 15px -3px rgba(0, 0, 0, 0.1)",
+    backgroundColor: 'rgba(255, 255, 255, 0.85) !important',
   },
   
   // Common toolbar button styles
