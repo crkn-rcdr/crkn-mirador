@@ -44,9 +44,10 @@ const mapStateToProps = (state, { windowId }) => {
  * @memberof ManifestListItem
  * @private
  */
-const mapDispatchToProps = {
+const mapDispatchToProps = (dispatch, { windowId }) => ({
   updateViewport: actions.updateViewport,
-};
+  setCanvas: (...args) => dispatch(actions.setCanvas(windowId, ...args)),
+});
 
 const enhance = compose(
   connect(mapStateToProps, mapDispatchToProps),

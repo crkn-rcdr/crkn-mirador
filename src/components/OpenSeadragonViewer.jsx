@@ -15,7 +15,6 @@ const StyledSection = styled('section')({
   flex: 1,
   position: 'relative',
 
-  /* Keep the built-in controls clickable even if overlays exist */
   '& .openseadragon-container .openseadragon-navigation': {
     zIndex: 1000,
     pointerEvents: 'auto',
@@ -33,13 +32,20 @@ export function OpenSeadragonViewer({
   canvasWorld,
   nonTiledImages = [],
   updateViewport,
+  setCanvas,
   ...rest
 }) {
   const { t } = useTranslation();
   const viewerRef = useRef(null);
   const containerRef = useRef(null);
   const [tileSources, setTileSources] = useState([]);
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
+  // Build stable IDs to prevent unnecessary rebuilds
+  const canvasIds = canvases.map(c => c.id).join('|');
+  const nonTiledIds = nonTiledImages.map(c => c.id).join('|');
+
+  /** Fetch and build tileSources once manifest changes */
   useEffect(() => {
     let cancelled = false;
     const infoCache = {};
@@ -62,68 +68,29 @@ export function OpenSeadragonViewer({
     async function buildSources() {
       const sources = [];
 
-      // Fetch info.json per canvas
       const infoResponsesByCanvas = await Promise.all(
-        canvases.map(async (canvas) => {
+        canvases.map(async canvas => {
           const services = canvas.imageServiceIds || [];
           return Promise.all(services.map(fetchInfoJson));
         })
       );
 
       const infoResponses = infoResponsesByCanvas.flat().filter(Boolean);
+      infoResponses.forEach(resp => sources.push(resp.json));
 
-      // IIIF tiled images
-      infoResponses.forEach((infoResponse) => {
-        const cr = canvasWorld.contentResource(infoResponse.id);
-        if (!cr) return;
-
-        const [x0, y0, x1] = canvasWorld.contentResourceToWorldCoordinates(cr);
-        const width = x1 - x0;
-        const index = canvasWorld.layerIndexOfImageResource(cr);
-        const opacity = canvasWorld.layerOpacityOfImageResource(cr);
-
-        sources.push({
-          tileSource: infoResponse.json,
-          x: x0,
-          y: y0,
-          width,
-          opacity,
-          index,
-          crossOriginPolicy: 'Anonymous',
-        });
-      });
-
-      // Non-tiled images
-      nonTiledImages.forEach((cr) => {
+      nonTiledImages.forEach(cr => {
         const type = cr.getProperty('type');
         const format = cr.getProperty('format') || '';
         if (!(type === 'Image' || type === 'dctypes:Image' || format.startsWith('image/'))) return;
-
-        const [x0, y0, x1] = canvasWorld.contentResourceToWorldCoordinates(cr);
-        const width = x1 - x0;
-        const index = canvasWorld.layerIndexOfImageResource(cr);
-        const opacity = canvasWorld.layerOpacityOfImageResource(cr);
-
-        sources.push({
-          tileSource: cr.id,
-          x: x0,
-          y: y0,
-          width,
-          opacity,
-          index,
-          crossOriginPolicy: 'Anonymous',
-        });
+        sources.push(cr.id);
       });
 
       if (!cancelled) setTileSources(sources);
     }
 
     buildSources();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [canvases, canvasWorld, nonTiledImages]);
+    return () => { cancelled = true; };
+  }, [canvasIds, nonTiledIds]);
 
   /** Report viewport changes */
   const onViewportChange = useCallback(() => {
@@ -138,17 +105,15 @@ export function OpenSeadragonViewer({
     });
   }, [updateViewport, windowId]);
 
-  /** Initialize OpenSeadragon once with built-in controls */
+  /** Initialize OSD once */
   useEffect(() => {
     if (!containerRef.current) return;
-
     const viewer = OpenSeadragon({
       element: containerRef.current,
       prefixUrl: '/openseadragon/images/',
       crossOriginPolicy: 'Anonymous',
       renderer: 'canvas',
 
-      /* Built-in controls */
       showZoomControl: true,
       showHomeControl: true,
       showFullPageControl: true,
@@ -164,46 +129,46 @@ export function OpenSeadragonViewer({
       maxZoomPixelRatio: osdConfig.maxZoomPixelRatio || 8,
       zoomPerClick: osdConfig.zoomPerClick || 1.3,
       zoomPerScroll: osdConfig.zoomPerScroll || 1.2,
-
       ...osdConfig,
     });
 
-    if (!viewer.zoomPerClick || viewer.zoomPerClick <= 1.001) {
-      viewer.zoomPerClick = 1.3;
-    }
+    if (!viewer.zoomPerClick || viewer.zoomPerClick <= 1.001) viewer.zoomPerClick = 1.3;
 
     viewerRef.current = viewer;
     OSDReferences.set(windowId, viewer);
 
     viewer.addHandler('viewport-change', onViewportChange);
 
+    // Sync page changes with Mirador state
+    viewer.addHandler('page', event => {
+      setCurrentPageIndex(event.page);
+      if (canvases[event.page] && setCanvas) setCanvas(canvases[event.page].id);
+    });
+
     return () => {
       viewer.destroy();
       viewerRef.current = null;
     };
-  }, [windowId, osdConfig, onViewportChange]);
+  }, [windowId, osdConfig, onViewportChange, canvases, setCanvas]);
 
-  /** Load or update sources when they change */
+  /** Open sources and go to current page */
   useEffect(() => {
-    if (viewerRef.current && tileSources.length > 0) {
-      viewerRef.current.open(tileSources);
+    if (!viewerRef.current || tileSources.length === 0) return;
 
-      viewerRef.current.addHandler('open', () => {
-        const world = viewerRef.current.world;
-        if (world.getItemCount() > 0) {
-          const bounds = world.getHomeBounds();
-          viewerRef.current.viewport.fitBounds(bounds, true);
-
-          if (viewerRef.current.viewport.minZoomLevel == null) {
-            viewerRef.current.viewport.minZoomLevel = viewerRef.current.viewport.getZoom() * 0.5;
-          }
-          if (viewerRef.current.viewport.maxZoomLevel == null) {
-            viewerRef.current.viewport.maxZoomLevel = viewerRef.current.viewport.getZoom() * 40;
-          }
+    viewerRef.current.open(tileSources);
+    viewerRef.current.addOnceHandler('open', () => {
+      const world = viewerRef.current.world;
+      if (world.getItemCount() > 0) {
+        viewerRef.current.viewport.fitBounds(world.getHomeBounds(), true);
+        viewerRef.current.viewport.minZoomLevel = viewerRef.current.viewport.getZoom() * 0.5;
+        viewerRef.current.viewport.maxZoomLevel = viewerRef.current.viewport.getZoom() * 40;
+        // Restore current page after open
+        if (currentPageIndex < tileSources.length) {
+          viewerRef.current.goToPage(currentPageIndex);
         }
-      });
-    }
-  }, [tileSources]);
+      }
+    });
+  }, [tileSources, currentPageIndex]);
 
   const pluginProps = {
     canvasWorld,
@@ -237,6 +202,7 @@ OpenSeadragonViewer.propTypes = {
   nonTiledImages: PropTypes.array,
   osdConfig: PropTypes.object,
   updateViewport: PropTypes.func.isRequired,
+  setCanvas: PropTypes.func,
   viewerConfig: PropTypes.object,
   windowId: PropTypes.string.isRequired,
 };
