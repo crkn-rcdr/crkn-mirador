@@ -37,7 +37,6 @@ const globalWindowViewerStyles = {
     position: 'relative',
     height: '50px',
     width: '50px',
-    backgroundColor: 'rgba(255, 255, 255, 0.85) !important',
     fontFamily: '"bootstrap-icons" !important',
     fontSize: '1.5rem',
     display: 'flex',
@@ -88,7 +87,10 @@ const globalWindowViewerStyles = {
     margin: '0.5rem !important',
     top: "0 !important",
     display: "flex !important",
-    right: "0 !important"
+    flexDirection: "column",
+    left: "calc(100% - 67px) !important",
+    width: "50px",
+    backgroundColor: 'rgba(255, 255, 255, 0.85) !important',
   },
 
   
