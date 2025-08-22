@@ -12,7 +12,7 @@ const globalWindowViewerStyles = {
     padding: '0 1rem !important',
     right: '0',
     borderRadius: "50px !important",
-    zIndex: "100000000000"
+    zIndex: "10000"
   },
   '.mirador-canvas-nav + .mirador-osd-container': {
     height: '100%',
