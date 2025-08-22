@@ -60,7 +60,7 @@ const globalWindowViewerStyles = {
     content: '"\\f14a"', // bi-arrows-fullscreen
   },
   'div[title="Previous page"]::before': {
-    content: '"\\f12c"', // bi-arrow-left-circle
+    content: '"\\f12f"', // bi-arrow-left-circle F12F
   },
   'div[title="Next page"]::before': {
     content: '"\\f138"', // bi-arrow-right-circle
