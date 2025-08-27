@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+// components/GalleryViewThumbnail.jsx
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import Chip from '@mui/material/Chip';
@@ -9,149 +10,84 @@ import IIIFThumbnail from '../containers/IIIFThumbnail';
 
 const Root = styled('div', { name: 'GalleryView', slot: 'thumbnail' })(
   ({ ownerState, theme }) => ({
-    '&:focus': {
-      outline: 'none',
-    },
-    '&:hover': {
-      backgroundColor: theme.palette.action.hover,
-    },
-    border: '2px solid transparent',
-    ...(ownerState.selected && {
-      borderColor: theme.palette.primary.main,
-    }),
-    ...(!ownerState.selected &&
-      ownerState.searchAnnotationsCount > 0 && {
-        borderColor: theme.palette.action.selected,
-      }),
-    ...(ownerState.highlighted && {
-      borderColor: theme.palette.warning.main, // 🔶 highlight color
-      boxShadow: `0 0 6px ${theme.palette.warning.main}`,
-    }),
+    '&:focus': { outline: 'none' },
+    '&:hover': { backgroundColor: theme.palette.action.hover },
+    ...(ownerState?.selected ? { boxShadow: `inset 0 0 0 2px ${theme.palette.primary.main}` } : {}),
+    ...(ownerState?.highlighted ? { boxShadow: `inset 0 0 0 2px ${theme.palette.info.main}` } : {}),
     cursor: 'pointer',
-    display: 'inline-block',
-    margin: theme.spacing(1, 0.5),
-    maxHeight: ownerState.config.height + 45,
-    minWidth: '60px',
-    overflow: 'hidden',
-    padding: theme.spacing(0.5),
+    margin: theme.spacing(1),
+    borderRadius: theme.shape.borderRadius,
+    padding: theme.spacing(1),
     position: 'relative',
-    width: 'min-content',
-    borderRadius: '7px',
-  })
+    width: '100%',
+    height: '100%',
+    boxSizing: 'border-box',
+  }),
 );
 
-const StyledChipsContainer = styled('div', {
-  name: 'GalleryView',
-  slot: 'chipArea',
-})(({ theme }) => ({
+const Chips = styled('div')(({ theme }) => ({
   display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(0.25),
+  gap: theme.spacing(0.5),
   position: 'absolute',
-  right: 0,
-  top: 0,
+  right: theme.spacing(1),
+  bottom: theme.spacing(1),
 }));
 
-const AnnotationChip = styled(Chip, {
-  name: 'GalleryView',
-  slot: 'chip',
-})(({ theme }) => ({
-  backgroundColor: theme.palette.annotations.chipBackground,
-  opacity: 0.875,
-  textAlign: 'right',
-}));
-
-/**
- * GalleryViewThumbnail
- */
 export function GalleryViewThumbnail({
   canvas,
   selected = false,
-  highlighted = false,   
+  highlighted = false,
   setCanvas,
   focusOnCanvas,
   annotationsCount = undefined,
   requestCanvasAnnotations = () => {},
   searchAnnotationsCount = 0,
   config = { height: 100, width: null },
+  thumbSize = 'm',      // 's' | 'm' | 'l'
+  tileW,                // new: inner cell width from Grid (already minus gap)
+  tileH,                // new: inner cell height from Grid (already minus gap)
 }) {
   const myRef = useRef();
+  const wasSelected = useRef(false);
   const [requestedAnnotations, setRequestedAnnotations] = useState(false);
 
   useEffect(() => {
-    if (selected) {
-      myRef.current?.scrollIntoView(true);
+    if (selected && !wasSelected.current) {
+      myRef.current?.scrollIntoView({ block: 'nearest' });
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    wasSelected.current = selected;
+  }, [selected]);
 
-  /** @private */
-  const handleSelect = () => {
-    console.log("Gallery thumbnail clicked, canvas.id:", canvas.id);
-    if (selected) {
-      focusOnCanvas();
-    } else {
-      setCanvas(canvas.id);
-    }
-  };
+  // Prefer tile-based sizing from Grid to avoid mismatch/overlap.
+  const pad = 16; // Root padding (8 top + 8 bottom) with MUI spacing(1)
+  const maxHeight = (typeof tileH === 'number' && tileH > 0)
+    ? Math.max(1, tileH - pad)
+    : Math.max(1, Math.round(((typeof config.height === 'number' ? config.height : 100) * ((thumbSize === 'l') ? 4.0 : 2.0))));
 
-  /** @private */
-  const handleKey = (event) => {
-    const keys = {
-      enter: 'Enter',
-      space: ' ',
-    };
+  const maxWidth = (typeof tileW === 'number' && tileW > 0)
+    ? Math.max(1, tileW - pad)
+    : (config.width == null ? null : Math.max(1, Math.round(config.width * ((thumbSize === 'l') ? 4.0 : 2.0))));
 
-    const chars = {
-      enter: 13,
-      space: 32,
-    };
-
-    const enterOrSpace =
-      event.key === keys.enter ||
-      event.which === chars.enter ||
-      event.key === keys.space ||
-      event.which === chars.space;
-
-    if (enterOrSpace) {
-      focusOnCanvas();
-    } else {
-      setCanvas(canvas.id);
-    }
-  };
-
-  /** */
-  const handleIntersection = (_inView, { isIntersecting }) => {
-    if (
-      !isIntersecting ||
-      annotationsCount === undefined ||
-      annotationsCount > 0 ||
-      requestedAnnotations
-    )
-      return;
-
+  const handleIntersection = (inView) => {
+    if (!inView) return;
+    if (requestedAnnotations || annotationsCount === undefined || annotationsCount > 0) return;
     setRequestedAnnotations(true);
     requestCanvasAnnotations();
   };
 
-  const ownerState = {
-    annotationsCount,
-    canvas,
-    config,
-    searchAnnotationsCount,
-    selected,
-    highlighted, // 👈 include in ownerState
+  const handleSelect = () => {
+    if (selected) focusOnCanvas();
+    else setCanvas(canvas.id);
   };
+
+  const ownerState = { selected, highlighted };
 
   return (
     <InView onChange={handleIntersection}>
       <Root
         ownerState={ownerState}
         key={canvas.id || canvas.index}
-        className={`${selected ? 'selected' : ''} ${
-          highlighted ? 'highlighted' : ''
-        }`}
         onClick={handleSelect}
-        onKeyUp={handleKey}
         ref={myRef}
         role="button"
         tabIndex={0}
@@ -160,25 +96,17 @@ export function GalleryViewThumbnail({
           resource={canvas}
           labelled
           variant="outside"
-          maxHeight={config.height}
-          maxWidth={config.width}
+          maxHeight={maxHeight}
+          maxWidth={maxWidth}
         >
-          <StyledChipsContainer>
+          <Chips>
             {searchAnnotationsCount > 0 && (
-              <AnnotationChip
-                icon={<SearchIcon fontSize="small" />}
-                label={searchAnnotationsCount}
-                size="small"
-              />
+              <Chip icon={<SearchIcon fontSize="small" />} label={searchAnnotationsCount} size="small" />
             )}
             {annotationsCount > 0 && (
-              <AnnotationChip
-                icon={<AnnotationIcon fontSize="small" />}
-                label={annotationsCount}
-                size="small"
-              />
+              <Chip icon={<AnnotationIcon fontSize="small" />} label={annotationsCount} size="small" />
             )}
-          </StyledChipsContainer>
+          </Chips>
         </IIIFThumbnail>
       </Root>
     </InView>
@@ -187,15 +115,28 @@ export function GalleryViewThumbnail({
 
 GalleryViewThumbnail.propTypes = {
   annotationsCount: PropTypes.number,
-  canvas: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  config: PropTypes.shape({
-    height: PropTypes.number,
-    width: PropTypes.number,
-  }),
+  canvas: PropTypes.object.isRequired,
+  config: PropTypes.shape({ height: PropTypes.number, width: PropTypes.number }),
   focusOnCanvas: PropTypes.func.isRequired,
   requestCanvasAnnotations: PropTypes.func,
   searchAnnotationsCount: PropTypes.number,
   selected: PropTypes.bool,
-  highlighted: PropTypes.bool, 
+  highlighted: PropTypes.bool,
   setCanvas: PropTypes.func.isRequired,
+  thumbSize: PropTypes.oneOf(['s','m','l']),
+  tileW: PropTypes.number,
+  tileH: PropTypes.number,
 };
+
+export default React.memo(GalleryViewThumbnail, (prev, next) => (
+  prev.selected === next.selected &&
+  prev.highlighted === next.highlighted &&
+  prev.searchAnnotationsCount === next.searchAnnotationsCount &&
+  prev.annotationsCount === next.annotationsCount &&
+  prev.config?.height === next.config?.height &&
+  prev.config?.width === next.config?.width &&
+  (prev.canvas?.id || prev.canvas?.index) === (next.canvas?.id || next.canvas?.index) &&
+  prev.thumbSize === next.thumbSize &&
+  prev.tileW === next.tileW &&
+  prev.tileH === next.tileH
+));
