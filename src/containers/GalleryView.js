@@ -9,17 +9,14 @@ import { getCanvases, getSequenceViewingDirection, getWindow } from '../state/se
  * @memberof WindowViewer
  * @private
  */
-const mapStateToProps = (state, { windowId }) => {
-  const raw = getCanvases(state, { windowId }) || [];
-  // ✅ Filter anything falsy or missing an identifier up front
-  const canvases = raw.filter(c => c && (c.id || typeof c.index !== 'undefined'));
-  return {
-    canvases,
+const mapStateToProps = (state, { windowId }) => (
+  {
+    canvases: getCanvases(state, { windowId }),
     viewingDirection: getSequenceViewingDirection(state, { windowId }),
-    // Force updates when selection changes
+    // Force updates when selection changes (even if GalleryView itself doesn't use it)
     currentCanvasId: (getWindow(state, { windowId }) || {}).canvasId,
-  };
-};
+  }
+);
 
 const enhance = compose(
   connect(mapStateToProps),
