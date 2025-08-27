@@ -7,33 +7,43 @@ import SearchIcon from '@mui/icons-material/SearchSharp';
 import { InView } from 'react-intersection-observer';
 import IIIFThumbnail from '../containers/IIIFThumbnail';
 
-const Root = styled('div', { name: 'GalleryView', slot: 'thumbnail' })(({ ownerState, theme }) => ({
-  '&:focus': {
-    outline: 'none',
-  },
-  '&:hover': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  border: '2px solid transparent',
-  ...(ownerState.selected && {
-    borderColor: theme.palette.primary.main,
-  }),
-  ...(!ownerState.selected && ownerState.searchAnnotationsCount > 0 && {
-    borderColor: theme.palette.action.selected,
-  }),
-  cursor: 'pointer',
-  display: 'inline-block',
-  margin: theme.spacing(1, 0.5),
-  maxHeight: ownerState.config.height + 45,
-  minWidth: '60px',
-  overflow: 'hidden',
-  padding: theme.spacing(0.5),
-  position: 'relative',
-  width: 'min-content',
-  borderRadius: '7px'
-}));
+const Root = styled('div', { name: 'GalleryView', slot: 'thumbnail' })(
+  ({ ownerState, theme }) => ({
+    '&:focus': {
+      outline: 'none',
+    },
+    '&:hover': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    border: '2px solid transparent',
+    ...(ownerState.selected && {
+      borderColor: theme.palette.primary.main,
+    }),
+    ...(!ownerState.selected &&
+      ownerState.searchAnnotationsCount > 0 && {
+        borderColor: theme.palette.action.selected,
+      }),
+    ...(ownerState.highlighted && {
+      borderColor: theme.palette.warning.main, // 🔶 highlight color
+      boxShadow: `0 0 6px ${theme.palette.warning.main}`,
+    }),
+    cursor: 'pointer',
+    display: 'inline-block',
+    margin: theme.spacing(1, 0.5),
+    maxHeight: ownerState.config.height + 45,
+    minWidth: '60px',
+    overflow: 'hidden',
+    padding: theme.spacing(0.5),
+    position: 'relative',
+    width: 'min-content',
+    borderRadius: '7px',
+  })
+);
 
-const StyledChipsContainer = styled('div', { name: 'GalleryView', slot: 'chipArea' })(({ theme }) => ({
+const StyledChipsContainer = styled('div', {
+  name: 'GalleryView',
+  slot: 'chipArea',
+})(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   gap: theme.spacing(0.25),
@@ -42,18 +52,26 @@ const StyledChipsContainer = styled('div', { name: 'GalleryView', slot: 'chipAre
   top: 0,
 }));
 
-const AnnotationChip = styled(Chip, { name: 'GalleryView', slot: 'chip' })(({ theme }) => ({
+const AnnotationChip = styled(Chip, {
+  name: 'GalleryView',
+  slot: 'chip',
+})(({ theme }) => ({
   backgroundColor: theme.palette.annotations.chipBackground,
   opacity: 0.875,
   textAlign: 'right',
 }));
 
 /**
- * Represents a WindowViewer in the mirador workspace. Responsible for mounting
- * OSD and Navigation
+ * GalleryViewThumbnail
  */
 export function GalleryViewThumbnail({
-  canvas, selected = false, setCanvas, focusOnCanvas, annotationsCount = undefined, requestCanvasAnnotations = () => {},
+  canvas,
+  selected = false,
+  highlighted = false,   
+  setCanvas,
+  focusOnCanvas,
+  annotationsCount = undefined,
+  requestCanvasAnnotations = () => {},
   searchAnnotationsCount = 0,
   config = { height: 100, width: null },
 }) {
@@ -68,6 +86,7 @@ export function GalleryViewThumbnail({
 
   /** @private */
   const handleSelect = () => {
+    console.log("Gallery thumbnail clicked, canvas.id:", canvas.id);
     if (selected) {
       focusOnCanvas();
     } else {
@@ -87,12 +106,11 @@ export function GalleryViewThumbnail({
       space: 32,
     };
 
-    const enterOrSpace = (
-      event.key === keys.enter
-      || event.which === chars.enter
-      || event.key === keys.space
-      || event.which === chars.space
-    );
+    const enterOrSpace =
+      event.key === keys.enter ||
+      event.which === chars.enter ||
+      event.key === keys.space ||
+      event.which === chars.space;
 
     if (enterOrSpace) {
       focusOnCanvas();
@@ -104,17 +122,24 @@ export function GalleryViewThumbnail({
   /** */
   const handleIntersection = (_inView, { isIntersecting }) => {
     if (
-      !isIntersecting
-      || annotationsCount === undefined
-      || annotationsCount > 0
-      || requestedAnnotations) return;
+      !isIntersecting ||
+      annotationsCount === undefined ||
+      annotationsCount > 0 ||
+      requestedAnnotations
+    )
+      return;
 
     setRequestedAnnotations(true);
     requestCanvasAnnotations();
   };
 
   const ownerState = {
-    annotationsCount, canvas, config, searchAnnotationsCount, selected,
+    annotationsCount,
+    canvas,
+    config,
+    searchAnnotationsCount,
+    selected,
+    highlighted, // 👈 include in ownerState
   };
 
   return (
@@ -122,7 +147,9 @@ export function GalleryViewThumbnail({
       <Root
         ownerState={ownerState}
         key={canvas.id || canvas.index}
-        className={selected ? 'selected' : ''}
+        className={`${selected ? 'selected' : ''} ${
+          highlighted ? 'highlighted' : ''
+        }`}
         onClick={handleSelect}
         onKeyUp={handleKey}
         ref={myRef}
@@ -169,5 +196,6 @@ GalleryViewThumbnail.propTypes = {
   requestCanvasAnnotations: PropTypes.func,
   searchAnnotationsCount: PropTypes.number,
   selected: PropTypes.bool,
+  highlighted: PropTypes.bool, 
   setCanvas: PropTypes.func.isRequired,
 };

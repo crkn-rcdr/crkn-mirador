@@ -27,13 +27,18 @@ function SearchHitsAndAnnotations({
   setCanvas,
 }) {
   const handleClick = (annotation) => {
+/* SELECT_ANNOTATION_ON_GROUP_CLICK */
+
     const canvasId = getCanvasIdFromAnnotation(annotation);
+    console.log("canvasId", canvasId)
     if (!canvasId) return;
 
     const pageIndex = canvases.findIndex((c) => c.id === canvasId);
     if (pageIndex < 0) return;
 
     setCanvas(canvasId);
+    // If this item has an annotation id, select it for highlight
+    if (annotation && annotation.id && typeof selectAnnotation === 'function') selectAnnotation(annotation.id);
     if (viewer) viewer.goToPage(pageIndex);
   };
 
@@ -202,4 +207,5 @@ SearchResults.propTypes = {
   viewer: PropTypes.object,
   canvases: PropTypes.arrayOf(PropTypes.object),
   setCanvas: PropTypes.func.isRequired,
+  selectAnnotation: PropTypes.func,
 };

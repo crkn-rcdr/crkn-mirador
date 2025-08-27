@@ -58,6 +58,7 @@ export function SearchHit({
   viewer,
   canvases,
   setCanvas,
+  focusOnCanvas,
 }) {
   const { t } = useTranslation();
 
@@ -90,9 +91,11 @@ export function SearchHit({
     const pageIndex = canvases.findIndex(c => c.id === canvasId);
     if (pageIndex < 0) return;
 
-    // Update Redux state first
-    setCanvas(canvasId);
-
+    // Switch to single view + setCanvas
+    focusOnCanvas(canvasId);
+console.log("SearchHit clicked, annotation:", annotation);
+console.log("canvasId extracted:", canvasId);
+console.log("All canvases in state:", canvases.map(c => c.id));
     // Select the annotation
     if (annotation.id) selectAnnotation(annotation.id);
 
@@ -100,15 +103,12 @@ export function SearchHit({
     if (viewer) {
       const osdItem = viewer.world?.getItemAt(pageIndex);
       if (osdItem) {
-        // Image is loaded, go directly
         viewer.goToPage(pageIndex);
       } else {
-        // Image not yet loaded, wait for it
         viewer.addOnceHandler('open', () => viewer.goToPage(pageIndex));
       }
     }
   };
-
 
   if (focused && !selected) return null;
 
@@ -196,6 +196,7 @@ SearchHit.propTypes = {
   viewer: PropTypes.object,
   canvases: PropTypes.arrayOf(PropTypes.object),
   setCanvas: PropTypes.func.isRequired,
+  focusOnCanvas: PropTypes.func.isRequired,
 };
 
 export default SearchHit;

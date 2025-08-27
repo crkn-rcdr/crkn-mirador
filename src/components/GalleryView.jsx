@@ -10,44 +10,31 @@ const Root = styled('div', { name: 'GalleryView', slot: 'root' })(({ theme }) =>
   overflowX: 'hidden',
   overflowY: 'auto',
   padding: '0',
-  backgroundColor:  theme.palette.background.paper,
+  backgroundColor: theme.palette.background.paper,
   height: '100%',
   justifyContent: 'space-around',
   alignContent: 'flex-start',
-  position: 'relative',
-  zIndex: 51,
-  borderRadius: "7px",
-  boxShadow: "box-shadow: 0px 10px 15px -3px rgba(0,0,0,0.1)"
 }));
 
-/**
- * Renders a GalleryView overview of the manifest.
- */
-export function GalleryView({ canvases, viewingDirection = '', windowId }) {
-  const htmlDir = viewingDirection === 'right-to-left' ? 'rtl' : 'ltr';
+export function GalleryView({ canvases = [], viewingDirection, windowId, currentCanvasId }) {
+  const safeCanvases = (canvases || []).filter(c => c && (c.id || typeof c.index !== 'undefined'));
+
   return (
-    <Root
-      aria-label='gallery section'
-      dir={htmlDir}
-      square
-      elevation={0}
-      id={`${windowId}-gallery`}
-    >
-      {
-        canvases.map(canvas => (
-          <GalleryViewThumbnail
-            key={canvas.id}
-            windowId={windowId}
-            canvas={canvas}
-          />
-        ))
-      }
+    <Root key={currentCanvasId || 'no-canvas'}>
+      {safeCanvases.map((canvas) => (
+        <GalleryViewThumbnail
+          key={canvas.id || canvas.index}
+          windowId={windowId}
+          canvas={canvas}
+        />
+      ))}
     </Root>
   );
 }
 
 GalleryView.propTypes = {
-  canvases: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+  canvases: PropTypes.array, // eslint-disable-line react/forbid-prop-types
   viewingDirection: PropTypes.string,
   windowId: PropTypes.string.isRequired,
+  currentCanvasId: PropTypes.string,
 };

@@ -11,48 +11,61 @@ import {
   getCompanionWindowsForContent,
 } from '../state/selectors';
 
+const normalizeId = (id) => (id || '').toString().split('#')[0];
+
 /** */
 const mapStateToProps = (state, { canvas, windowId }) => {
+  // ✅ If something bubbled up undefined, render a harmless tile (avoid crashes)
+  if (!canvas) {
+    return {
+      annotationsCount: undefined,
+      config: getConfig(state).galleryView,
+      searchAnnotationsCount: 0,
+      selected: false,
+      highlighted: false,
+    };
+  }
+
   const currentCanvas = getCurrentCanvas(state, { windowId });
-  const searchAnnotations = getSearchAnnotationsForWindow(
-    state,
-    { windowId },
+  const searchAnnotations = getSearchAnnotationsForWindow(state, { windowId }) || [];
+  const selectedAnnotationId = state.windows?.[windowId]?.selectedAnnotationId;
+
+  const flatResources = flatten(
+    searchAnnotations.map(a => Array.isArray(a?.resources) ? a.resources : []),
   );
 
-  const canvasAnnotations = flatten(searchAnnotations.map(a => a.resources))
-    .filter(a => a.targetId === canvas.id);
+  const canvasAnnotations = flatResources.filter(r => {
+    const targetCanvasId = normalizeId(r?.targetId);
+    return targetCanvasId && targetCanvasId === normalizeId(canvas.id);
+  });
 
-  const hasOpenAnnotationsWindow = getCompanionWindowsForContent(state, { content: 'annotations', windowId }).length > 0;
+  const hasOpenAnnotationsWindow =
+    (getCompanionWindowsForContent(state, { content: 'annotations', windowId }) || []).length > 0;
+
+  const isHighlighted = !!selectedAnnotationId && canvasAnnotations.some(a => {
+    const rid = a?.['@id'] || a?.id;
+    return rid && rid === selectedAnnotationId;
+  });
 
   return {
     annotationsCount: (() => {
       if (!hasOpenAnnotationsWindow) return undefined;
-      const annotations = getPresentAnnotationsOnSelectedCanvases(
-        state,
-        { canvasId: canvas.id },
-      );
-
-      return annotations.reduce(
-        (v, a) => (v) + a.resources.filter(r => r.targetId === canvas.id).length,
-        0,
-      );
+      const present = getPresentAnnotationsOnSelectedCanvases(state, { canvasId: canvas.id }) || [];
+      return present.reduce((v, ann) => {
+        const res = Array.isArray(ann?.resources) ? ann.resources : [];
+        return v + res.filter(r => normalizeId(r?.targetId) === normalizeId(canvas.id)).length;
+      }, 0);
     })(),
     config: getConfig(state).galleryView,
     searchAnnotationsCount: canvasAnnotations.length,
-    selected: currentCanvas && currentCanvas.id === canvas.id,
+    selected: !!currentCanvas && normalizeId(currentCanvas.id) === normalizeId(canvas.id),
+    highlighted: isHighlighted,
   };
 };
 
-/**
- * mapDispatchToProps - used to hook up connect to action creators
- * @memberof WindowViewer
- * @private
- */
-const mapDispatchToProps = (dispatch, { canvas, id, windowId }) => ({
+const mapDispatchToProps = (dispatch, { canvas, windowId }) => ({
   focusOnCanvas: () => dispatch(actions.setWindowViewType(windowId, 'single')),
-  requestCanvasAnnotations: () => (
-    dispatch(actions.requestCanvasAnnotations(windowId, canvas.id))
-  ),
+  requestCanvasAnnotations: () => dispatch(actions.requestCanvasAnnotations(windowId, canvas?.id)),
   setCanvas: (...args) => dispatch(actions.setCanvas(windowId, ...args)),
 });
 

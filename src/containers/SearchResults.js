@@ -32,8 +32,9 @@ const mapStateToProps = (state, { companionWindowId, windowId }) => ({
  * mapDispatchToProps - wire up Redux actions
  */
 const mapDispatchToProps = (dispatch, { windowId }) => ({
+  selectAnnotation: (...args) => dispatch(actions.selectAnnotation(windowId, ...args)),
   fetchSearch: (...args) => dispatch(actions.fetchSearch(...args)),
-  setCanvas: (pageIndex) => dispatch(actions.setCanvas(windowId, pageIndex)),
+  setCanvas: (canvasId) => dispatch(actions.setCanvas(windowId, canvasId)),
 });
 
 export default compose(
