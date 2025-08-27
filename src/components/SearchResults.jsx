@@ -144,7 +144,7 @@ export function SearchResults({
         >
           {t('moreResults')}
           <br />
-          {`(${t('searchResultsRemaining', { numLeft: searchNumTotal - searchHits.length })})`}
+          {searchNumTotal ? `(${t('searchResultsRemaining', { numLeft: searchNumTotal - searchHits.length })})` : ""}
         </Button>
       )}
     </>
