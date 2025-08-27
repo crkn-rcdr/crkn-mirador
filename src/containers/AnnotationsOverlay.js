@@ -19,20 +19,32 @@ import {
  * @memberof Window
  * @private
  */
-const mapStateToProps = (state, { windowId }) => ({
-  annotations: getPresentAnnotationsOnSelectedCanvases(state, { windowId }),
-  canvasWorld: getCurrentCanvasWorld(state, { windowId }),
-  drawAnnotations: getConfig(state).window.forceDrawAnnotations || getCompanionWindowsForContent(state, { content: 'annotations', windowId }).length > 0,
-  drawSearchAnnotations: getConfig(state).window.forceDrawAnnotations || getCompanionWindowsForContent(state, { content: 'search', windowId }).length > 0,
-  highlightAllAnnotations: getWindow(state, { windowId }).highlightAllAnnotations,
-  hoveredAnnotationIds: getWindow(state, { windowId }).hoveredAnnotationIds,
-  palette: getTheme(state).palette,
-  searchAnnotations: getSearchAnnotationsForWindow(
-    state,
-    { windowId },
-  ),
-  selectedAnnotationId: getSelectedAnnotationId(state, { windowId }),
-});
+const mapStateToProps = (state, { windowId }) => {
+  const searchAnnotationsArray = getSearchAnnotationsForWindow(state, { windowId });
+
+  // Ensure searchAnnotations is an array of annotation objects
+  const searchAnnotations = Array.isArray(searchAnnotationsArray)
+    ? searchAnnotationsArray.map(resource => ({ resources: [resource] }))
+    : [];
+
+  console.log("searchAnnotations", searchAnnotations, searchAnnotationsArray)
+
+  return {
+    annotations: getPresentAnnotationsOnSelectedCanvases(state, { windowId }),
+    canvasWorld: getCurrentCanvasWorld(state, { windowId }),
+    drawAnnotations:
+      getConfig(state).window.forceDrawAnnotations ||
+      getCompanionWindowsForContent(state, { content: 'annotations', windowId }).length > 0,
+    drawSearchAnnotations:
+      getConfig(state).window.forceDrawAnnotations ||
+      getCompanionWindowsForContent(state, { content: 'search', windowId }).length > 0,
+    highlightAllAnnotations: getWindow(state, { windowId })?.highlightAllAnnotations,
+    hoveredAnnotationIds: getWindow(state, { windowId })?.hoveredAnnotationIds,
+    palette: getTheme(state).palette,
+    searchAnnotations,
+    selectedAnnotationId: getSelectedAnnotationId(state, { windowId }),
+  };
+};
 
 /**
  * mapDispatchToProps - used to hook up connect to action creators

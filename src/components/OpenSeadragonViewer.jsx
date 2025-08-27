@@ -16,7 +16,6 @@ const StyledSection = styled('section')({
   cursor: 'grab',
   flex: 1,
   position: 'relative',
-
   '& .openseadragon-container .openseadragon-navigation': {
     zIndex: 1000,
     pointerEvents: 'auto',
@@ -36,6 +35,15 @@ export function OpenSeadragonViewer({
   updateViewport,
   setCanvas,
   onCanvasIndexChange,
+  annotations = [],
+  searchAnnotations = [],
+  hoveredAnnotationIds = [],
+  selectAnnotation,
+  deselectAnnotation,
+  hoverAnnotation,
+  selectedAnnotationId,
+  palette,
+  highlightAllAnnotations,
   ...rest
 }) {
   const { t } = useTranslation();
@@ -44,7 +52,6 @@ export function OpenSeadragonViewer({
   const [tileSources, setTileSources] = useState([]);
   const [internalIndex, setInternalIndex] = useState(0);
 
-  // Get canvasIndex from Redux
   const canvasIndex = useSelector(state => getCanvasIndex(state, { windowId }));
 
   const canvasKeys = canvases.map(c => c.id).join('|');
@@ -93,20 +100,7 @@ export function OpenSeadragonViewer({
 
     buildSources();
     return () => { cancelled = true; };
-  }, [canvasKeys, nonTiledKeys]);
-
-  /** Report viewport changes */
-  const onViewportChange = useCallback(() => {
-    const vp = viewerRef.current?.viewport;
-    if (!vp) return;
-    updateViewport(windowId, {
-      x: vp.getCenter().x,
-      y: vp.getCenter().y,
-      zoom: vp.getZoom(),
-      rotation: vp.getRotation(),
-      flip: vp.getFlip(),
-    });
-  }, [updateViewport, windowId]);
+  }, [canvasKeys, nonTiledKeys, canvases, nonTiledImages]);
 
   /** Initialize OSD */
   useEffect(() => {
@@ -134,30 +128,30 @@ export function OpenSeadragonViewer({
       ...osdConfig,
     });
 
-    if (!viewer.zoomPerClick || viewer.zoomPerClick <= 1.001) viewer.zoomPerClick = 1.3;
-
     viewerRef.current = viewer;
     OSDReferences.set(windowId, viewer);
 
-    viewer.addHandler('viewport-change', onViewportChange);
-
-    viewer.addHandler('page', event => {
-      const index = event.page;
-      setInternalIndex(index);
-      if (setCanvas) setCanvas(canvases[index]?.id);
-      if (onCanvasIndexChange) onCanvasIndexChange(index);
+    viewer.addHandler('viewport-change', () => {
+      const vp = viewer.viewport;
+      if (!vp) return;
+      updateViewport(windowId, {
+        x: vp.getCenter().x,
+        y: vp.getCenter().y,
+        zoom: vp.getZoom(),
+        rotation: vp.getRotation(),
+        flip: vp.getFlip(),
+      });
     });
 
     return () => {
       viewer.destroy();
       viewerRef.current = null;
     };
-  }, [windowId, osdConfig, onViewportChange, canvases, setCanvas, onCanvasIndexChange]);
+  }, [windowId, osdConfig, updateViewport]);
 
-  /** Open sources and set initial page */
+  /** Open tile sources */
   useEffect(() => {
     if (!viewerRef.current || tileSources.length === 0) return;
-
     viewerRef.current.open(tileSources);
 
     viewerRef.current.addOnceHandler('open', () => {
@@ -171,17 +165,7 @@ export function OpenSeadragonViewer({
         setInternalIndex(canvasIndex);
       }
     });
-  }, [tileSources, canvases, canvasIndex]);
-
-  /** Sync external canvasIndex updates */
-  useEffect(() => {
-    if (!viewerRef.current || tileSources.length === 0) return;
-
-    if (canvasIndex !== internalIndex && canvasIndex >= 0) {
-      viewerRef.current.goToPage(canvasIndex);
-      setInternalIndex(canvasIndex);
-    }
-  }, [canvasIndex, internalIndex, tileSources]);
+  }, [tileSources, canvasIndex]);
 
   const pluginProps = {
     canvasWorld,
@@ -194,12 +178,28 @@ export function OpenSeadragonViewer({
     updateViewport,
     viewerConfig,
     windowId,
+    annotations,
+    searchAnnotations,
+    hoveredAnnotationIds,
+    selectAnnotation,
+    deselectAnnotation,
+    hoverAnnotation,
+    selectedAnnotationId,
+    palette,
+    highlightAllAnnotations,
     ...rest,
   };
 
   return (
     <StyledSection ref={containerRef} className={classNames(ns('osd-container'))}>
-      {drawAnnotations && <AnnotationsOverlay viewer={viewerRef.current} windowId={windowId} />}
+      {/* Mount overlay only when viewer exists */}
+      {drawAnnotations && viewerRef.current && (
+        <AnnotationsOverlay
+          viewer={viewerRef.current}
+          windowId={windowId}
+          {...pluginProps}
+        />
+      )}
       <PluginHook viewer={viewerRef.current} {...pluginProps} />
       {children}
     </StyledSection>
@@ -219,4 +219,13 @@ OpenSeadragonViewer.propTypes = {
   onCanvasIndexChange: PropTypes.func,
   viewerConfig: PropTypes.object,
   windowId: PropTypes.string.isRequired,
+  annotations: PropTypes.array,
+  searchAnnotations: PropTypes.array,
+  hoveredAnnotationIds: PropTypes.array,
+  selectAnnotation: PropTypes.func,
+  deselectAnnotation: PropTypes.func,
+  hoverAnnotation: PropTypes.func,
+  selectedAnnotationId: PropTypes.string,
+  palette: PropTypes.object,
+  highlightAllAnnotations: PropTypes.bool,
 };

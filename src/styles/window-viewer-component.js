@@ -117,6 +117,9 @@ const globalWindowViewerStyles = {
   },
   '.mirador-next-canvas-button' : {
     marginRight: "1rem !important;"
+  },
+  'canvas': {
+    pointerEvents: "none"
   }
 
 };

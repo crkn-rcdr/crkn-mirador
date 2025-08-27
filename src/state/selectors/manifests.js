@@ -454,7 +454,8 @@ export const getManifestSearchService = createSelector(
   (manifest) => {
     if (!manifest) return null;
     const searchService = manifest.getService('http://iiif.io/api/search/0/search')
-     || manifest.getService('http://iiif.io/api/search/1/search');
+     || manifest.getService('http://iiif.io/api/search/1/search')
+     || manifest.getService('http://iiif.io/api/search/2/search');
     if (searchService) return searchService;
     return null;
   },
@@ -473,6 +474,7 @@ export const getManifestAutocompleteService = createSelector(
     const autocompleteService = searchService && (
       searchService.getService('http://iiif.io/api/search/0/autocomplete')
       || searchService.getService('http://iiif.io/api/search/1/autocomplete')
+      || searchService.getService('http://iiif.io/api/search/2/autocomplete')
     );
 
     return autocompleteService && autocompleteService;
