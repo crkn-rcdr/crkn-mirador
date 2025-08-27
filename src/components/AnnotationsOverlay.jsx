@@ -20,76 +20,93 @@ function parseTarget(annotation) {
 export function AnnotationsOverlay({
   viewer,
   searchAnnotations = [],
-  canvasWorld,
+  currentCanvasId, // ✅ current canvas from Redux
 }) {
   const overlayRef = useRef(null);
 
+  /** Initialize overlay canvas once */
   useEffect(() => {
     if (!viewer) return;
 
-    // Create overlay <canvas>
     const canvas = document.createElement("canvas");
     canvas.style.position = "absolute";
     canvas.style.top = 0;
     canvas.style.left = 0;
     canvas.width = viewer.container.clientWidth;
     canvas.height = viewer.container.clientHeight;
-    canvas.style.pointerEvents = "none"; // don't block drag/zoom
+    canvas.style.pointerEvents = "none";
     viewer.container.appendChild(canvas);
     overlayRef.current = canvas;
+
     const ctx = canvas.getContext("2d");
 
-    function draw() {
-      if (!overlayRef.current) return;
+    const draw = () => {
+      if (!overlayRef.current || !viewer.world.getItemCount()) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // 🔍 Which canvas is currently displayed?
-      const pageIndex = viewer.currentPage();
-      const currentCanvasId = canvasWorld?.canvasIds?.[pageIndex];
 
       searchAnnotations.forEach((annoWrapper) => {
         (annoWrapper.resources || []).forEach((anno) => {
           const { canvasId, rect } = parseTarget(anno);
-          if (!rect || canvasId !== currentCanvasId) return; // 🚫 skip others
+          if (!rect || canvasId !== currentCanvasId) return;
 
           const [x, y, w, h] = rect;
+          const item = viewer.world.getItemAt(0);
+          if (!item?.imageToViewportRectangle) return; // SAFETY
 
           const rectImg = new OpenSeadragon.Rect(x, y, w, h);
-          const vpRect = viewer.world
-            .getItemAt(0)
-            .imageToViewportRectangle(rectImg);
-          const screenRect = viewer.viewport.viewportToViewerElementRectangle(
-            vpRect
-          );
+          const vpRect = item.imageToViewportRectangle(rectImg);
+          const screenRect = viewer.viewport.viewportToViewerElementRectangle(vpRect);
 
-          // Highlight fill
           ctx.fillStyle = "rgba(255, 255, 0, 0.4)";
-          ctx.fillRect(
-            screenRect.x,
-            screenRect.y,
-            screenRect.width,
-            screenRect.height
-          );
+          ctx.fillRect(screenRect.x, screenRect.y, screenRect.width, screenRect.height);
         });
       });
-    }
+    };
 
-    draw();
-
-    // Re-draw when viewport changes or viewer resizes
-    viewer.addHandler("viewport-change", draw);
-    viewer.addHandler("resize", () => {
+    const handleResize = () => {
+      if (!overlayRef.current) return;
       canvas.width = viewer.container.clientWidth;
       canvas.height = viewer.container.clientHeight;
       draw();
-    });
+    };
+
+    viewer.addHandler("viewport-change", draw);
+    viewer.addHandler("resize", handleResize);
+    viewer.addHandler("open", draw); // redraw when new image opens
 
     return () => {
       viewer.removeHandler("viewport-change", draw);
-      viewer.container.removeChild(canvas);
+      viewer.removeHandler("resize", handleResize);
+      viewer.removeHandler("open", draw);
+      if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
       overlayRef.current = null;
     };
-  }, [viewer, searchAnnotations, canvasWorld]);
+  }, [viewer, searchAnnotations, currentCanvasId]);
+
+  /** Redraw whenever annotations or current canvas changes */
+  useEffect(() => {
+    if (!overlayRef.current || !viewer?.world?.getItemAt(0)) return;
+    const ctx = overlayRef.current.getContext("2d");
+    ctx.clearRect(0, 0, overlayRef.current.width, overlayRef.current.height);
+
+    searchAnnotations.forEach((annoWrapper) => {
+      (annoWrapper.resources || []).forEach((anno) => {
+        const { canvasId, rect } = parseTarget(anno);
+        if (!rect || canvasId !== currentCanvasId) return;
+
+        const [x, y, w, h] = rect;
+        const item = viewer.world.getItemAt(0);
+        if (!item?.imageToViewportRectangle) return;
+
+        const rectImg = new OpenSeadragon.Rect(x, y, w, h);
+        const vpRect = item.imageToViewportRectangle(rectImg);
+        const screenRect = viewer.viewport.viewportToViewerElementRectangle(vpRect);
+
+        ctx.fillStyle = "rgba(255, 255, 0, 0.4)";
+        ctx.fillRect(screenRect.x, screenRect.y, screenRect.width, screenRect.height);
+      });
+    });
+  }, [searchAnnotations, currentCanvasId, viewer]);
 
   return null;
 }

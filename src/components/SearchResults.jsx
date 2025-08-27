@@ -9,10 +9,11 @@ import { useTranslation } from 'react-i18next';
 import SearchHit from '../containers/SearchHit';
 import { ScrollTo } from './ScrollTo';
 
-/**
- * Return SearchHits for every hit in the response
- * Return SearchHits for every annotation in the response if there are no hits
- */
+function getCanvasIdFromAnnotation(annotation) {
+  if (!annotation?.targetId) return null;
+  return annotation.targetId.split('#')[0];
+}
+
 function SearchHitsAndAnnotations({
   companionWindowId,
   containerRef,
@@ -21,11 +22,27 @@ function SearchHitsAndAnnotations({
   windowId,
   focused,
   toggleFocus,
+  viewer,
+  canvases,
+  setCanvas,
 }) {
+  const handleClick = (annotation) => {
+    console.log('dd', annotation);
+    const canvasId = getCanvasIdFromAnnotation(annotation);
+    if (!canvasId) return;
+
+    const pageIndex = canvases.findIndex((c) => c.id === canvasId);
+    if (pageIndex < 0) return;
+
+    setCanvas(canvasId);         // Redux
+    if (viewer) viewer.goToPage(pageIndex); // OSD
+  };
+
   if (searchHits.length === 0 && searchAnnotations.length > 0) {
     return searchAnnotations.map((anno, index) => (
       <SearchHit
         announcer={announce}
+        annotation={anno}
         annotationId={anno.id}
         companionWindowId={companionWindowId}
         containerRef={containerRef}
@@ -35,54 +52,63 @@ function SearchHitsAndAnnotations({
         total={searchAnnotations.length}
         windowId={windowId}
         showDetails={toggleFocus}
+        viewer={viewer}
+        canvases={canvases}
+        setCanvas={setCanvas}
+        onClick={() => handleClick(anno)}
       />
     ));
   }
 
-  return searchHits.map((hit, index) => (
-    <SearchHit
-      announcer={announce}
-      containerRef={containerRef}
-      companionWindowId={companionWindowId}
-      key={hit.annotations[0]}
-      focused={focused}
-      hit={hit}
-      index={index}
-      total={searchHits.length}
-      windowId={windowId}
-      showDetails={toggleFocus}
-    />
-  ));
+  return searchHits.map((hit, index) => {
+    const annotation = hit.annotations[0];
+    return (
+      <SearchHit
+        announcer={announce}
+        hit={hit}
+        annotation={annotation}
+        annotationId={annotation.id}
+        companionWindowId={companionWindowId}
+        containerRef={containerRef}
+        key={annotation.id}
+        focused={focused}
+        index={index}
+        total={searchHits.length}
+        windowId={windowId}
+        showDetails={toggleFocus}
+        viewer={viewer}
+        canvases={canvases}
+        setCanvas={setCanvas}
+        onClick={() => handleClick(annotation)}
+      />
+    );
+  });
 }
 
-/** */
 export function SearchResults({
   companionWindowId,
-  containerRef = undefined,
-  isFetching = false,
+  containerRef,
+  isFetching,
   fetchSearch,
-  nextSearch = undefined,
-  query = undefined,
-  searchAnnotations = [],
-  searchHits = [],
-  searchNumTotal = undefined,
+  nextSearch,
+  query,
+  searchAnnotations,
+  searchHits,
+  searchNumTotal,
   windowId,
+  viewer,
+  canvases,
+  setCanvas,
 }) {
   const { t } = useTranslation();
   const [focused, setFocused] = useState(false);
+  const toggleFocus = useCallback(() => setFocused((f) => !f), []);
 
-  /** */
-  const toggleFocus = useCallback(() => {
-    setFocused(!focused);
-  }, [setFocused, focused]);
-
-  const noResultsState = (
-    query && !isFetching && searchHits.length === 0 && searchAnnotations.length === 0
-  );
+  const noResultsState = query && !isFetching && searchHits.length === 0 && searchAnnotations.length === 0;
 
   return (
     <>
-      { focused && (
+      {focused && (
         <ScrollTo containerRef={containerRef} offsetTop={96} scrollTo>
           <Button onClick={toggleFocus} sx={{ textTransform: 'none' }} size="small">
             <BackIcon />
@@ -90,15 +116,11 @@ export function SearchResults({
           </Button>
         </ScrollTo>
       )}
+
       {noResultsState && (
-        <Typography sx={{
-          padding: 2,
-          typography: 'h6',
-        }}
-        >
-          {t('searchNoResults')}
-        </Typography>
+        <Typography sx={{ padding: 2, typography: 'h6' }}>{t('searchNoResults')}</Typography>
       )}
+
       <List disablePadding>
         <SearchHitsAndAnnotations
           companionWindowId={companionWindowId}
@@ -108,9 +130,13 @@ export function SearchResults({
           windowId={windowId}
           focused={focused}
           toggleFocus={toggleFocus}
+          viewer={viewer}
+          canvases={canvases}
+          setCanvas={setCanvas}
         />
       </List>
-      { nextSearch && (
+
+      {nextSearch && (
         <Button
           sx={{ width: '100%' }}
           color="secondary"
@@ -135,8 +161,11 @@ SearchResults.propTypes = {
   isFetching: PropTypes.bool,
   nextSearch: PropTypes.string,
   query: PropTypes.string,
-  searchAnnotations: PropTypes.arrayOf(PropTypes.object), // eslint-disable-line react/forbid-prop-types
-  searchHits: PropTypes.arrayOf(PropTypes.object), // eslint-disable-line react/forbid-prop-types
+  searchAnnotations: PropTypes.arrayOf(PropTypes.object),
+  searchHits: PropTypes.arrayOf(PropTypes.object),
   searchNumTotal: PropTypes.number,
-  windowId: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
+  windowId: PropTypes.string.isRequired,
+  viewer: PropTypes.object,
+  canvases: PropTypes.arrayOf(PropTypes.object),
+  setCanvas: PropTypes.func.isRequired,
 };

@@ -1,5 +1,5 @@
-import { compose } from 'redux';
 import { connect } from 'react-redux';
+import { compose } from 'redux';
 import { withPlugins } from '../extend/withPlugins';
 import { AnnotationsOverlay } from '../components/AnnotationsOverlay';
 import * as actions from '../state/actions';
@@ -12,6 +12,7 @@ import {
   getPresentAnnotationsOnSelectedCanvases,
   getSelectedAnnotationId,
   getCurrentCanvasWorld,
+  getCurrentCanvas,
 } from '../state/selectors';
 
 /**
@@ -22,16 +23,16 @@ import {
 const mapStateToProps = (state, { windowId }) => {
   const searchAnnotationsArray = getSearchAnnotationsForWindow(state, { windowId });
 
-  // Ensure searchAnnotations is an array of annotation objects
   const searchAnnotations = Array.isArray(searchAnnotationsArray)
     ? searchAnnotationsArray.map(resource => ({ resources: [resource] }))
     : [];
 
-  console.log("searchAnnotations", searchAnnotations, searchAnnotationsArray)
+  const currentCanvas = getCurrentCanvas(state, { windowId });
 
   return {
     annotations: getPresentAnnotationsOnSelectedCanvases(state, { windowId }),
     canvasWorld: getCurrentCanvasWorld(state, { windowId }),
+    currentCanvasId: currentCanvas?.id, // ✅ Add currentCanvasId here
     drawAnnotations:
       getConfig(state).window.forceDrawAnnotations ||
       getCompanionWindowsForContent(state, { content: 'annotations', windowId }).length > 0,
@@ -57,9 +58,7 @@ const mapDispatchToProps = {
   selectAnnotation: actions.selectAnnotation,
 };
 
-const enhance = compose(
+export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-  withPlugins('AnnotationsOverlay'),
-);
-
-export default enhance(AnnotationsOverlay);
+  withPlugins('AnnotationsOverlay')
+)(AnnotationsOverlay);

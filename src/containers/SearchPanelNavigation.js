@@ -20,7 +20,8 @@ const mapStateToProps = (state, { companionWindowId, windowId }) => ({
   numTotal: getSearchNumTotal(state, { companionWindowId, windowId }),
   searchHits: getSortedSearchHitsForCompanionWindow(state, { companionWindowId, windowId }),
   selectedContentSearchAnnotation: getSelectedContentSearchAnnotationIds(state, {
-    companionWindowId, windowId,
+    companionWindowId,
+    windowId,
   }),
 });
 
@@ -33,6 +34,9 @@ const mapDispatchToProps = (dispatch, { windowId }) => ({
   selectAnnotation: (...args) => dispatch(
     actions.selectAnnotation(windowId, ...args),
   ),
+  setCurrentCanvas: (windowId, canvasId) => dispatch(
+    actions.setCurrentCanvas(windowId, canvasId),
+  ), 
 });
 
 const enhance = compose(

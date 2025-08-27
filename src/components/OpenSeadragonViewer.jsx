@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import OpenSeadragon from 'openseadragon';
@@ -27,14 +27,11 @@ export function OpenSeadragonViewer({
   label = null,
   windowId,
   osdConfig = {},
-  viewerConfig = null,
   drawAnnotations = false,
   canvases = [],
   canvasWorld,
   nonTiledImages = [],
   updateViewport,
-  setCanvas,
-  onCanvasIndexChange,
   annotations = [],
   searchAnnotations = [],
   hoveredAnnotationIds = [],
@@ -152,6 +149,7 @@ export function OpenSeadragonViewer({
   /** Open tile sources */
   useEffect(() => {
     if (!viewerRef.current || tileSources.length === 0) return;
+
     viewerRef.current.open(tileSources);
 
     viewerRef.current.addOnceHandler('open', () => {
@@ -167,6 +165,13 @@ export function OpenSeadragonViewer({
     });
   }, [tileSources, canvasIndex]);
 
+  /** Sync viewer when current canvas in Redux changes */
+  useEffect(() => {
+    if (!viewerRef.current || canvasIndex < 0 || internalIndex === canvasIndex) return;
+    viewerRef.current.goToPage(canvasIndex);
+    setInternalIndex(canvasIndex);
+  }, [canvasIndex, internalIndex]);
+
   const pluginProps = {
     canvasWorld,
     drawAnnotations,
@@ -176,7 +181,6 @@ export function OpenSeadragonViewer({
     osdConfig,
     t,
     updateViewport,
-    viewerConfig,
     windowId,
     annotations,
     searchAnnotations,
@@ -215,10 +219,6 @@ OpenSeadragonViewer.propTypes = {
   nonTiledImages: PropTypes.array,
   osdConfig: PropTypes.object,
   updateViewport: PropTypes.func.isRequired,
-  setCanvas: PropTypes.func,
-  onCanvasIndexChange: PropTypes.func,
-  viewerConfig: PropTypes.object,
-  windowId: PropTypes.string.isRequired,
   annotations: PropTypes.array,
   searchAnnotations: PropTypes.array,
   hoveredAnnotationIds: PropTypes.array,
