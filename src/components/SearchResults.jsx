@@ -27,61 +27,95 @@ function SearchHitsAndAnnotations({
   setCanvas,
 }) {
   const handleClick = (annotation) => {
-    console.log('dd', annotation);
     const canvasId = getCanvasIdFromAnnotation(annotation);
     if (!canvasId) return;
 
     const pageIndex = canvases.findIndex((c) => c.id === canvasId);
     if (pageIndex < 0) return;
 
-    setCanvas(canvasId);         // Redux
-    if (viewer) viewer.goToPage(pageIndex); // OSD
+    setCanvas(canvasId);
+    if (viewer) viewer.goToPage(pageIndex);
   };
 
-  if (searchHits.length === 0 && searchAnnotations.length > 0) {
-    return searchAnnotations.map((anno, index) => (
-      <SearchHit
-        announcer={announce}
-        annotation={anno}
-        annotationId={anno.id}
-        companionWindowId={companionWindowId}
-        containerRef={containerRef}
-        key={anno.id}
-        focused={focused}
-        index={index}
-        total={searchAnnotations.length}
-        windowId={windowId}
-        showDetails={toggleFocus}
-        viewer={viewer}
-        canvases={canvases}
-        setCanvas={setCanvas}
-        onClick={() => handleClick(anno)}
-      />
-    ));
-  }
+  // Combine hits and annotations
+  const allItems = [
+    ...searchHits.map(hit => ({
+      type: 'hit',
+      data: hit,
+      canvasId: getCanvasIdFromAnnotation(hit.annotations[0]),
+      position: hit.position ?? 0,
+    })),
+    ...searchAnnotations.map(anno => ({
+      type: 'annotation',
+      data: anno,
+      canvasId: getCanvasIdFromAnnotation(anno),
+      position: anno.position ?? 0,
+    })),
+  ];
 
-  return searchHits.map((hit, index) => {
-    const annotation = hit.annotations[0];
-    return (
-      <SearchHit
-        announcer={announce}
-        hit={hit}
-        annotation={annotation}
-        annotationId={annotation.id}
-        companionWindowId={companionWindowId}
-        containerRef={containerRef}
-        key={annotation.id}
-        focused={focused}
-        index={index}
-        total={searchHits.length}
-        windowId={windowId}
-        showDetails={toggleFocus}
-        viewer={viewer}
-        canvases={canvases}
-        setCanvas={setCanvas}
-        onClick={() => handleClick(annotation)}
-      />
-    );
+  // Group by canvasId
+  const groupedByCanvas = allItems.reduce((acc, item) => {
+    if (!item.canvasId) return acc;
+    if (!acc[item.canvasId]) acc[item.canvasId] = [];
+    acc[item.canvasId].push(item);
+    return acc;
+  }, {});
+
+  // Sort each canvas group by position
+  Object.keys(groupedByCanvas).forEach(canvasId => {
+    groupedByCanvas[canvasId].sort((a, b) => a.position - b.position);
+  });
+
+  // Flatten groups, ordered by canvas order
+  const sortedItems = Object.keys(groupedByCanvas)
+    .sort((a, b) => canvases.findIndex(c => c.id === a) - canvases.findIndex(c => c.id === b))
+    .flatMap(canvasId => groupedByCanvas[canvasId]);
+
+  return sortedItems.map((item, index) => {
+    if (item.type === 'hit') {
+      const annotation = item.data.annotations[0];
+      return (
+        <SearchHit
+          key={annotation.id}
+          announcer={announce}
+          hit={item.data}
+          annotation={annotation}
+          annotationId={annotation.id}
+          companionWindowId={companionWindowId}
+          containerRef={containerRef}
+          focused={focused}
+          index={index}
+          total={sortedItems.length}
+          windowId={windowId}
+          showDetails={toggleFocus}
+          viewer={viewer}
+          canvases={canvases}
+          setCanvas={setCanvas}
+          onClick={() => handleClick(annotation)}
+        />
+      );
+    } else {
+      const annotation = item.data;
+      return (
+        <SearchHit
+          key={annotation.id}
+          announcer={announce}
+          annotation={annotation}
+          annotationId={annotation.id}
+          companionWindowId={companionWindowId}
+          containerRef={containerRef}
+          focused={focused}
+          index={index}
+          total={sortedItems.length}
+          windowId={windowId}
+          showDetails={toggleFocus}
+          viewer={viewer}
+          canvases={canvases}
+          setCanvas={setCanvas}
+          onClick={() => handleClick(annotation)}
+        />
+      );
+    }
   });
 }
 
