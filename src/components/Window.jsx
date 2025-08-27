@@ -15,11 +15,13 @@ import ErrorContent from '../containers/ErrorContent';
 import IIIFAuthentication from '../containers/IIIFAuthentication';
 import { PluginHook } from './PluginHook';
 
-// Toggle UI (kept out of top bar)
-import IconButton from '@mui/material/IconButton';
+// Floating view selector (kept out of the top bar)
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
-import ViewModuleIcon from '@mui/icons-material/ViewModule'; // show gallery
-import ViewDayIcon from '@mui/icons-material/ViewDay';       // hide gallery
+import ViewModuleIcon from '@mui/icons-material/ViewModule';   // gallery only
+import ViewDayIcon from '@mui/icons-material/ViewDay';         // primary only
+import SplitscreenIcon from '@mui/icons-material/Splitscreen'; // both
 
 const GalleryView = lazy(() => import('../containers/GalleryView'));
 
@@ -50,25 +52,50 @@ const Root = styled(Paper, { name: 'Window', slot: 'root' })(({ ownerState, them
 }));
 
 const ContentRow = styled('div', { name: 'Window', slot: 'row' })(() => ({ ...rowMixin }));
-const ContentColumn = styled('div', { name: 'Window', slot: 'column' })(() => ({ ...columnMixin }));
+
+const ContentColumn = styled('div', { name: 'Window', slot: 'column' })(() => ({
+  ...columnMixin,
+  position: 'relative', // anchor for floating menu
+}));
+
 const StyledPrimaryWindow = styled(PrimaryWindow, { name: 'Window', slot: 'primary' })(() => ({
   ...rowMixin, height: '100%', position: 'relative',
 }));
+
 const StyledCompanionAreaBottom = styled(CompanionArea, { name: 'Window', slot: 'bottom' })(() => ({
   ...rowMixin, flex: '0', flexBasis: 'auto',
 }));
+
 const StyledCompanionAreaRight = styled('div', { name: 'Window', slot: 'right' })(() => ({
   ...rowMixin, flex: '0 1 auto',
 }));
 
-// Compact controls bar (NOT in the top bar)
-const ControlsBar = styled('div')(({ theme }) => ({
+// Floating white menu in the top-left
+const FloatingMenu = styled('div')(({ theme }) => ({
+  position: 'absolute',
+  top: 8,
+  left: 8,
+  zIndex: theme.zIndex.tooltip,
+  background: '#fff', // explicit white
+  color: theme.palette.text.primary,
+  border: `1px solid ${theme.palette.divider}`,
+  borderRadius: 8,
+  boxShadow: theme.shadows[2],
+  padding: 6,
   display: 'flex',
-  justifyContent: 'flex-end',
+  gap: 6,
   alignItems: 'center',
-  gap: theme.spacing(1),
-  padding: '5px',
-  borderBottom: `1px solid ${theme.palette.divider}`,
+}));
+
+// Compact group styling
+const CompactGroup = styled(ToggleButtonGroup)(({ theme }) => ({
+  '& .MuiToggleButton-root': {
+    margin: 0,
+    minWidth: 28,
+    padding: '1px 4px',
+    fontSize: '0.72rem',
+    lineHeight: 1,
+  },
 }));
 
 /** Window title bar wrapper for drag controls in the mosaic view */
@@ -108,21 +135,19 @@ export function Window({
 
   const componentRef = useRef(null);
 
-  // Persisted split %
+  // Split percentage
   const [splitPercentage, setSplitPercentage] = useState(() => {
     const stored = localStorage.getItem('splitPercentage');
     return stored ? Number(JSON.parse(stored)) : 0;
   });
-
   const [minimumPaneSizePercentage, setMinimumPaneSizePercentage] = useState(0);
 
-  // Gallery open/closed, persisted
-  const [isGalleryOpen, setIsGalleryOpen] = useState(() => {
-    const persisted = localStorage.getItem('galleryOpen');
-    return persisted ? JSON.parse(persisted) : true;
+  // View mode: 'both' | 'primary' | 'gallery'
+  const [viewMode, setViewMode] = useState(() => {
+    return localStorage.getItem('windowViewMode') || 'both';
   });
 
-  // Remember last open split to restore when re-opening
+  // Remember last "both" split to restore
   const [lastOpenSplit, setLastOpenSplit] = useState(() => {
     const persisted = localStorage.getItem('galleryLastSplit');
     return persisted ? Number(JSON.parse(persisted)) : 70;
@@ -131,44 +156,41 @@ export function Window({
   useEffect(() => {
     const width = componentRef.current?.getBoundingClientRect().width;
     if (width) {
-      const minimum = (160 / width) * 100; // 160px minimum pane
+      const minimum = (160 / width) * 100; // 160px minimum for either pane
       setMinimumPaneSizePercentage(minimum);
-      if (splitPercentage <= 0) {
-        setSplitPercentage(100 - minimum);
-      }
+      if (splitPercentage <= 0) setSplitPercentage(100 - minimum);
     }
     localStorage.setItem('splitPercentage', JSON.stringify(splitPercentage));
-    localStorage.setItem('galleryOpen', JSON.stringify(isGalleryOpen));
-    if (isGalleryOpen && splitPercentage > 0) {
+    localStorage.setItem('windowViewMode', viewMode);
+    if (viewMode === 'both' && splitPercentage > 0) {
       localStorage.setItem('galleryLastSplit', JSON.stringify(splitPercentage));
       setLastOpenSplit(splitPercentage);
     }
-  }, [splitPercentage, isGalleryOpen]);
+  }, [splitPercentage, viewMode]);
 
   const handleChangeSplit = (newSplit) => {
-    if (!isGalleryOpen) return;
+    if (viewMode !== 'both') return;
     if (typeof newSplit?.splitPercentage === 'number') {
       setSplitPercentage(newSplit.splitPercentage);
     }
   };
 
-  const toggleGallery = () => {
-    setIsGalleryOpen((open) => {
-      if (open) {
-        // collapsing: remember current split
-        if (splitPercentage > 0) {
-          localStorage.setItem('galleryLastSplit', JSON.stringify(splitPercentage));
-          setLastOpenSplit(splitPercentage);
-        }
-      } else {
-        // expanding: restore last split (respect minimum)
-        const width = componentRef.current?.getBoundingClientRect().width;
-        const minPct = width ? (160 / width) * 100 : minimumPaneSizePercentage;
-        const restored = Math.max(minPct ? (100 - minPct) : 0, lastOpenSplit || 70);
-        setSplitPercentage(restored);
+  const switchViewMode = (nextMode) => {
+    if (!nextMode || nextMode === viewMode) return;
+    if (nextMode === 'both') {
+      // restore split (respect minimum)
+      const width = componentRef.current?.getBoundingClientRect().width;
+      const minPct = width ? (160 / width) * 100 : minimumPaneSizePercentage;
+      const restored = Math.max(minPct ? (100 - minPct) : 0, lastOpenSplit || 70);
+      setSplitPercentage(restored);
+    } else if (viewMode === 'both') {
+      // leaving "both": remember split
+      if (splitPercentage > 0) {
+        localStorage.setItem('galleryLastSplit', JSON.stringify(splitPercentage));
+        setLastOpenSplit(splitPercentage);
       }
-      return !open;
-    });
+    }
+    setViewMode(nextMode);
   };
 
   // Ignore shortcuts while typing
@@ -180,20 +202,23 @@ export function Window({
     return role === 'textbox' || role === 'combobox' || role === 'searchbox' || role === 'spinbutton';
   };
 
-  // Keyboard shortcut: "g" or Ctrl/⌘+G toggles gallery
+  // Keyboard: "g" or Ctrl/⌘+g cycles: both → primary → gallery → both
   useEffect(() => {
+    const order = ['both', 'primary', 'gallery'];
     const onKeyDown = (e) => {
       if (isTypingTarget(e.target)) return;
       const key = (e.key || '').toLowerCase();
       const ctrlLike = e.ctrlKey || e.metaKey;
       if ((key === 'g' && !e.shiftKey && !e.altKey) || (ctrlLike && key === 'g')) {
         e.preventDefault();
-        toggleGallery();
+        const idx = order.indexOf(viewMode);
+        const next = order[(idx + 1) % order.length];
+        switchViewMode(next);
       }
     };
     window.addEventListener('keydown', onKeyDown, { passive: false });
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [toggleGallery]);
+  }, [viewMode]); // switchViewMode closes over latest state
 
   return (
     <ErrorBoundary FallbackComponent={ErrorWindow}>
@@ -217,21 +242,39 @@ export function Window({
 
         <ContentRow>
           <ContentColumn>
-            <ControlsBar>
-              <Tooltip title={isGalleryOpen ? 'Hide gallery (g)' : 'Show gallery (g)'} arrow>
-                <IconButton
-                  size="small"
-                  onClick={toggleGallery}
-                  aria-label={isGalleryOpen ? 'Hide gallery' : 'Show gallery'}
-                >
-                  {isGalleryOpen ? <ViewDayIcon fontSize="small" /> : <ViewModuleIcon fontSize="small" />}
-                </IconButton>
+            {/* Floating white view selector */}
+            <FloatingMenu>
+              <Tooltip title="Gallery & Primary" arrow>
+                <span>
+                  <ToggleButton
+                    value="both"
+                    selected={viewMode === 'both'}
+                    onChange={() => switchViewMode('both')}
+                    size="small"
+                  >
+                    <SplitscreenIcon fontSize="small" />
+                  </ToggleButton>
+                </span>
               </Tooltip>
-            </ControlsBar>
+              <CompactGroup
+                exclusive
+                value={viewMode}
+                onChange={(e, val) => val && switchViewMode(val)}
+                aria-label="Window view mode"
+                size="small"
+              >
+                <ToggleButton value="primary" aria-label="Primary only">
+                  <ViewDayIcon fontSize="small" />
+                </ToggleButton>
+                <ToggleButton value="gallery" aria-label="Gallery only">
+                  <ViewModuleIcon fontSize="small" />
+                </ToggleButton>
+              </CompactGroup>
+            </FloatingMenu>
 
-            {isGalleryOpen ? (
+            {viewMode === 'both' && (
               <StyledMosaic
-                key="with-gallery"
+                key="both"
                 renderTile={(id) => ELEMENT_MAP[id]}
                 initialValue={{
                   direction: 'row',
@@ -242,12 +285,14 @@ export function Window({
                 onChange={handleChangeSplit}
                 resize={{ minimumPaneSizePercentage }}
               />
-            ) : (
-              <StyledMosaic
-                key="no-gallery"
-                renderTile={(id) => ELEMENT_MAP[id]}
-                initialValue="a"
-              />
+            )}
+
+            {viewMode === 'primary' && (
+              <StyledMosaic key="primary" renderTile={(id) => ELEMENT_MAP[id]} initialValue="a" />
+            )}
+
+            {viewMode === 'gallery' && (
+              <StyledMosaic key="gallery" renderTile={(id) => ELEMENT_MAP[id]} initialValue="b" />
             )}
 
             <StyledCompanionAreaBottom windowId={windowId} position="bottom" />
