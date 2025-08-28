@@ -78,8 +78,8 @@ const FloatingMenu = styled('div')(({ theme }) => ({
   zIndex: theme.zIndex.tooltip,
   background: '#fff', // explicit white
   color: theme.palette.text.primary,
-  border: `1px solid ${theme.palette.divider}`,
-  borderRadius: 8,
+  border: `none`,
+  borderRadius: 50,
   boxShadow: theme.shadows[2],
   padding: 6,
   display: 'flex',
@@ -95,6 +95,8 @@ const CompactGroup = styled(ToggleButtonGroup)(({ theme }) => ({
     padding: '1px 4px',
     fontSize: '0.72rem',
     lineHeight: 1,
+    border: `none`,
+    borderRadius: 50,
   },
 }));
 
@@ -244,25 +246,21 @@ export function Window({
           <ContentColumn>
             {/* Floating white view selector */}
             <FloatingMenu>
-              <Tooltip title="Gallery & Primary" arrow>
-                <span>
-                  <ToggleButton
-                    value="both"
-                    selected={viewMode === 'both'}
-                    onChange={() => switchViewMode('both')}
-                    size="small"
-                  >
-                    <SplitscreenIcon fontSize="small" />
-                  </ToggleButton>
-                </span>
-              </Tooltip>
               <CompactGroup
                 exclusive
                 value={viewMode}
                 onChange={(e, val) => val && switchViewMode(val)}
                 aria-label="Window view mode"
                 size="small"
-              >
+              > 
+                <ToggleButton
+                    value="both"
+                    selected={viewMode === 'both'}
+                    onChange={() => switchViewMode('both')}
+                    size="small"
+                  >
+                    <SplitscreenIcon fontSize="small" />
+                </ToggleButton>
                 <ToggleButton value="primary" aria-label="Primary only">
                   <ViewDayIcon fontSize="small" />
                 </ToggleButton>

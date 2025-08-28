@@ -20,24 +20,23 @@ const Bar = styled('div')(({ theme }) => ({
   display: 'flex',
   justifyContent: 'flex-end',
   gap: theme.spacing(1),
-  padding: "2px",
+  padding: '2px',
   borderBottom: `1px solid ${theme.palette.divider}`,
 }));
 
 const CompactToggleButton = styled(ToggleButton)(({ theme }) => ({
-  minWidth: 28,      // narrower
-  padding: '2px 2px', // less padding
+  minWidth: 28,
+  padding: '2px 2px',
   fontSize: '0.75rem',
 }));
 
-// Rectangular presets (portrait-ish), and your 2×/4× scales
 const SIZE_PRESETS = {
-  s: { tileH: 180, tileW: 120, scale: 1.0 }, 
-  m: { tileH: 270, tileW: 200, scale: 2.0 },  
-  l: { tileH: 550, tileW: 390, scale: 4.0 },  
+  s: { tileH: 180, tileW: 120, scale: 1.0 },
+  m: { tileH: 270, tileW: 200, scale: 2.0 },
+  l: { tileH: 550, tileW: 390, scale: 4.0 },
 };
 
-const GAP = 20; // total px subtracted from each cell to create visual spacing
+const GAP = 20;
 
 const Cell = React.memo(({ columnIndex, rowIndex, style, data }) => {
   const { canvases, windowId, columnCount, thumbSize, tileW, tileH } = data;
@@ -45,7 +44,6 @@ const Cell = React.memo(({ columnIndex, rowIndex, style, data }) => {
   if (index >= canvases.length) return null;
   const canvas = canvases[index];
 
-  // Apply a visual gap without changing Grid’s measured size
   const cellStyle = {
     ...style,
     left: style.left + GAP / 2,
@@ -84,6 +82,7 @@ export function GalleryView({ canvases = [], windowId }) {
           <CompactToggleButton value="s">S</CompactToggleButton>
           <CompactToggleButton value="m">M</CompactToggleButton>
           <CompactToggleButton value="l">L</CompactToggleButton>
+          <CompactToggleButton value="fit" aria-label="Fit width">F</CompactToggleButton>
         </ToggleButtonGroup>
       </Bar>
 
@@ -91,25 +90,38 @@ export function GalleryView({ canvases = [], windowId }) {
         {({ width, height }) => {
           if (!width || !height) return null;
 
-          const columnCount = Math.max(1, Math.floor(width / preset.tileW));
-          const rowCount = Math.ceil(safe.length / columnCount);
+          let columnCount;
+          let rowCount;
+          let columnWidth;
+          let rowHeight;
 
-          // Effective inner dimensions per cell (after visual gap)
-          const tileW = preset.tileW - GAP;
-          const tileH = preset.tileH - GAP;
+          if (thumbSize === 'fit') {
+            columnCount = 1;
+            columnWidth = width;
+            rowHeight = Math.max(1, Math.round(width * 1.7));
+            rowCount = safe.length;
+          } else {
+            columnCount = Math.max(1, Math.floor(width / preset.tileW));
+            rowCount = Math.ceil(safe.length / columnCount);
+            columnWidth = preset.tileW;
+            rowHeight = preset.tileH;
+          }
+
+          const tileW = columnWidth - GAP;
+          const tileH = rowHeight - GAP;
 
           const itemData = { canvases: safe, windowId, columnCount, thumbSize, tileW, tileH };
 
           return (
             <Grid
               width={width}
-              height={height - 48}
+              height={height}
               columnCount={columnCount}
               rowCount={rowCount}
-              columnWidth={preset.tileW}
-              rowHeight={preset.tileH}
+              columnWidth={columnWidth}
+              rowHeight={rowHeight}
               itemData={itemData}
-              overscanRowCount={2}
+              overscanRowCount={1}
               overscanColumnCount={1}
             >
               {Cell}
