@@ -105,7 +105,7 @@ const Cell = React.memo(({ columnIndex, rowIndex, style, data }) => {
 export function GalleryView({ canvases = [], windowId, currentCanvasId }) {
   const { t } = useTranslation();
   const safe = (canvases || []).filter(c => c && (c.id || typeof c.index !== 'undefined'));
-  const [thumbSize, setThumbSize] = useState('s');
+  const [thumbSize, setThumbSize] = useState('fit');
   const preset = SIZE_PRESETS[thumbSize];
   const gridRef = useRef(null);
   // store latest computed layout values without re-render churn
