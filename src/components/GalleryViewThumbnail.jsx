@@ -14,17 +14,44 @@ const Root = styled('div', { name: 'GalleryView', slot: 'thumbnail' })(
   ({ ownerState, theme }) => ({
     '&:focus': { outline: 'none' },
     '&:hover': { backgroundColor: theme.palette.action.hover },
-    ...(ownerState?.selected ? { boxShadow: `inset 0 0 0 2px ${theme.palette.primary.main}` } : {}),
-    ...(ownerState?.highlighted ? { boxShadow: `inset 0 0 0 2px ${theme.palette.info.main}` } : {}),
     cursor: 'pointer',
     // Margin here caused overflow beyond grid cells; spacing comes from Grid gap.
     margin: 0,
-    borderRadius: theme.shape.borderRadius,
+    borderRadius: theme.shape.borderRadius * 1.5,
     padding: theme.spacing(1),
     position: 'relative',
     width: '100%',
     height: '100%',
     boxSizing: 'border-box',
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+    transition: 'transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease',
+    '&:hover': {
+      transform: 'translateY(-1px)',
+      boxShadow: theme.shadows[2],
+    },
+    // Selection/highlight ring that hugs the outer edge, not inner padding
+    ...(ownerState?.selected ? {
+      '&::after': {
+        content: '""',
+        position: 'absolute',
+        inset: 1,
+        borderRadius: 'inherit',
+        border: `2px solid ${theme.palette.primary.main}`,
+        pointerEvents: 'none',
+        zIndex: 2,
+      },
+    } : {}),
+    ...(ownerState?.highlighted && !ownerState?.selected ? {
+      '&::after': {
+        content: '""',
+        position: 'absolute',
+        inset: 1,
+        borderRadius: 'inherit',
+        border: `2px solid ${theme.palette.info.main}`,
+        pointerEvents: 'none',
+        zIndex: 2,
+      },
+    } : {}),
   }),
 );
 

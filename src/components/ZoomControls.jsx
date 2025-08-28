@@ -8,15 +8,19 @@ import MiradorMenuButton from '../containers/MiradorMenuButton';
 
 const StyledZoomControlsWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'center',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: 4,
   position: 'absolute',
-  background: theme.palette.background.paper,
-  borderRadius: '25px',
-  left: '1rem',
-  top: '0rem',
+  right: '0.75rem',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  background: theme.palette.mode === 'dark' ? 'rgba(30,30,30,0.6)' : 'rgba(255,255,255,0.7)',
+  backdropFilter: 'blur(6px)',
+  borderRadius: 24,
+  padding: '6px',
   zIndex: 50,
-  boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
+  boxShadow: '0 6px 18px rgba(0,0,0,0.15)',
 }));
 
 export function ZoomControls({ viewer, zoomToWorld, showZoomControls = true }) {

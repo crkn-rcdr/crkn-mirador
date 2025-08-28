@@ -200,6 +200,100 @@ export default {
       borderRadius: 4
     },
     components: {
+      MuiCssBaseline: {
+        styleOverrides: {
+          body: {
+            scrollbarColor: '#bdbdbd transparent',
+          },
+          '*::-webkit-scrollbar': {
+            width: 10,
+            height: 10,
+          },
+          '*::-webkit-scrollbar-thumb': ({ theme }) => ({
+            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.24)' : 'rgba(0,0,0,0.24)',
+            borderRadius: 8,
+            border: '2px solid transparent',
+            backgroundClip: 'content-box',
+          }),
+          '*::-webkit-scrollbar-track': {
+            backgroundColor: 'transparent',
+          },
+          ':focus-visible': {
+            outlineOffset: 2,
+          },
+        },
+      },
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            backgroundColor: 'transparent',
+            boxShadow: 'none',
+          },
+        },
+      },
+      MuiToolbar: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            backdropFilter: 'blur(6px)',
+            borderBottom: `1px solid ${theme.palette.divider}`,
+          }),
+        },
+      },
+      MuiTooltip: {
+        defaultProps: { arrow: true, enterDelay: 250 },
+        styleOverrides: {
+          tooltip: ({ theme }) => ({
+            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(30,30,30,0.92)' : 'rgba(33,33,33,0.92)',
+            boxShadow: theme.shadows[2],
+            fontSize: '0.72rem',
+            letterSpacing: 0.1,
+          }),
+          arrow: ({ theme }) => ({
+            color: theme.palette.mode === 'dark' ? 'rgba(30,30,30,0.92)' : 'rgba(33,33,33,0.92)',
+          }),
+        },
+      },
+      MuiChip: {
+        styleOverrides: {
+          root: {
+            borderRadius: 12,
+            '&.MuiChip-sizeSmall': { height: 22 },
+          },
+          label: { fontWeight: 600 },
+        },
+      },
+      MuiToggleButtonGroup: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            borderRadius: 50,
+            background: theme.palette.mode === 'dark' ? 'rgba(30,30,30,0.7)' : 'rgba(255,255,255,0.8)',
+            boxShadow: theme.shadows[2],
+            padding: 6,
+          }),
+        },
+      },
+      MuiToggleButton: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            border: 'none',
+            borderRadius: 50,
+            '&.Mui-selected': {
+              backgroundColor: theme.palette.action.selected,
+              color: theme.palette.text.primary,
+            },
+          }),
+        },
+      },
+      MuiListItemButton: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            borderRadius: 8,
+            '&.Mui-selected': {
+              backgroundColor: theme.palette.action.selected,
+            },
+          }),
+        },
+      },
       MuiMenuItem: {
         variants: [
           {

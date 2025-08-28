@@ -22,17 +22,21 @@ import ViewDayIcon from '@mui/icons-material/ViewDay';
 import SplitscreenIcon from '@mui/icons-material/Splitscreen';
 import SearchPanelControls from '../containers/SearchPanelControls';
 
-const Root = styled(AppBar, { name: 'WindowTopBar', slot: 'root' })(() => ({
+const Root = styled(AppBar, { name: 'WindowTopBar', slot: 'root' })(({ theme }) => ({
   zIndex: 1100,
+  backgroundColor: 'transparent',
+  boxShadow: 'none',
 }));
 
 const StyledToolbar = styled(Toolbar, { name: 'WindowTopBar', slot: 'toolbar' })(({ ownerState, theme }) => ({
-  backgroundColor: theme.palette.shades?.main,
+  backgroundColor: theme.palette.mode === 'dark' ? 'rgba(30,30,30,0.72)' : 'rgba(255,255,255,0.82)',
   borderTop: '2px solid',
   borderTopColor: ownerState?.focused ? theme.palette.primary.main : 'transparent',
   minHeight: 32,
   paddingLeft: theme.spacing(0.5),
   paddingRight: theme.spacing(0.5),
+  backdropFilter: 'blur(6px)',
+  borderBottom: `1px solid ${theme.palette.divider}`,
   ...(ownerState?.windowDraggable && {
     cursor: 'move',
   }),

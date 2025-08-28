@@ -23,8 +23,15 @@ const Bar = styled('div')(({ theme }) => ({
   display: 'flex',
   justifyContent: 'flex-end',
   gap: theme.spacing(1),
-  padding: '2px',
+  padding: '6px 8px',
   borderBottom: `1px solid ${theme.palette.divider}`,
+  position: 'sticky',
+  top: 0,
+  zIndex: theme.zIndex.appBar,
+  backdropFilter: 'blur(6px)',
+  backgroundColor: theme.palette.mode === 'dark'
+    ? 'rgba(30,30,30,0.6)'
+    : 'rgba(255,255,255,0.7)',
 }));
 
 // Flex child that constrains AutoSizer to remaining space under the Bar
