@@ -114,6 +114,7 @@ export function SearchPanelControls({
           onInputChange={handleChange}
           freeSolo
           disableClearable
+          sx={{ width: '100%' }}
           renderInput={params => (
             <TextField
               {...params}
