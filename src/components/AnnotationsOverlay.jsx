@@ -27,16 +27,17 @@ export function AnnotationsOverlay({
 
   /** Initialize overlay canvas once */
   useEffect(() => {
-    if (!viewer) return;
+    if (!viewer || !viewer.container) return;
 
     const canvas = document.createElement("canvas");
     canvas.style.position = "absolute";
     canvas.style.top = 0;
     canvas.style.left = 0;
-    canvas.width = viewer.container.clientWidth;
-    canvas.height = viewer.container.clientHeight;
+    const containerEl = viewer.container;
+    canvas.width = containerEl?.clientWidth || 0;
+    canvas.height = containerEl?.clientHeight || 0;
     canvas.style.pointerEvents = "none";
-    viewer.container.appendChild(canvas);
+    containerEl?.appendChild(canvas);
     overlayRef.current = canvas;
 
     const ctx = canvas.getContext("2d");
@@ -70,9 +71,9 @@ export function AnnotationsOverlay({
     };
 
     const handleResize = () => {
-      if (!overlayRef.current) return;
-      canvas.width = viewer.container.clientWidth;
-      canvas.height = viewer.container.clientHeight;
+      if (!overlayRef.current || !viewer?.container) return;
+      canvas.width = viewer.container?.clientWidth || 0;
+      canvas.height = viewer.container?.clientHeight || 0;
       draw();
     };
 

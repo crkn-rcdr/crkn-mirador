@@ -17,9 +17,6 @@ import WindowMinIcon from './icons/WindowMinIcon';
 import ns from '../config/css-ns';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import ViewModuleIcon from '@mui/icons-material/ViewModule';
-import ViewDayIcon from '@mui/icons-material/ViewDay';
-import SplitscreenIcon from '@mui/icons-material/Splitscreen';
 import SearchPanelControls from '../containers/SearchPanelControls';
 
 const Root = styled(AppBar, { name: 'WindowTopBar', slot: 'root' })(({ theme }) => ({
@@ -60,6 +57,16 @@ const PillGroup = styled(ToggleButtonGroup)(({ theme }) => ({
     border: 'none',
     borderRadius: 50,
   },
+  // Ensure Bootstrap icons render at a consistent size
+  '& .MuiToggleButton-root .bi': {
+    fontSize: '1rem',
+    lineHeight: 1,
+    display: 'inline-block',
+  },
+  // Normalize MUI SVG icon sizes if any are used alongside
+  '& .MuiToggleButton-root .MuiSvgIcon-root': {
+    fontSize: '1rem',
+  },
   '& .MuiToggleButton-root:hover': {
     backgroundColor: theme.palette.action.hover,
   },
@@ -72,6 +79,7 @@ const PillGroup = styled(ToggleButtonGroup)(({ theme }) => ({
     backgroundColor: theme.palette.action.selected,
   },
 }));
+
 
 /**
  * WindowTopBar
@@ -132,13 +140,13 @@ export function WindowTopBar({
             sx={{ marginRight: 1 }}
           >
             <ToggleButton value="both" aria-label={t('splitView')}>
-              <SplitscreenIcon fontSize="small" />
+              <i className="bi bi-layout-split" />
             </ToggleButton>
             <ToggleButton value="primary" aria-label={t('primaryOnly')}>
-              <ViewDayIcon fontSize="small" />
+              <i className="bi bi-app" />
             </ToggleButton>
             <ToggleButton value="gallery" aria-label={t('galleryOnly')}>
-              <ViewModuleIcon fontSize="small" />
+              <i className="bi bi-grid-3x3-gap" />
             </ToggleButton>
           </PillGroup>
         )}

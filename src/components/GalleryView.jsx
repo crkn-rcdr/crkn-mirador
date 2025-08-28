@@ -172,13 +172,16 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId }) {
 
           if (thumbSize === 'fit') {
             columnCount = 1;
-            columnWidth = width;
-            rowHeight = Math.max(1, Math.round(width * 1.7));
+            // Nudge down by GAP to avoid any X-overflow due to rounding + left/right spacing adjustments
+            const fitWidth = Math.max(1, width - GAP - 2);
+            columnWidth = fitWidth;
+            rowHeight = Math.max(1, Math.round(fitWidth * 1.7));
             rowCount = safe.length;
           } else {
             columnCount = Math.max(1, Math.floor(width / preset.tileW));
             rowCount = Math.ceil(safe.length / columnCount);
-            columnWidth = preset.tileW;
+            // Use computed width per column to avoid 1px overflow + X scroll due to rounding
+            columnWidth = Math.floor(width / columnCount);
             rowHeight = preset.tileH;
           }
 

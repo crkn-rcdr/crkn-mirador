@@ -24,29 +24,9 @@ const Root = styled('div', { name: 'GalleryView', slot: 'thumbnail' })(
     height: '100%',
     boxSizing: 'border-box',
     transition: 'background-color 120ms ease',
-    // Selection/highlight ring that hugs the outer edge, not inner padding
-    ...(ownerState?.selected ? {
-      '&::after': {
-        content: '""',
-        position: 'absolute',
-        inset: 1,
-        borderRadius: 'inherit',
-        border: `2px solid ${theme.palette.primary.main}`,
-        pointerEvents: 'none',
-        zIndex: 2,
-      },
-    } : {}),
-    ...(ownerState?.highlighted && !ownerState?.selected ? {
-      '&::after': {
-        content: '""',
-        position: 'absolute',
-        inset: 1,
-        borderRadius: 'inherit',
-        border: `2px solid ${theme.palette.info.main}`,
-        pointerEvents: 'none',
-        zIndex: 2,
-      },
-    } : {}),
+    // Use inset box-shadow to avoid any clipping from parent containers
+    ...(ownerState?.selected ? { boxShadow: `inset 0 0 0 2px ${theme.palette.primary.main}` } : {}),
+    ...(ownerState?.highlighted && !ownerState?.selected ? { boxShadow: `inset 0 0 0 2px ${theme.palette.info.main}` } : {}),
   }),
 );
 

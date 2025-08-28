@@ -19,6 +19,7 @@ import LocaleContext from '../contexts/LocaleContext';
 /**
  * Allow applications to opt-out of (or provide their own) drag and drop context
  */
+// Revert to the simple, original logic to avoid MultiBackend duplication
 const MaybeDndProvider = ({ dndManager = undefined, children }) => {
   if (dndManager === false) {
     return children;
@@ -117,6 +118,16 @@ export function AppProviders({
   theme, translations,
   dndManager = undefined,
 }) {
+  // Keep a theme class on the root container for CSS targeting (.light / .dark)
+  useEffect(() => {
+    try {
+      const root = document.getElementById('mirador');
+      if (!root) return;
+      root.classList.remove('light', 'dark');
+      const mode = theme?.palette?.mode === 'dark' ? 'dark' : 'light';
+      root.classList.add(mode);
+    } catch (_) { /* noop */ }
+  }, [theme]);
   return (
     <FullScreenShim>
       <StoreAwareI18nextProvider language={language} translations={translations}>

@@ -423,5 +423,4 @@ OpenSeadragonViewer.propTypes = {
   highlightAllAnnotations: PropTypes.bool,
   viewType: PropTypes.oneOf(['single', 'book', 'scroll']),
   currentCanvasId: PropTypes.string,
-  searchAnnotations: PropTypes.array,
 };
