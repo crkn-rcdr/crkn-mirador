@@ -51,6 +51,7 @@ export function OpenSeadragonViewer({
   const containerRef = useRef(null);
   const [tileSources, setTileSources] = useState([]);
   const [addedCount, setAddedCount] = useState(0);
+  const lastZoomedAnnoRef = useRef(null);
 
   const canvasIndex = useSelector(state => getCanvasIndex(state, { windowId }));
 
@@ -264,7 +265,10 @@ export function OpenSeadragonViewer({
           if (pending === 0) {
             const world = viewer.world;
             if (world.getItemCount() > 0) {
-              viewer.viewport.fitBounds(world.getHomeBounds(), true);
+              // If a specific annotation is selected, skip auto-fit to avoid overriding zoom
+              if (!selectedAnnotationId) {
+                viewer.viewport.fitBounds(world.getHomeBounds(), true);
+              }
               const current = viewer.viewport.getZoom();
               viewer.viewport.minZoomLevel = current * 0.5;
               viewer.viewport.maxZoomLevel = current * 40;
@@ -283,6 +287,63 @@ export function OpenSeadragonViewer({
       } catch (_) { /* ignore */ }
     }, 0);
   }, [tileSources, viewType]);
+
+  /** Zoom to the selected annotation region (xywh) when selection changes */
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    if (!viewer || !selectedAnnotationId) return;
+    // Avoid reapplying zoom for the same selection if user pans/zooms
+    if (lastZoomedAnnoRef.current === selectedAnnotationId) return;
+
+    // find annotation resource
+    const res = (searchAnnotations || []).find(r => (
+      r && (r.id === selectedAnnotationId || r['@id'] === selectedAnnotationId)
+    ));
+    if (!res) return;
+
+    const target = res.targetId || res.target || '';
+    const [canvasIdRaw, frag] = String(target).split('#');
+    if (!frag || !frag.startsWith('xywh=')) return;
+    const normalize = (s) => (s || '').toString().split('#')[0];
+    const canvasId = normalize(canvasIdRaw);
+    const [x, y, w, h] = frag.replace('xywh=', '').split(',').map(n => parseInt(n, 10));
+
+    const zoomOnItem = (itemIndex) => {
+      const item = viewer.world.getItemAt(itemIndex);
+      if (!item || !item.imageToViewportRectangle) return;
+      const vpRect = item.imageToViewportRectangle(new OpenSeadragon.Rect(x, y, w, h));
+      // Add slight padding for context
+      const padX = vpRect.width * 0.1;
+      const padY = vpRect.height * 0.1;
+      const padded = new OpenSeadragon.Rect(vpRect.x - padX, vpRect.y - padY, vpRect.width + 2 * padX, vpRect.height + 2 * padY);
+      viewer.viewport.fitBoundsWithConstraints(padded, true);
+    };
+
+    if (viewType === 'single') {
+      // If we are already on the right page, zoom now; otherwise, zoom after the page changes
+      const targetIndex = canvases.findIndex(c => normalize(c.id) === canvasId);
+      if (targetIndex < 0) return;
+      if (canvasIndex === targetIndex) {
+        // world holds current page at item 0 in sequence mode
+        const doZoom = () => { zoomOnItem(0); lastZoomedAnnoRef.current = selectedAnnotationId; };
+        if (viewer.world.getItemCount() > 0) doZoom();
+        else viewer.addOnceHandler('open', () => setTimeout(doZoom, 0));
+      } else {
+        viewer.addOnceHandler('page', () => setTimeout(() => { zoomOnItem(0); lastZoomedAnnoRef.current = selectedAnnotationId; }, 0));
+      }
+      return;
+    }
+
+    // book/scroll: zoom on the corresponding item index in the laid out world
+    const vi = (visibleCanvases || []).findIndex(c => normalize(c.id) === canvasId);
+    if (vi >= 0 && vi < (viewer.world.getItemCount() || 0)) {
+      zoomOnItem(vi);
+      lastZoomedAnnoRef.current = selectedAnnotationId;
+    } else {
+      // wait for world layout
+      viewer.addOnceHandler('open', () => setTimeout(() => { zoomOnItem(vi); lastZoomedAnnoRef.current = selectedAnnotationId; }, 0));
+    }
+  }, [selectedAnnotationId, searchAnnotations, viewType, canvasIndex, addedCount, canvasKeys, visibleKeys]);
 
   /** Sync viewer when current canvas changes (no auto-zoom to item) */
   useEffect(() => {
