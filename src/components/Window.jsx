@@ -16,12 +16,7 @@ import IIIFAuthentication from '../containers/IIIFAuthentication';
 import { PluginHook } from './PluginHook';
 
 // Floating view selector (kept out of the top bar)
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import Tooltip from '@mui/material/Tooltip';
-import ViewModuleIcon from '@mui/icons-material/ViewModule';   // gallery only
-import ViewDayIcon from '@mui/icons-material/ViewDay';         // primary only
-import SplitscreenIcon from '@mui/icons-material/Splitscreen'; // both
+//
 
 const GalleryView = lazy(() => import('../containers/GalleryView'));
 
@@ -70,47 +65,7 @@ const StyledCompanionAreaRight = styled('div', { name: 'Window', slot: 'right' }
   ...rowMixin, flex: '0 1 auto',
 }));
 
-// Floating white menu in the top-left
-const FloatingMenu = styled('div')(({ theme }) => ({
-  position: 'absolute',
-  top: 8,
-  left: 8,
-  zIndex: theme.zIndex.tooltip,
-  background: '#fff', // explicit white
-  color: theme.palette.text.primary,
-  border: `none`,
-  borderRadius: 50,
-  boxShadow: theme.shadows[2],
-  padding: 6,
-  display: 'flex',
-  gap: 6,
-  alignItems: 'center',
-}));
-
-// Compact group styling
-const CompactGroup = styled(ToggleButtonGroup)(({ theme }) => ({
-  gap: 4,
-  '& .MuiToggleButton-root': {
-    margin: 0,
-    minWidth: 28,
-    padding: '1px 4px',
-    fontSize: '0.72rem',
-    lineHeight: 1,
-    border: 'none',
-    borderRadius: 50,
-  },
-  '& .MuiToggleButton-root:hover': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  '& .MuiToggleButton-root.Mui-selected': {
-    border: 'none',
-    backgroundColor: theme.palette.action.selected,
-    color: theme.palette.text.primary,
-  },
-  '& .MuiToggleButton-root.Mui-selected:hover': {
-    backgroundColor: theme.palette.action.selected,
-  },
-}));
+// (View toggle moved to WindowTopBar)
 
 /** Window title bar wrapper for drag controls in the mosaic view */
 const DraggableNavBar = ({ children, ...props }) => {
@@ -250,37 +205,15 @@ export function Window({
           component={workspaceType === 'mosaic' && windowDraggable ? DraggableNavBar : undefined}
           windowId={windowId}
           windowDraggable={windowDraggable}
+          viewMode={viewMode}
+          onChangeViewMode={(mode) => switchViewMode(mode)}
         />
         <IIIFAuthentication windowId={windowId} />
         {manifestError && <ErrorContent error={{ stack: manifestError }} windowId={windowId} />}
 
         <ContentRow>
           <ContentColumn>
-            {/* Floating white view selector */}
-            <FloatingMenu>
-              <CompactGroup
-                exclusive
-                value={viewMode}
-                onChange={(e, val) => val && switchViewMode(val)}
-                aria-label="Window view mode"
-                size="small"
-              > 
-                <ToggleButton
-                    value="both"
-                    selected={viewMode === 'both'}
-                    onChange={() => switchViewMode('both')}
-                    size="small"
-                  >
-                    <SplitscreenIcon fontSize="small" />
-                </ToggleButton>
-                <ToggleButton value="primary" aria-label="Primary only">
-                  <ViewDayIcon fontSize="small" />
-                </ToggleButton>
-                <ToggleButton value="gallery" aria-label="Gallery only">
-                  <ViewModuleIcon fontSize="small" />
-                </ToggleButton>
-              </CompactGroup>
-            </FloatingMenu>
+            {/* View toggle now lives in WindowTopBar */}
 
             {viewMode === 'both' && (
               <StyledMosaic
