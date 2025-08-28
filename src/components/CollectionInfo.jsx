@@ -2,7 +2,7 @@ import { useId } from 'react';
 import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import ViewListIcon from '@mui/icons-material/ViewListSharp';
+import BiIcon from './BiIcon';
 import { useTranslation } from 'react-i18next';
 import CollapsibleSection from '../containers/CollapsibleSection';
 
@@ -45,7 +45,7 @@ export function CollectionInfo({
       <Button
         color="primary"
         onClick={openCollectionDialog}
-        startIcon={<ViewListIcon />}
+        startIcon={<BiIcon name="list" size={16} />}
       >
         {t('showCollection')}
       </Button>

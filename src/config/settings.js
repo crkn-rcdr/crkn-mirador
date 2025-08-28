@@ -1,4 +1,4 @@
-import { borderRadius } from '@mui/system';
+import { borderRadius, color } from '@mui/system';
 import { v4 as uuid } from 'uuid';
 
 export default {
@@ -146,9 +146,10 @@ export default {
       overline: {
         fontSize: "0.678rem",
         fontWeight: 500,
-        letterSpacing: "0.166em",
+        letterSpacing: "0em",
         lineHeight: "2em",
         textTransform: "uppercase",
+        color: "#424242"
       },
       h1: {
         fontSize: "2.822rem",

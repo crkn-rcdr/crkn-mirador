@@ -4,9 +4,8 @@ import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
+import BiIcon from './BiIcon';
 import { useTranslation } from 'react-i18next';
-import AnnotationIcon from '@mui/icons-material/CommentSharp';
-import SearchIcon from '@mui/icons-material/SearchSharp';
 import { InView } from 'react-intersection-observer';
 import IIIFThumbnail from '../containers/IIIFThumbnail';
 
@@ -112,16 +111,33 @@ export function GalleryViewThumbnail({
             <TopLeft>
               <Tooltip title={t('searchHitsCount', { count: searchAnnotationsCount })} arrow>
                 <Chip
-                  icon={<SearchIcon fontSize="small" sx={{ color: 'inherit' }} />}
+                  icon={<BiIcon name="search" size={12} />}
                   label={searchAnnotationsCount}
                   size="small"
                   aria-label={t('searchHitsCount', { count: searchAnnotationsCount })}
                   sx={(theme) => ({
                     pointerEvents: 'auto',
-                    height: 22,
-                    bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.72)',
-                    color: theme.palette.mode === 'dark' ? theme.palette.text.primary : theme.palette.common.white,
-                    '& .MuiChip-label': { px: 0.75, fontSize: '0.72rem', fontWeight: 600 },
+                    height: 20,
+                    borderRadius: 12,
+                    // Softer translucent background and always-light icon/text for better contrast
+                    bgcolor: theme.palette.mode === 'dark'
+                      ? 'rgba(20,20,20,0.55)'
+                      : 'rgba(0,0,0,0.45)',
+                    color: theme.palette.common.white,
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.18)',
+                    backdropFilter: 'blur(2px)',
+                    '& .MuiChip-icon': {
+                      mr: 0.25,
+                      color: 'inherit',
+                      opacity: 0.9,
+                    },
+                    '& .MuiChip-label': {
+                      px: 0.5,
+                      fontSize: '0.7rem',
+                      fontWeight: 500, // less bold
+                      letterSpacing: 0.15,
+                      lineHeight: 1.2,
+                    },
                   })}
                 />
               </Tooltip>
@@ -165,7 +181,7 @@ export function GalleryViewThumbnail({
           )}
           <Chips>
             {annotationsCount > 0 && (
-              <Chip icon={<AnnotationIcon fontSize="small" />} label={annotationsCount} size="small" />
+              <Chip icon={<BiIcon name="chat-dots" size={12} />} label={annotationsCount} size="small" />
             )}
           </Chips>
         </IIIFThumbnail>

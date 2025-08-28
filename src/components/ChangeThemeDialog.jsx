@@ -7,13 +7,16 @@ import {
   MenuItem,
   DialogContent,
 } from '@mui/material';
-import PaletteIcon from '@mui/icons-material/PaletteSharp';
+import BiIcon from './BiIcon';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { WorkspaceDialog } from './WorkspaceDialog';
 
-const ThemeIcon = styled(PaletteIcon, { name: 'ThemeIcon', slot: 'icon' })(({ theme }) => ({
+// Use Bootstrap Icons' palette icon instead of MUI's PaletteIcon
+const ThemeIcon = styled((props) => (
+  <BiIcon name="palette" size={24} {...props} />
+), { name: 'ThemeIcon', slot: 'icon' })(({ theme }) => ({
   color: '#BDBDBD',
 }));
 

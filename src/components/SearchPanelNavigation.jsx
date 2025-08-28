@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeftSharp';
-import ChevronRightIcon from '@mui/icons-material/ChevronRightSharp';
+// Using Bootstrap icons
 import { styled } from '@mui/material/styles';
+import BiIcon from './BiIcon';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 import MiradorMenuButton from '../containers/MiradorMenuButton';
@@ -141,7 +141,7 @@ export function SearchPanelNavigation({
         disabled={!hasPreviousResult}
         onClick={() => goToSearchResult(safeHitIndex - 1)}
       >
-        <ChevronLeftIcon style={iconStyle} />
+        <BiIcon name="chevron-left" size={16} style={iconStyle} />
       </MiradorMenuButton>
       <Typography component="span" variant="body2" className="count" sx={{ unicodeBidi: 'plaintext' }}>
         {isV2
@@ -153,7 +153,7 @@ export function SearchPanelNavigation({
         disabled={!hasNextResult}
         onClick={() => goToSearchResult(safeHitIndex + 1)}
       >
-        <ChevronRightIcon style={iconStyle} />
+        <BiIcon name="chevron-right" size={16} style={iconStyle} />
       </MiradorMenuButton>
     </NavPill>
   );

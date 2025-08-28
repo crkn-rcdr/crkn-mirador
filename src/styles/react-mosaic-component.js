@@ -279,6 +279,15 @@ const globalReactMosaicStyles = {
   '.mosaic:not(.mosaic-blueprint-theme) .mosaic-default-control.expand-button:before': {
     content: '\'Expand\'',
   },
+  'input::before': {
+    fontSize: "10px !important"
+  },
+  'h1, h2, h3, h4, h5, h6, p, span': {
+    fontSize: "14px !important"
+  },
+  'i': {
+    fontSize: "16px !important"
+  }
 };
 
 export default globalReactMosaicStyles;

@@ -1,6 +1,4 @@
-import AddCircleIcon from '@mui/icons-material/AddCircleOutlineSharp';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircleOutlineSharp';
-import RestoreZoomIcon from './icons/RestoreZoomIcon';
+import BiIcon from './BiIcon';
 import { styled } from '@mui/material/styles';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
@@ -47,13 +45,13 @@ export function ZoomControls({ viewer, zoomToWorld, showZoomControls = true }) {
   return (
     <StyledZoomControlsWrapper>
       <MiradorMenuButton aria-label={t('zoomIn')} onClick={handleZoomIn}>
-        <AddCircleIcon />
+        <BiIcon name="zoom-in" size={18} />
       </MiradorMenuButton>
       <MiradorMenuButton aria-label={t('zoomOut')} onClick={handleZoomOut}>
-        <RemoveCircleIcon />
+        <BiIcon name="zoom-out" size={18} />
       </MiradorMenuButton>
       <MiradorMenuButton aria-label={t('zoomReset')} onClick={handleReset}>
-        <RestoreZoomIcon />
+        <BiIcon name="arrow-counterclockwise" size={18} />
       </MiradorMenuButton>
     </StyledZoomControlsWrapper>
   );

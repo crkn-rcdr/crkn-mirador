@@ -1,5 +1,5 @@
 import zIndex from "@mui/material/styles/zIndex";
-import { borderRadius } from "@mui/system";
+import { borderRadius, fontSize } from "@mui/system";
 
 const globalWindowViewerStyles = {
   '.mirador-osd-container': {
@@ -93,7 +93,8 @@ const globalWindowViewerStyles = {
     display: "flex !important",
     flexDirection: "column",
     left: "calc(100% - 67px) !important",
-    width: "50px"
+    width: "50px",
+    zIndex: '100000000'
   },
 
   
@@ -141,6 +142,9 @@ const globalWindowViewerStyles = {
   },
   'canvas': {
     pointerEvents: "none"
+  },
+  '.mirador-osd-navigation i': {
+    fontSize: "24px !important"
   }
 
 };

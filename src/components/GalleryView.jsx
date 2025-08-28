@@ -17,6 +17,7 @@ const Root = styled('div', { name: 'GalleryView', slot: 'root' })(({ theme }) =>
   flexDirection: 'column',
   minHeight: 0,
   overflow: 'hidden',
+  borderRadius: theme.shape.borderRadius * 1.5,
 }));
 
 const Bar = styled('div')(({ theme }) => ({

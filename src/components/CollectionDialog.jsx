@@ -11,7 +11,7 @@ import {
   MenuItem,
   Typography,
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBackSharp';
+import BiIcon from './BiIcon';
 import Skeleton from '@mui/material/Skeleton';
 import { styled } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
@@ -147,7 +147,7 @@ export function CollectionDialog({
       <StyledScrollIndicatedDialogContent>
         { collection && (
           <Button
-            startIcon={<ArrowBackIcon />}
+            startIcon={<BiIcon name="arrow-left" size={16} />}
             onClick={() => goToPreviousCollection()}
           >
             <IIIFResourceLabel resource={collection} />

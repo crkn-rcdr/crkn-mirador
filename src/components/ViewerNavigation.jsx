@@ -1,4 +1,4 @@
-import NavigationIcon from '@mui/icons-material/PlayCircleOutlineSharp';
+// Bootstrap icons used inline; removed unused MUI icon import
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';

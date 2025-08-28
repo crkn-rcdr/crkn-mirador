@@ -8,7 +8,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
-import SearchIcon from '@mui/icons-material/SearchSharp';
+import BiIcon from './BiIcon';
 import { useTranslation } from 'react-i18next';
 import MiradorMenuButton from '../containers/MiradorMenuButton';
 import SearchPanelNavigation from '../containers/SearchPanelNavigation';
@@ -120,12 +120,20 @@ export function SearchPanelControls({
               {...params}
               label={t('searchInputLabel')}
               variant="standard"
+              InputLabelProps={{
+                ...(params.InputLabelProps || {}),
+                sx: {
+                  ...((params.InputLabelProps && params.InputLabelProps.sx) || {}),
+                  fontSize: '14px',
+                  '&.MuiInputLabel-shrink': { fontSize: '14px' },
+                },
+              }}
               InputProps={{
                 ...params.InputProps,
                 endAdornment: (
                   <InputAdornment sx={{ position: 'relative' }} position="end">
                     <MiradorMenuButton aria-label={t('searchSubmitAria')} type="submit">
-                      <SearchIcon />
+                      <BiIcon name="search" size={16} />
                     </MiradorMenuButton>
                     {Boolean(searchIsFetching) && (
                     <CircularProgress

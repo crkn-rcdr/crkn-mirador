@@ -17,6 +17,7 @@ import WindowMinIcon from './icons/WindowMinIcon';
 import ns from '../config/css-ns';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import BiIcon from './BiIcon';
 import SearchPanelControls from '../containers/SearchPanelControls';
 
 const Root = styled(AppBar, { name: 'WindowTopBar', slot: 'root' })(({ theme }) => ({
@@ -32,6 +33,7 @@ const StyledToolbar = styled(Toolbar, { name: 'WindowTopBar', slot: 'toolbar' })
   minHeight: 32,
   paddingLeft: theme.spacing(0.5),
   paddingRight: theme.spacing(0.5),
+  justifyContent: 'space-between',
   backdropFilter: 'blur(6px)',
   borderBottom: `1px solid ${theme.palette.divider}`,
   ...(ownerState?.windowDraggable && {
@@ -140,13 +142,13 @@ export function WindowTopBar({
             sx={{ marginRight: 1 }}
           >
             <ToggleButton value="both" aria-label={t('splitView')}>
-              <i className="bi bi-layout-split" />
+              <BiIcon name="layout-split" size={16} />
             </ToggleButton>
             <ToggleButton value="primary" aria-label={t('primaryOnly')}>
-              <i className="bi bi-app" />
+              <BiIcon name="app" size={16} />
             </ToggleButton>
             <ToggleButton value="gallery" aria-label={t('galleryOnly')}>
-              <i className="bi bi-grid-3x3-gap" />
+              <BiIcon name="grid-3x3-gap" size={16} />
             </ToggleButton>
           </PillGroup>
         )}
