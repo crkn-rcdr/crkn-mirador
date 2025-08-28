@@ -3,6 +3,8 @@ import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import Chip from '@mui/material/Chip';
+import Tooltip from '@mui/material/Tooltip';
+import { useTranslation } from 'react-i18next';
 import AnnotationIcon from '@mui/icons-material/CommentSharp';
 import SearchIcon from '@mui/icons-material/SearchSharp';
 import { InView } from 'react-intersection-observer';
@@ -61,6 +63,7 @@ export function GalleryViewThumbnail({
 }) {
   const myRef = useRef();
   const [requestedAnnotations, setRequestedAnnotations] = useState(false);
+  const { t } = useTranslation();
 
   // Prefer tile-based sizing from Grid to avoid mismatch/overlap.
   const pad = 16; // Root padding (8 top + 8 bottom) with MUI spacing(1)
@@ -105,18 +108,21 @@ export function GalleryViewThumbnail({
           {/* Search results count (top-left, high contrast) */}
           {searchAnnotationsCount > 0 && (
             <TopLeft>
-              <Chip
-                icon={<SearchIcon fontSize="small" sx={{ color: 'inherit' }} />}
-                label={searchAnnotationsCount}
-                size="small"
-                sx={{
-                  pointerEvents: 'none',
-                  height: 22,
-                  bgcolor: 'rgba(0,0,0,0.72)',
-                  color: 'common.white',
-                  '& .MuiChip-label': { px: 0.75, fontSize: '0.72rem', fontWeight: 600 },
-                }}
-              />
+              <Tooltip title={t('searchHitsCount', { count: searchAnnotationsCount })} arrow>
+                <Chip
+                  icon={<SearchIcon fontSize="small" sx={{ color: 'inherit' }} />}
+                  label={searchAnnotationsCount}
+                  size="small"
+                  aria-label={t('searchHitsCount', { count: searchAnnotationsCount })}
+                  sx={{
+                    pointerEvents: 'auto',
+                    height: 22,
+                    bgcolor: 'rgba(0,0,0,0.72)',
+                    color: 'common.white',
+                    '& .MuiChip-label': { px: 0.75, fontSize: '0.72rem', fontWeight: 600 },
+                  }}
+                />
+              </Tooltip>
             </TopLeft>
           )}
 

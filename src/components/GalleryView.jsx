@@ -156,6 +156,7 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId }) {
           <ToggleButton value="s" aria-label={t('thumbSizeSmall')}>S</ToggleButton>
           <ToggleButton value="m" aria-label={t('thumbSizeMedium')}>M</ToggleButton>
           <ToggleButton value="l" aria-label={t('thumbSizeLarge')}>L</ToggleButton>
+          <ToggleButton value="fit" aria-label={t('thumbSizeFit')}>F</ToggleButton>
         </CompactGroup>
       </Bar>
 
