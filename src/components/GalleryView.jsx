@@ -7,6 +7,7 @@ import { FixedSizeGrid as Grid, areEqual } from 'react-window';
 import GalleryViewThumbnail from '../containers/GalleryViewThumbnail';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import { useTranslation } from 'react-i18next';
 
 const Root = styled('div', { name: 'GalleryView', slot: 'root' })(({ theme }) => ({
   height: '100%',
@@ -102,6 +103,7 @@ const Cell = React.memo(({ columnIndex, rowIndex, style, data }) => {
 }, areEqual);
 
 export function GalleryView({ canvases = [], windowId, currentCanvasId }) {
+  const { t } = useTranslation();
   const safe = (canvases || []).filter(c => c && (c.id || typeof c.index !== 'undefined'));
   const [thumbSize, setThumbSize] = useState('s');
   const preset = SIZE_PRESETS[thumbSize];
@@ -151,9 +153,9 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId }) {
           value={thumbSize}
           onChange={(e, val) => { if (val) setThumbSize(val); }}
         >
-          <ToggleButton value="s">S</ToggleButton>
-          <ToggleButton value="m">M</ToggleButton>
-          <ToggleButton value="l">L</ToggleButton>
+          <ToggleButton value="s" aria-label={t('thumbSizeSmall')}>S</ToggleButton>
+          <ToggleButton value="m" aria-label={t('thumbSizeMedium')}>M</ToggleButton>
+          <ToggleButton value="l" aria-label={t('thumbSizeLarge')}>L</ToggleButton>
         </CompactGroup>
       </Bar>
 

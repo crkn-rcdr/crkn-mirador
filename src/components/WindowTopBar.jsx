@@ -124,16 +124,16 @@ export function WindowTopBar({
             size="small"
             value={viewMode}
             onChange={(e, val) => { if (val) onChangeViewMode(val); }}
-            aria-label="Window view mode"
+            aria-label={t('windowViewMode')}
             sx={{ marginRight: 1 }}
           >
-            <ToggleButton value="both" aria-label="Split">
+            <ToggleButton value="both" aria-label={t('splitView')}>
               <SplitscreenIcon fontSize="small" />
             </ToggleButton>
-            <ToggleButton value="primary" aria-label="Primary only">
+            <ToggleButton value="primary" aria-label={t('primaryOnly')}>
               <ViewDayIcon fontSize="small" />
             </ToggleButton>
-            <ToggleButton value="gallery" aria-label="Gallery only">
+            <ToggleButton value="gallery" aria-label={t('galleryOnly')}>
               <ViewModuleIcon fontSize="small" />
             </ToggleButton>
           </PillGroup>
