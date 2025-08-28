@@ -36,9 +36,9 @@ const Viewport = styled('div')(() => ({
   overflow: 'hidden',
 }));
 
-// Match the Window view toggle style: pill, no borders, white background
+// Match the Window view toggle style: pill, theme-aware background
 const CompactGroup = styled(ToggleButtonGroup)(({ theme }) => ({
-  background: '#fff',
+  background: theme.palette.mode === 'dark' ? 'rgba(30,30,30,0.72)' : 'rgba(255,255,255,0.82)',
   color: theme.palette.text.primary,
   border: 'none',
   borderRadius: 50,

@@ -136,13 +136,13 @@ export function GalleryViewThumbnail({
                   label={searchAnnotationsCount}
                   size="small"
                   aria-label={t('searchHitsCount', { count: searchAnnotationsCount })}
-                  sx={{
+                  sx={(theme) => ({
                     pointerEvents: 'auto',
                     height: 22,
-                    bgcolor: 'rgba(0,0,0,0.72)',
-                    color: 'common.white',
+                    bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.72)',
+                    color: theme.palette.mode === 'dark' ? theme.palette.text.primary : theme.palette.common.white,
                     '& .MuiChip-label': { px: 0.75, fontSize: '0.72rem', fontWeight: 600 },
-                  }}
+                  })}
                 />
               </Tooltip>
             </TopLeft>

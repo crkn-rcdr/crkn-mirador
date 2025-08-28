@@ -44,7 +44,7 @@ const StyledToolbar = styled(Toolbar, { name: 'WindowTopBar', slot: 'toolbar' })
 
 // Shared pill-style toggle group (matches Gallery and Window styling)
 const PillGroup = styled(ToggleButtonGroup)(({ theme }) => ({
-  background: '#fff',
+  background: theme.palette.mode === 'dark' ? 'rgba(30,30,30,0.72)' : 'rgba(255,255,255,0.82)',
   color: theme.palette.text.primary,
   border: 'none',
   borderRadius: 50,

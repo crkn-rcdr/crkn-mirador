@@ -41,6 +41,7 @@ const NavPill = styled('div')(({ theme }) => ({
   fontFamily: theme.typography.fontFamily,
   fontSize: theme.typography.body2.fontSize,
   lineHeight: theme.typography.body2.lineHeight,
+  color: theme.palette.text.primary,
   '& .count': {
     padding: '0 6px',
   },

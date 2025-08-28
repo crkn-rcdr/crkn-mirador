@@ -102,6 +102,18 @@ const globalWindowViewerStyles = {
     boxShadow: "0px 10px 15px -3px rgba(0, 0, 0, 0.1)",
     backgroundColor: 'rgba(255, 255, 255, 0.85) !important',
   },
+  '@media (prefers-color-scheme: dark)': {
+    '.openseadragon-canvas + div > div': {
+      backgroundColor: 'rgba(30, 30, 30, 0.65) !important',
+      boxShadow: '0 6px 18px rgba(0,0,0,0.35)'
+    },
+    'div[title="Zoom in"], div[title="Zoom out"], div[title="Go home"], div[title="Toggle full page"], div[title="Previous page"], div[title="Next page"], div[title="Rotate left"], div[title="Rotate right"], div[title="Flip Horizontally"]': {
+      color: '#e0e0e0',
+    },
+    'div[title="Zoom in"]::before, div[title="Zoom out"]::before, div[title="Go home"]::before, div[title="Toggle full page"]::before, div[title="Previous page"]::before, div[title="Next page"]::before, div[title="Flip Horizontally"]::before, div[title="Rotate right"]::before, div[title="Rotate left"]::before': {
+      color: '#e0e0e0'
+    },
+  },
   
   // Common toolbar button styles
   'div[title="Zoom in"]::before, div[title="Zoom out"]::before, div[title="Go home"]::before, div[title="Toggle full page"]::before, div[title="Previous page"]::before, div[title="Next page"]::before, div[title="Flip Horizontally"]::before, div[title="Rotate right"]::before, div[title="Rotate left"]::before': {
