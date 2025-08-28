@@ -111,7 +111,7 @@ export function WindowTopBar({
 
         {/* Inline search controls (only when search service exists) */}
         {hasSearchService && (
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', minWidth: 200, maxWidth: 520, marginLeft: 8, marginRight: 8 }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', minWidth: 320, maxWidth: 800, marginLeft: 8, marginRight: 8 }}>
             <SearchPanelControls companionWindowId={`${windowId}-topbar`} windowId={windowId} />
           </div>
         )}

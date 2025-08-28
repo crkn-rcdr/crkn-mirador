@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeftSharp';
 import ChevronRightIcon from '@mui/icons-material/ChevronRightSharp';
+import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 import MiradorMenuButton from '../containers/MiradorMenuButton';
@@ -26,6 +27,29 @@ function getCanvasIdFromAnnotation(annotation, searchAnnotations = []) {
  * SearchPanelNavigation
  */
 import { useEffect, useRef, useState } from 'react';
+
+const NavPill = styled('div')(({ theme }) => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 6,
+  padding: 0,
+  background: 'transparent',
+  borderRadius: 0,
+  boxShadow: 'none',
+  backdropFilter: 'none',
+  // Force the standard app font stack to avoid serif fallbacks
+  fontFamily: theme.typography.fontFamily,
+  fontSize: theme.typography.body2.fontSize,
+  lineHeight: theme.typography.body2.lineHeight,
+  '& .count': {
+    padding: '0 6px',
+  },
+  '& .MuiIconButton-root': {
+    width: 34,
+    height: 34,
+    borderRadius: 18,
+  },
+}));
 
 export function SearchPanelNavigation({
   numTotal,
@@ -110,7 +134,7 @@ export function SearchPanelNavigation({
   if (!isV2 && typeof numTotal === 'number' && searchHits.length < numTotal) lengthText += '+';
 
   return (
-    <Typography variant="body2" align="center">
+    <NavPill>
       <MiradorMenuButton
         aria-label={t('searchPreviousResult')}
         disabled={!hasPreviousResult}
@@ -118,11 +142,11 @@ export function SearchPanelNavigation({
       >
         <ChevronLeftIcon style={iconStyle} />
       </MiradorMenuButton>
-      <span style={{ unicodeBidi: 'plaintext' }}>
+      <Typography component="span" variant="body2" className="count" sx={{ unicodeBidi: 'plaintext' }}>
         {isV2
           ? (safeHitIndex + 1)
-          : t('pagination', { current: safeHitIndex + 1, total: lengthText })}
-      </span>
+          : `${safeHitIndex + 1} / ${lengthText}`}
+      </Typography>
       <MiradorMenuButton
         aria-label={t('searchNextResult')}
         disabled={!hasNextResult}
@@ -130,7 +154,7 @@ export function SearchPanelNavigation({
       >
         <ChevronRightIcon style={iconStyle} />
       </MiradorMenuButton>
-    </Typography>
+    </NavPill>
   );
 }
 

@@ -23,12 +23,7 @@ const Root = styled('div', { name: 'GalleryView', slot: 'thumbnail' })(
     width: '100%',
     height: '100%',
     boxSizing: 'border-box',
-    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
-    transition: 'transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease',
-    '&:hover': {
-      transform: 'translateY(-1px)',
-      boxShadow: theme.shadows[2],
-    },
+    transition: 'background-color 120ms ease',
     // Selection/highlight ring that hugs the outer edge, not inner padding
     ...(ownerState?.selected ? {
       '&::after': {
