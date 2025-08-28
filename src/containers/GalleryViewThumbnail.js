@@ -31,11 +31,12 @@ const mapStateToProps = (state, { canvas, windowId }) => {
   const searchAnnotations = getSearchAnnotationsForWindow(state, { windowId }) || [];
   const selectedAnnotationId = state.windows?.[windowId]?.selectedAnnotationId;
 
-  const flatResources = flatten(
-    searchAnnotations.map(a => Array.isArray(a?.resources) ? a.resources : []),
-  );
+  // Normalize resources array whether selector returns grouped or flat
+  const resources = Array.isArray(searchAnnotations)
+    ? (searchAnnotations[0]?.resources ? flatten(searchAnnotations.map(a => a.resources || [])) : searchAnnotations)
+    : [];
 
-  const canvasAnnotations = flatResources.filter(r => {
+  const canvasAnnotations = resources.filter(r => {
     const targetCanvasId = normalizeId(r?.targetId);
     return targetCanvasId && targetCanvasId === normalizeId(canvas.id);
   });
@@ -63,6 +64,19 @@ const mapStateToProps = (state, { canvas, windowId }) => {
     .map(s => s.length > 180 ? (s.slice(0, 177) + '…') : s)
     .slice(0, 2);
 
+  // Figure out which terms actually appear on this canvas
+  const canvasText = canvasAnnotations
+    .map(a => (
+      a?.chars
+      ?? a?.resource?.chars
+      ?? a?.match
+      ?? a?.body?.value
+      ?? ''
+    ))
+    .join(' \n ')
+    .toLowerCase();
+  const matchingTerms = searchTerms.filter(term => canvasText.includes(term.toLowerCase()));
+
   const hasOpenAnnotationsWindow =
     (getCompanionWindowsForContent(state, { content: 'annotations', windowId }) || []).length > 0;
 
@@ -86,6 +100,7 @@ const mapStateToProps = (state, { canvas, windowId }) => {
     highlighted: isHighlighted,
     searchTerms,
     searchSnippets,
+    matchingTerms,
   };
 };
 

@@ -34,6 +34,16 @@ const Chips = styled('div')(({ theme }) => ({
   bottom: theme.spacing(1),
 }));
 
+const TopLeft = styled('div')(({ theme }) => ({
+  position: 'absolute',
+  left: theme.spacing(1),
+  top: theme.spacing(1),
+  display: 'flex',
+  gap: theme.spacing(0.5),
+  pointerEvents: 'none',
+  zIndex: 2,
+}));
+
 export function GalleryViewThumbnail({
   canvas,
   selected = false,
@@ -43,6 +53,7 @@ export function GalleryViewThumbnail({
   annotationsCount = undefined,
   requestCanvasAnnotations = () => {},
   searchAnnotationsCount = 0,
+  matchingTerms = [],
   config = { height: 100, width: null },
   thumbSize = 'm',      // 's' | 'm' | 'l'
   tileW,                // new: inner cell width from Grid (already minus gap)
@@ -100,10 +111,60 @@ export function GalleryViewThumbnail({
           maxHeight={maxHeight}
           maxWidth={maxWidth}
         >
+          {/* Search results count (top-left, high contrast) */}
+          {searchAnnotationsCount > 0 && (
+            <TopLeft>
+              <Chip
+                icon={<SearchIcon fontSize="small" sx={{ color: 'inherit' }} />}
+                label={searchAnnotationsCount}
+                size="small"
+                sx={{
+                  pointerEvents: 'none',
+                  height: 22,
+                  bgcolor: 'rgba(0,0,0,0.72)',
+                  color: 'common.white',
+                  '& .MuiChip-label': { px: 0.75, fontSize: '0.72rem', fontWeight: 600 },
+                }}
+              />
+            </TopLeft>
+          )}
+
+          {/* Search term pills (left) */}
+          {Array.isArray(matchingTerms) && matchingTerms.length > 0 && (
+            <div style={{
+              position: 'absolute',
+              left: 8,
+              bottom: 8,
+              display: 'flex',
+              gap: 4,
+              flexWrap: 'nowrap',
+              maxWidth: '60%',
+              pointerEvents: 'none',
+            }}>
+              {matchingTerms.slice(0, 3).map((t) => (
+                <Chip
+                  key={t}
+                  size="small"
+                  label={t}
+                  sx={{
+                    pointerEvents: 'none',
+                    height: 20,
+                    '& .MuiChip-label': { px: 0.75, fontSize: '0.7rem' },
+                    bgcolor: 'highlights.primary',
+                    color: 'common.white',
+                  }}
+                />
+              ))}
+              {matchingTerms.length > 3 && (
+                <Chip
+                  size="small"
+                  label={`+${matchingTerms.length - 3}`}
+                  sx={{ pointerEvents: 'none', height: 20, '& .MuiChip-label': { px: 0.75, fontSize: '0.7rem' } }}
+                />
+              )}
+            </div>
+          )}
           <Chips>
-            {searchAnnotationsCount > 0 && (
-              <Chip icon={<SearchIcon fontSize="small" />} label={searchAnnotationsCount} size="small" />
-            )}
             {annotationsCount > 0 && (
               <Chip icon={<AnnotationIcon fontSize="small" />} label={annotationsCount} size="small" />
             )}
@@ -124,6 +185,7 @@ GalleryViewThumbnail.propTypes = {
   selected: PropTypes.bool,
   highlighted: PropTypes.bool,
   setCanvas: PropTypes.func.isRequired,
+  matchingTerms: PropTypes.arrayOf(PropTypes.string),
   thumbSize: PropTypes.oneOf(['s','m','l']),
   tileW: PropTypes.number,
   tileH: PropTypes.number,
