@@ -29,7 +29,7 @@ const StyledMosaic = styled(Mosaic)({
   height: '100%',
   '& .mosaic-preview': { boxShadow: 'none' },
   '& .mosaic-tile': { boxShadow: 'none' },
-  '& .mosaic-window': { boxShadow: 'none', borderRadius: '4px' },
+  '& .mosaic-window': { boxShadow: 'none', borderRadius: '4px', overflow: 'hidden' },
   '& .mosaic-window-toolbar': { display: 'none !important' },
 });
 
