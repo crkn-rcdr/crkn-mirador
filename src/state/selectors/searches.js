@@ -96,7 +96,14 @@ export const getSearchNumTotal = createSelector(
     const resultWithWithin = Object.values(results.data).find(result => (
       !result.isFetching && result.json && result.json.within
     ));
-    return resultWithWithin?.json?.within?.total;
+    const total = resultWithWithin?.json?.within?.total;
+    if (typeof total === 'number') return total;
+    // Fallback: derive from items/resources length (first available page)
+    const firstPage = Object.values(results.data).find(result => !result.isFetching && result.json);
+    if (!firstPage) return undefined;
+    if (Array.isArray(firstPage.json.items)) return firstPage.json.items.length;
+    if (Array.isArray(firstPage.json.resources)) return firstPage.json.resources.length;
+    return undefined;
   },
 );
 
@@ -188,10 +195,15 @@ export const getSortedSearchHitsForCompanionWindow = createSelector(
     getSearchAnnotationsForCompanionWindow,
   ],
   (searchHits, canvases, annotation) => {
-    if (!canvases?.length || !searchHits?.length) return EMPTY_ARRAY;
+    if (!canvases?.length) return EMPTY_ARRAY;
+    // Fallback for Content Search API v2 responses that omit `hits` and only provide annotations
+    const baseHits = (searchHits && searchHits.length > 0)
+      ? searchHits
+      : (annotation?.resources || []).map(r => ({ annotations: [r.id] }));
+    if (!baseHits.length) return EMPTY_ARRAY;
     const canvasIds = canvases.map(c => c.id);
 
-    return searchHits.concat().sort((a, b) => {
+    return baseHits.concat().sort((a, b) => {
       const hitA = annotation.resources.find(r => r.id === a.annotations?.[0]);
       const hitB = annotation.resources.find(r => r.id === b.annotations?.[0]);
       return canvasIds.indexOf(hitA?.targetId || '') - canvasIds.indexOf(hitB?.targetId || '');

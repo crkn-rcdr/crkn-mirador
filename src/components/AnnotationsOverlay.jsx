@@ -20,7 +20,8 @@ function parseTarget(annotation) {
 export function AnnotationsOverlay({
   viewer,
   searchAnnotations = [],
-  currentCanvasId, // ✅ current canvas from Redux
+  currentCanvasId,
+  canvasWorld,
 }) {
   const overlayRef = useRef(null);
 
@@ -44,14 +45,19 @@ export function AnnotationsOverlay({
       if (!overlayRef.current || !viewer.world.getItemCount()) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      const ids = (canvasWorld?.canvasIds || []).map(s => (s || '').toString());
       searchAnnotations.forEach((annoWrapper) => {
         (annoWrapper.resources || []).forEach((anno) => {
           const { canvasId, rect } = parseTarget(anno);
-          if (!rect || canvasId !== currentCanvasId) return;
+          if (!rect) return;
+
+          // draw only if this canvas is visible in current world
+          const idx = ids.findIndex(id => id.split('#')[0] === (canvasId || '').split('#')[0]);
+          if (idx < 0 || idx >= viewer.world.getItemCount()) return;
 
           const [x, y, w, h] = rect;
-          const item = viewer.world.getItemAt(0);
-          if (!item?.imageToViewportRectangle) return; // SAFETY
+          const item = viewer.world.getItemAt(idx);
+          if (!item?.imageToViewportRectangle) return;
 
           const rectImg = new OpenSeadragon.Rect(x, y, w, h);
           const vpRect = item.imageToViewportRectangle(rectImg);
@@ -81,7 +87,7 @@ export function AnnotationsOverlay({
       if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
       overlayRef.current = null;
     };
-  }, [viewer, searchAnnotations, currentCanvasId]);
+  }, [viewer, searchAnnotations, currentCanvasId, canvasWorld]);
 
   /** Redraw whenever annotations or current canvas changes */
   useEffect(() => {
@@ -106,7 +112,7 @@ export function AnnotationsOverlay({
         ctx.fillRect(screenRect.x, screenRect.y, screenRect.width, screenRect.height);
       });
     });
-  }, [searchAnnotations, currentCanvasId, viewer]);
+  }, [searchAnnotations, currentCanvasId, viewer, canvasWorld]);
 
   return null;
 }

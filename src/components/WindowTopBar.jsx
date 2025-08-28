@@ -45,7 +45,7 @@ const PillGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   border: 'none',
   borderRadius: 50,
   boxShadow: theme.shadows[2],
-  padding: 4,
+  padding: 6,
   gap: 4,
   '& .MuiToggleButton-root': {
     margin: 0,

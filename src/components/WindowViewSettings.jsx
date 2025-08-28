@@ -11,27 +11,37 @@ import BookViewIcon from './icons/BookViewIcon';
 import GalleryViewIcon from './icons/GalleryViewIcon';
 
 const ViewOption = styled(MenuItem, { name: 'WindowViewSettings', slot: 'option' })(({ selected, theme }) => ({
+  borderRadius: 50,
+  margin: 0,
+  minHeight: 28,
+  padding: '2px 8px',
+  lineHeight: 1,
+  '&:hover': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  '&.Mui-selected': {
+    backgroundColor: `${(theme.vars || theme).palette.action.selected} !important`,
+    color: theme.palette.text.primary,
+  },
+  '& .MuiFormControlLabel-root': {
+    margin: 0,
+    alignItems: 'center',
+    '& svg': { width: 18, height: 18 },
+  },
   '& .MuiFormControlLabel-label': {
-    borderBottom: '2px solid transparent',
-    ...(selected && {
-      borderBottomColor: theme.palette.secondary.main,
-    }),
-    '&.Mui-selected': {
-      backgroundColor: 'transparent !important',
-    },
-    '&.Mui-selected.Mui-focusVisible': {
-      backgroundColor: `${(theme.vars || theme).palette.action.focus} !important`,
-    },
-    '&:focused': {
-      backgroundColor: `${(theme.vars || theme).palette.action.focus} !important`,
-    },
-    color: selected ? theme.palette.secondary.main : undefined,
-    display: 'inline-block',
+    display: 'none', // no text label to match pill toggles
   },
 }));
 
-const StyledMenuList = styled(MenuList, { name: 'WindowViewSettings', slot: 'option' })(() => ({
+const StyledMenuList = styled(MenuList, { name: 'WindowViewSettings', slot: 'option' })(({ theme }) => ({
   display: 'inline-flex',
+  alignItems: 'center',
+  gap: 4,
+  background: '#fff',
+  color: theme.palette.text.primary,
+  borderRadius: 50,
+  boxShadow: theme.shadows[2],
+  padding: 6,
 }));
 
 /**
@@ -72,7 +82,8 @@ export function WindowViewSettings({
     </ViewOption>
   );
 
-  if (viewTypes.length === 0) return null;
+  // Only show when there are multiple view options available
+  if (!Array.isArray(viewTypes) || viewTypes.length <= 1) return null;
   return (
     <>
       <StyledMenuList role="menubar">

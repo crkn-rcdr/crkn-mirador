@@ -1,5 +1,5 @@
 // components/GalleryViewThumbnail.jsx
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import Chip from '@mui/material/Chip';
@@ -60,15 +60,7 @@ export function GalleryViewThumbnail({
   tileH,                // new: inner cell height from Grid (already minus gap)
 }) {
   const myRef = useRef();
-  const wasSelected = useRef(false);
   const [requestedAnnotations, setRequestedAnnotations] = useState(false);
-
-  useEffect(() => {
-    if (selected && !wasSelected.current) {
-      myRef.current?.scrollIntoView({ block: 'nearest' });
-    }
-    wasSelected.current = selected;
-  }, [selected]);
 
   // Prefer tile-based sizing from Grid to avoid mismatch/overlap.
   const pad = 16; // Root padding (8 top + 8 bottom) with MUI spacing(1)
@@ -98,7 +90,6 @@ export function GalleryViewThumbnail({
     <InView onChange={handleIntersection}>
       <Root
         ownerState={ownerState}
-        key={canvas.id || canvas.index}
         onClick={handleSelect}
         ref={myRef}
         role="button"

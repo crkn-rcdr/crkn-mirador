@@ -1,5 +1,5 @@
 // components/GalleryView.jsx
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -108,6 +108,7 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId }) {
   const gridRef = useRef(null);
   // store latest computed layout values without re-render churn
   const layoutRef = useRef({ columnCount: 1 });
+  const lastIdxRef = useRef(-1);
 
   // normalize IIIF ids (strip fragment)
   const normalizeId = (id) => (id || '').toString().split('#')[0];
@@ -119,6 +120,7 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId }) {
 
     const idx = safe.findIndex(c => normalizeId(c?.id) === normalizeId(currentCanvasId));
     if (idx < 0) return;
+    if (lastIdxRef.current === idx) return; // avoid redundant scrolls that can jitter
 
     const cc = Math.max(1, layoutRef.current.columnCount || 1);
     const rowIndex = Math.floor(idx / cc);
@@ -135,6 +137,8 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId }) {
       const rowHeight = (thumbSize === 's' ? SIZE_PRESETS.s.tileH : thumbSize === 'm' ? SIZE_PRESETS.m.tileH : SIZE_PRESETS.l.tileH);
       gridRef.current.scrollTo({ scrollTop: Math.max(0, rowIndex * rowHeight) });
     }
+
+    lastIdxRef.current = idx;
   }, [currentCanvasId, thumbSize, safe]);
   //<CompactToggleButton value="fit" aria-label="Fit width">F</CompactToggleButton> - todo with search term highlighting
 

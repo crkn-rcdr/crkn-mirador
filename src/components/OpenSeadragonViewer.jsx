@@ -29,6 +29,9 @@ export function OpenSeadragonViewer({
   osdConfig = {},
   drawAnnotations = false,
   canvases = [],
+  visibleCanvases = [],
+  viewType = 'single',
+  currentCanvasId = undefined,
   canvasWorld,
   nonTiledImages = [],
   updateViewport,
@@ -47,15 +50,17 @@ export function OpenSeadragonViewer({
   const viewerRef = useRef(null);
   const containerRef = useRef(null);
   const [tileSources, setTileSources] = useState([]);
-  const [internalIndex, setInternalIndex] = useState(0);
+  const [addedCount, setAddedCount] = useState(0);
 
   const canvasIndex = useSelector(state => getCanvasIndex(state, { windowId }));
 
   const canvasKeys = canvases.map(c => c.id).join('|');
   const nonTiledKeys = nonTiledImages.map(c => c.id).join('|');
+  const visibleKeys = (visibleCanvases || []).map(c => c.id).join('|');
 
-  /** Fetch tile sources */
+  /** Fetch tile sources for 'single' view (sequence of all canvases) */
   useEffect(() => {
+    if (viewType !== 'single') return;
     let cancelled = false;
     const infoCache = {};
 
@@ -75,9 +80,10 @@ export function OpenSeadragonViewer({
     }
 
     async function buildSources() {
+      const targets = canvases;
       const sources = [];
       const infoResponsesByCanvas = await Promise.all(
-        canvases.map(async canvas => {
+        targets.map(async canvas => {
           const services = canvas.imageServiceIds || [];
           return Promise.all(services.map(fetchInfoJson));
         })
@@ -97,7 +103,56 @@ export function OpenSeadragonViewer({
 
     buildSources();
     return () => { cancelled = true; };
-  }, [canvasKeys, nonTiledKeys, canvases, nonTiledImages]);
+  }, [canvasKeys, nonTiledKeys, viewType]);
+
+  /** Fetch tile sources for 'book' and 'scroll' views */
+  useEffect(() => {
+    if (viewType === 'single') return;
+    let cancelled = false;
+    const infoCache = {};
+
+    async function fetchInfoJson(id) {
+      if (!id) return null;
+      if (infoCache[id]) return infoCache[id];
+      try {
+        const resp = await fetch(id.replace(/\/info\.json$/, '') + '/info.json');
+        if (!resp.ok) throw new Error(`Bad response for ${id}`);
+        const json = await resp.json();
+        infoCache[id] = { id, json };
+        return infoCache[id];
+      } catch (e) {
+        console.error('Failed to fetch info.json', id, e);
+        return null;
+      }
+    }
+
+    async function buildSources() {
+      const targets = (viewType === 'book' && visibleCanvases && visibleCanvases.length > 0)
+        ? visibleCanvases
+        : canvases;
+      const sources = [];
+      const infoResponsesByCanvas = await Promise.all(
+        targets.map(async canvas => {
+          const services = canvas.imageServiceIds || [];
+          return Promise.all(services.map(fetchInfoJson));
+        })
+      );
+
+      infoResponsesByCanvas.flat().filter(Boolean).forEach(resp => sources.push(resp.json));
+
+      nonTiledImages.forEach(cr => {
+        const type = cr.getProperty('type');
+        const format = cr.getProperty('format') || '';
+        if (!(type === 'Image' || type === 'dctypes:Image' || format.startsWith('image/'))) return;
+        sources.push(cr.id);
+      });
+
+      if (!cancelled) setTileSources(sources);
+    }
+
+    buildSources();
+    return () => { cancelled = true; };
+  }, [viewType, visibleKeys, canvasKeys, nonTiledKeys]);
 
   /** Initialize OSD */
   useEffect(() => {
@@ -108,14 +163,15 @@ export function OpenSeadragonViewer({
       prefixUrl: '/openseadragon/images/',
       crossOriginPolicy: 'Anonymous',
       renderer: 'canvas',
+      preserveViewport: true,
       showZoomControl: true,
       showHomeControl: true,
       showFullPageControl: true,
       showRotationControl: true,
       showFlipControl: true,
       showNavigator: false,
-      showSequenceControl: true,
-      sequenceMode: true,
+      showSequenceControl: viewType === 'single',
+      sequenceMode: viewType === 'single',
       blendTime: 0,
       immediateRender: true,
       preserveOverlays: true,
@@ -144,33 +200,106 @@ export function OpenSeadragonViewer({
       viewer.destroy();
       viewerRef.current = null;
     };
-  }, [windowId, osdConfig, updateViewport]);
+  }, [windowId, osdConfig, updateViewport, viewType]);
 
-  /** Open tile sources */
+  /** Arrange and open tile sources according to viewType */
   useEffect(() => {
-    if (!viewerRef.current || tileSources.length === 0) return;
+    const viewer = viewerRef.current;
+    if (!viewer || tileSources.length === 0) return;
 
-    viewerRef.current.open(tileSources);
+    const GAP = 0.05; // small spacing in world units
+    const isScroll = viewType === 'scroll';
+    const isBook = viewType === 'book';
+    const isSingle = viewType === 'single';
 
-    viewerRef.current.addOnceHandler('open', () => {
-      const world = viewerRef.current.world;
-      if (world.getItemCount() > 0) {
-        viewerRef.current.viewport.fitBounds(world.getHomeBounds(), true);
-        viewerRef.current.viewport.minZoomLevel = viewerRef.current.viewport.getZoom() * 0.5;
-        viewerRef.current.viewport.maxZoomLevel = viewerRef.current.viewport.getZoom() * 40;
+    // Single: open as sequence for fast page switching (no flicker)
+    if (isSingle) {
+      viewer.open(tileSources);
+      viewer.addOnceHandler('open', () => {
+        const world = viewer.world;
+        if (world.getItemCount() > 0) {
+          viewer.viewport.fitBounds(world.getHomeBounds(), true);
+          viewer.viewport.minZoomLevel = viewer.viewport.getZoom() * 0.5;
+          viewer.viewport.maxZoomLevel = viewer.viewport.getZoom() * 40;
+          if (canvasIndex >= 0) viewer.goToPage(canvasIndex);
+        }
+      });
+      return;
+    }
 
-        if (canvasIndex >= 0) viewerRef.current.goToPage(canvasIndex);
-        setInternalIndex(canvasIndex);
+    // Book / Scroll: manual layout of items in the world
+    viewer.world.removeAll();
+    setAddedCount(0);
+
+    let y = 0;
+    let pending = tileSources.length;
+    const sources = tileSources;
+
+    sources.forEach((ts, idx) => {
+      const wpx = typeof ts === 'object' ? (ts.width || ts['@width']) : undefined;
+      const hpx = typeof ts === 'object' ? (ts.height || ts['@height']) : undefined;
+      const ratio = (wpx && hpx) ? (wpx / hpx) : 1; // width/height
+
+      let posX = 0;
+      let posY = 0;
+      let width = 1; // default width in world units
+
+      if (isScroll) {
+        posX = 0;
+        posY = y;
+        y += (1 / ratio) + GAP; // advance by height
+      } else if (isBook) {
+        posX = (idx % 2 === 0) ? 0 : 1 + GAP; // side-by-side
+        posY = 0;
       }
-    });
-  }, [tileSources, canvasIndex]);
 
-  /** Sync viewer when current canvas in Redux changes */
+      viewer.addTiledImage({
+        tileSource: ts,
+        x: posX,
+        y: posY,
+        width,
+        success: () => {
+          pending -= 1;
+          setAddedCount((c) => c + 1);
+          if (pending === 0) {
+            const world = viewer.world;
+            if (world.getItemCount() > 0) {
+              viewer.viewport.fitBounds(world.getHomeBounds(), true);
+              const current = viewer.viewport.getZoom();
+              viewer.viewport.minZoomLevel = current * 0.5;
+              viewer.viewport.maxZoomLevel = current * 40;
+            }
+          }
+        },
+      });
+    });
+
+    // Fallback: if nothing was added (unexpected tileSource shape), open as a sequence
+    setTimeout(() => {
+      try {
+        if (viewer.world.getItemCount() === 0) {
+          viewer.open(tileSources);
+        }
+      } catch (_) { /* ignore */ }
+    }, 0);
+  }, [tileSources, viewType]);
+
+  /** Sync viewer when current canvas changes (no auto-zoom to item) */
   useEffect(() => {
-    if (!viewerRef.current || canvasIndex < 0 || internalIndex === canvasIndex) return;
-    viewerRef.current.goToPage(canvasIndex);
-    setInternalIndex(canvasIndex);
-  }, [canvasIndex, internalIndex]);
+    const viewer = viewerRef.current;
+    if (!viewer || !currentCanvasId) return;
+
+    if (viewType === 'single') {
+      // Do not clamp to world.getItemCount(); in sequence mode it stays 1.
+      // Let OSD handle clamping internally.
+      viewer.goToPage(canvasIndex);
+      return;
+    }
+
+    // Book/Scroll: do not change zoom automatically
+  }, [currentCanvasId, canvasIndex, viewType]);
+
+  // Removed auto-zoom to search hit by request
 
   const pluginProps = {
     canvasWorld,
@@ -183,7 +312,9 @@ export function OpenSeadragonViewer({
     updateViewport,
     windowId,
     annotations,
-    searchAnnotations,
+    searchAnnotations: Array.isArray(searchAnnotations)
+      ? searchAnnotations.map(r => ({ resources: [r] }))
+      : [],
     hoveredAnnotationIds,
     selectAnnotation,
     deselectAnnotation,
@@ -215,6 +346,7 @@ OpenSeadragonViewer.propTypes = {
   children: PropTypes.node,
   drawAnnotations: PropTypes.bool,
   canvases: PropTypes.arrayOf(PropTypes.object),
+  visibleCanvases: PropTypes.arrayOf(PropTypes.object),
   label: PropTypes.string,
   nonTiledImages: PropTypes.array,
   osdConfig: PropTypes.object,
@@ -228,4 +360,7 @@ OpenSeadragonViewer.propTypes = {
   selectedAnnotationId: PropTypes.string,
   palette: PropTypes.object,
   highlightAllAnnotations: PropTypes.bool,
+  viewType: PropTypes.oneOf(['single', 'book', 'scroll']),
+  currentCanvasId: PropTypes.string,
+  searchAnnotations: PropTypes.array,
 };

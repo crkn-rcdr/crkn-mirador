@@ -7,7 +7,12 @@ import {
   getSelectedContentSearchAnnotationIds,
   getSearchNumTotal,
   getSortedSearchHitsForCompanionWindow,
+  getNextSearchId,
+  getSearchQuery,
+  getSortedSearchAnnotationsForCompanionWindow,
   getThemeDirection,
+  getWindowViewType,
+  getManifestSearchService,
 } from '../state/selectors';
 
 /**
@@ -15,15 +20,34 @@ import {
  * @memberof SearchPanelControls
  * @private
  */
-const mapStateToProps = (state, { companionWindowId, windowId }) => ({
-  direction: getThemeDirection(state),
-  numTotal: getSearchNumTotal(state, { companionWindowId, windowId }),
-  searchHits: getSortedSearchHitsForCompanionWindow(state, { companionWindowId, windowId }),
-  selectedContentSearchAnnotation: getSelectedContentSearchAnnotationIds(state, {
-    companionWindowId,
-    windowId,
-  }),
-});
+const mapStateToProps = (state, { companionWindowId, windowId }) => {
+  const svc = getManifestSearchService(state, { windowId });
+  const profile = (svc && (
+    (typeof svc.getProfile === 'function' && svc.getProfile())
+    || (typeof svc.getProperty === 'function' && svc.getProperty('profile'))
+    || svc.profile
+  )) || '';
+  const type = (svc && (
+    (typeof svc.getProperty === 'function' && svc.getProperty('type'))
+    || svc.type
+  )) || '';
+  const isV2 = /\/api\/search\/2\//.test(String(profile)) || String(type) === 'ContentSearchService2';
+
+  return {
+    direction: getThemeDirection(state),
+    numTotal: getSearchNumTotal(state, { companionWindowId, windowId }),
+    searchHits: getSortedSearchHitsForCompanionWindow(state, { companionWindowId, windowId }),
+    searchAnnotations: getSortedSearchAnnotationsForCompanionWindow(state, { companionWindowId, windowId }),
+    nextSearch: getNextSearchId(state, { companionWindowId, windowId }),
+    query: getSearchQuery(state, { companionWindowId, windowId }) || '',
+    viewType: getWindowViewType(state, { windowId }),
+    isV2,
+    selectedContentSearchAnnotation: getSelectedContentSearchAnnotationIds(state, {
+      companionWindowId,
+      windowId,
+    }),
+  };
+};
 
 /**
  * mapDispatchToProps - to hook up connect
@@ -34,9 +58,11 @@ const mapDispatchToProps = (dispatch, { windowId }) => ({
   selectAnnotation: (...args) => dispatch(
     actions.selectAnnotation(windowId, ...args),
   ),
-  setCurrentCanvas: (windowId, canvasId) => dispatch(
-    actions.setCurrentCanvas(windowId, canvasId),
+  // Map to setCanvas (setCurrentCanvas is not defined in actions)
+  setCurrentCanvas: (windowId2, canvasId) => dispatch(
+    actions.setCanvas(windowId2, canvasId),
   ), 
+  fetchSearch: (...args) => dispatch(actions.fetchSearch(...args)),
 });
 
 const enhance = compose(

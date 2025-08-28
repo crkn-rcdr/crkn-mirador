@@ -13,7 +13,12 @@ import {
   getCompanionWindowsForContent,
   getCurrentCanvasWorld,
   getCanvases,
-  getCanvasIndex
+  getCanvasIndex,
+  getMiradorCanvasWrapper,
+  getVisibleCanvases,
+  getWindowViewType,
+  getSearchAnnotationsForWindow,
+  getSelectedAnnotationId,
 } from '../state/selectors';
 
 /**
@@ -23,13 +28,23 @@ import {
  */
 const mapStateToProps = (state, { windowId }) => {
   const canvasWorld = getCurrentCanvasWorld(state, { windowId });
-  const canvases = getCanvases(state, { windowId });
+  const allCanvases = getCanvases(state, { windowId }) || [];
+  const visibleCanvases = getVisibleCanvases(state, { windowId }) || [];
+  const getMiradorCanvas = getMiradorCanvasWrapper(state);
+  const currentCanvas = getCurrentCanvas(state, { windowId });
   return {
     canvasWorld,
     drawAnnotations: getConfig(state).window.forceDrawAnnotations
       || getCompanionWindowsForContent(state, { content: 'annotations', windowId }).length > 0
       || getCompanionWindowsForContent(state, { content: 'search', windowId }).length > 0,
-    canvases:canvases,
+    // All canvases (wrapped) for reference
+    canvases: allCanvases.map(getMiradorCanvas),
+    // Visible canvases drive rendering
+    visibleCanvases: visibleCanvases.map(getMiradorCanvas),
+    viewType: getWindowViewType(state, { windowId }),
+    currentCanvasId: (currentCanvas || {}).id,
+    searchAnnotations: getSearchAnnotationsForWindow(state, { windowId }) || [],
+    selectedAnnotationId: getSelectedAnnotationId(state, { windowId }),
     label: getCanvasLabel(state, {
       canvasId: (getCurrentCanvas(state, { windowId }) || {}).id,
       windowId,

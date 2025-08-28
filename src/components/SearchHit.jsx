@@ -91,13 +91,14 @@ export function SearchHit({
     const pageIndex = canvases.findIndex(c => c.id === canvasId);
     if (pageIndex < 0) return;
 
+    // Select the annotation
+    if (annotation.id) selectAnnotation(annotation.id);
+
     // Switch to single view + setCanvas
     focusOnCanvas(canvasId);
 console.log("SearchHit clicked, annotation:", annotation);
 console.log("canvasId extracted:", canvasId);
 console.log("All canvases in state:", canvases.map(c => c.id));
-    // Select the annotation
-    if (annotation.id) selectAnnotation(annotation.id);
 
     // Jump OpenSeadragon safely
     if (viewer) {

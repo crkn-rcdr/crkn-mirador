@@ -107,12 +107,18 @@ export const searchesReducer = (state = {}, action) => {
         ...state,
         [action.windowId]: Object.keys(state[action.windowId]).reduce((object, key) => {
           const search = state[action.windowId][key];
-          const searchHasAnnotation = search.data
-            && Object.values(search.data)
-              .filter(resp => resp.json && resp.json.resources)
-              .some(resp => (
-                flatten([resp.json.resources]).some(r => r['@id'] === action.annotationId)
-              ));
+          const searchHasAnnotation = search.data && Object.values(search.data).some(resp => {
+            if (!resp.json) return false;
+            // v2 (old) shape with `resources`
+            if (resp.json.resources) {
+              return flatten([resp.json.resources]).some(r => r['@id'] === action.annotationId || r.id === action.annotationId);
+            }
+            // Content Search API v2 (AnnotationPage with `items`)
+            if (Array.isArray(resp.json.items)) {
+              return resp.json.items.some(item => (item['@id'] === action.annotationId) || (item.id === action.annotationId));
+            }
+            return false;
+          });
 
           if (searchHasAnnotation) {
             object[key] = { // eslint-disable-line no-param-reassign

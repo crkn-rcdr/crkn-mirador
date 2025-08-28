@@ -30,6 +30,7 @@ import {
   getWindowConfig,
   getMiradorCanvasWrapper,
   getMiradorManifestWrapper,
+  getSelectedAnnotationId,
 } from '../selectors';
 import { fetchManifests } from './iiif';
 
@@ -177,8 +178,12 @@ export function* setCurrentAnnotationsOnCurrentCanvas({
   );
 
   if (Object.values(annotationBySearch).length > 0) {
-    // if the currently selected annotation isn't on this canvas, do a thing.
-    yield put(selectAnnotation(windowId, Object.values(annotationBySearch)[0][0]));
+    // Only auto-select if nothing is currently selected, to avoid clobbering
+    // an explicit Next/Prev selection.
+    const currentlySelected = yield select(getSelectedAnnotationId, { windowId });
+    if (!currentlySelected) {
+      yield put(selectAnnotation(windowId, Object.values(annotationBySearch)[0][0]));
+    }
   }
 }
 
