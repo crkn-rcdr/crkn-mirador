@@ -15,7 +15,8 @@ const Root = styled('div', { name: 'GalleryView', slot: 'thumbnail' })(
     ...(ownerState?.selected ? { boxShadow: `inset 0 0 0 2px ${theme.palette.primary.main}` } : {}),
     ...(ownerState?.highlighted ? { boxShadow: `inset 0 0 0 2px ${theme.palette.info.main}` } : {}),
     cursor: 'pointer',
-    margin: theme.spacing(1),
+    // Margin here caused overflow beyond grid cells; spacing comes from Grid gap.
+    margin: 0,
     borderRadius: theme.shape.borderRadius,
     padding: theme.spacing(1),
     position: 'relative',

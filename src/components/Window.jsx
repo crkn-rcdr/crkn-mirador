@@ -89,14 +89,26 @@ const FloatingMenu = styled('div')(({ theme }) => ({
 
 // Compact group styling
 const CompactGroup = styled(ToggleButtonGroup)(({ theme }) => ({
+  gap: 4,
   '& .MuiToggleButton-root': {
     margin: 0,
     minWidth: 28,
     padding: '1px 4px',
     fontSize: '0.72rem',
     lineHeight: 1,
-    border: `none`,
+    border: 'none',
     borderRadius: 50,
+  },
+  '& .MuiToggleButton-root:hover': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  '& .MuiToggleButton-root.Mui-selected': {
+    border: 'none',
+    backgroundColor: theme.palette.action.selected,
+    color: theme.palette.text.primary,
+  },
+  '& .MuiToggleButton-root.Mui-selected:hover': {
+    backgroundColor: theme.palette.action.selected,
   },
 }));
 

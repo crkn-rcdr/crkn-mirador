@@ -14,6 +14,8 @@ const Root = styled('div', { name: 'GalleryView', slot: 'root' })(({ theme }) =>
   backgroundColor: theme.palette.background.paper,
   display: 'flex',
   flexDirection: 'column',
+  minHeight: 0,
+  overflow: 'hidden',
 }));
 
 const Bar = styled('div')(({ theme }) => ({
@@ -24,10 +26,44 @@ const Bar = styled('div')(({ theme }) => ({
   borderBottom: `1px solid ${theme.palette.divider}`,
 }));
 
-const CompactToggleButton = styled(ToggleButton)(({ theme }) => ({
-  minWidth: 28,
-  padding: '2px 2px',
-  fontSize: '0.75rem',
+// Flex child that constrains AutoSizer to remaining space under the Bar
+const Viewport = styled('div')(() => ({
+  position: 'relative',
+  flex: '1 1 0',
+  minHeight: 0,
+  minWidth: 0,
+  overflow: 'hidden',
+}));
+
+// Match the Window view toggle style: pill, no borders, white background
+const CompactGroup = styled(ToggleButtonGroup)(({ theme }) => ({
+  background: '#fff',
+  color: theme.palette.text.primary,
+  border: 'none',
+  borderRadius: 50,
+  boxShadow: theme.shadows[2],
+  padding: 6,
+  gap: 4,
+  '& .MuiToggleButton-root': {
+    margin: 0,
+    minWidth: 28,
+    padding: '1px 4px',
+    fontSize: '0.72rem',
+    lineHeight: 1,
+    border: 'none',
+    borderRadius: 50,
+  },
+  '& .MuiToggleButton-root:hover': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  '& .MuiToggleButton-root.Mui-selected': {
+    border: 'none',
+    backgroundColor: theme.palette.action.selected,
+    color: theme.palette.text.primary,
+  },
+  '& .MuiToggleButton-root.Mui-selected:hover': {
+    backgroundColor: theme.palette.action.selected,
+  },
 }));
 
 const SIZE_PRESETS = {
@@ -105,21 +141,22 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId }) {
   return (
     <Root>
       <Bar>
-        <ToggleButtonGroup
+        <CompactGroup
           exclusive
           size="small"
           value={thumbSize}
           onChange={(e, val) => { if (val) setThumbSize(val); }}
         >
-          <CompactToggleButton value="s">S</CompactToggleButton>
-          <CompactToggleButton value="m">M</CompactToggleButton>
-          <CompactToggleButton value="l">L</CompactToggleButton>
-        </ToggleButtonGroup>
+          <ToggleButton value="s">S</ToggleButton>
+          <ToggleButton value="m">M</ToggleButton>
+          <ToggleButton value="l">L</ToggleButton>
+        </CompactGroup>
       </Bar>
 
-      <AutoSizer>
-        {({ width, height }) => {
-          if (!width || !height) return null;
+      <Viewport>
+        <AutoSizer>
+          {({ width, height }) => {
+            if (!width || !height) return null;
 
           let columnCount;
           let rowCount;
@@ -146,24 +183,25 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId }) {
 
           const itemData = { canvases: safe, windowId, columnCount, thumbSize, tileW, tileH };
 
-          return (
-            <Grid
-              ref={gridRef}
-              width={width}
-              height={height}
-              columnCount={columnCount}
-              rowCount={rowCount}
-              columnWidth={columnWidth}
-              rowHeight={rowHeight}
-              itemData={itemData}
-              overscanRowCount={1}
-              overscanColumnCount={1}
-            >
-              {Cell}
-            </Grid>
-          );
-        }}
-      </AutoSizer>
+            return (
+              <Grid
+                ref={gridRef}
+                width={width}
+                height={height}
+                columnCount={columnCount}
+                rowCount={rowCount}
+                columnWidth={columnWidth}
+                rowHeight={rowHeight}
+                itemData={itemData}
+                overscanRowCount={1}
+                overscanColumnCount={1}
+              >
+                {Cell}
+              </Grid>
+            );
+          }}
+        </AutoSizer>
+      </Viewport>
     </Root>
   );
 }
