@@ -1,5 +1,5 @@
 // components/GalleryView.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -65,10 +65,42 @@ const Cell = React.memo(({ columnIndex, rowIndex, style, data }) => {
   );
 }, areEqual);
 
-export function GalleryView({ canvases = [], windowId }) {
+export function GalleryView({ canvases = [], windowId, currentCanvasId }) {
   const safe = (canvases || []).filter(c => c && (c.id || typeof c.index !== 'undefined'));
   const [thumbSize, setThumbSize] = useState('s');
   const preset = SIZE_PRESETS[thumbSize];
+  const gridRef = useRef(null);
+  // store latest computed layout values without re-render churn
+  const layoutRef = useRef({ columnCount: 1 });
+
+  // normalize IIIF ids (strip fragment)
+  const normalizeId = (id) => (id || '').toString().split('#')[0];
+
+  // When the current canvas changes (e.g., from a SearchHit),
+  // scroll the virtualized grid to bring its thumbnail into view.
+  useEffect(() => {
+    if (!currentCanvasId || !gridRef.current || safe.length === 0) return;
+
+    const idx = safe.findIndex(c => normalizeId(c?.id) === normalizeId(currentCanvasId));
+    if (idx < 0) return;
+
+    const cc = Math.max(1, layoutRef.current.columnCount || 1);
+    const rowIndex = Math.floor(idx / cc);
+    const columnIndex = idx % cc;
+
+    // Prefer scrollToItem if available (FixedSizeGrid supports it)
+    if (typeof gridRef.current.scrollToItem === 'function') {
+      try { gridRef.current.scrollToItem({ rowIndex, columnIndex, align: 'smart' }); }
+      catch (_) { /* no-op; fall back below */ }
+    }
+
+    // Fallback: approximate using rowHeight if needed
+    if (typeof gridRef.current.scrollToItem !== 'function' && typeof gridRef.current.scrollTo === 'function') {
+      const rowHeight = (thumbSize === 's' ? SIZE_PRESETS.s.tileH : thumbSize === 'm' ? SIZE_PRESETS.m.tileH : SIZE_PRESETS.l.tileH);
+      gridRef.current.scrollTo({ scrollTop: Math.max(0, rowIndex * rowHeight) });
+    }
+  }, [currentCanvasId, thumbSize, safe]);
+  //<CompactToggleButton value="fit" aria-label="Fit width">F</CompactToggleButton> - todo with search term highlighting
 
   return (
     <Root>
@@ -82,7 +114,6 @@ export function GalleryView({ canvases = [], windowId }) {
           <CompactToggleButton value="s">S</CompactToggleButton>
           <CompactToggleButton value="m">M</CompactToggleButton>
           <CompactToggleButton value="l">L</CompactToggleButton>
-          <CompactToggleButton value="fit" aria-label="Fit width">F</CompactToggleButton>
         </ToggleButtonGroup>
       </Bar>
 
@@ -110,10 +141,14 @@ export function GalleryView({ canvases = [], windowId }) {
           const tileW = columnWidth - GAP;
           const tileH = rowHeight - GAP;
 
+          // expose latest column count for scroll effect
+          layoutRef.current = { columnCount };
+
           const itemData = { canvases: safe, windowId, columnCount, thumbSize, tileW, tileH };
 
           return (
             <Grid
+              ref={gridRef}
               width={width}
               height={height}
               columnCount={columnCount}
@@ -136,4 +171,5 @@ export function GalleryView({ canvases = [], windowId }) {
 GalleryView.propTypes = {
   canvases: PropTypes.array,
   windowId: PropTypes.string.isRequired,
+  currentCanvasId: PropTypes.string,
 };
