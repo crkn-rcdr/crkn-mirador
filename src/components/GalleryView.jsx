@@ -3,10 +3,11 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { FixedSizeGrid as Grid, areEqual } from 'react-window';
+import { VariableSizeGrid as Grid, areEqual } from 'react-window';
 import GalleryViewThumbnail from '../containers/GalleryViewThumbnail';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Slider from '@mui/material/Slider';
+import BiIcon from './BiIcon';
+import MiradorMenuButton from '../containers/MiradorMenuButton';
 import { useTranslation } from 'react-i18next';
 
 const Root = styled('div', { name: 'GalleryView', slot: 'root' })(({ theme }) => ({
@@ -37,58 +38,70 @@ const Viewport = styled('div')(() => ({
   overflow: 'hidden',
 }));
 
-// Match the Window view toggle style: pill, theme-aware background
-const CompactGroup = styled(ToggleButtonGroup)(({ theme }) => ({
+// Slider-style controls to choose S/M/L/Fit
+const SizeControls = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(1.5),
   background: theme.palette.mode === 'dark' ? 'rgba(30,30,30,0.72)' : 'rgba(255,255,255,0.82)',
   color: theme.palette.text.primary,
   border: 'none',
-  borderRadius: 50,
+  borderRadius: 16,
   boxShadow: theme.shadows[2],
-  padding: 6,
-  gap: 4,
-  '& .MuiToggleButton-root': {
-    margin: 0,
-    minWidth: 28,
-    padding: '1px 4px',
-    fontSize: '0.72rem',
-    lineHeight: 1,
+  padding: '6px 10px',
+  minWidth: 220,
+}));
+
+const SizeSlider = styled(Slider)(({ theme }) => ({
+  color: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.55)',
+  height: 6,
+  padding: '6px 0',
+  '& .MuiSlider-rail': {
+    opacity: theme.palette.mode === 'dark' ? 0.35 : 0.25,
+  },
+  '& .MuiSlider-track': {
     border: 'none',
-    borderRadius: 50,
   },
-  '& .MuiToggleButton-root:hover': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  '& .MuiToggleButton-root.Mui-selected': {
+  '& .MuiSlider-thumb': {
+    width: 18,
+    height: 18,
+    backgroundColor: theme.palette.mode === 'dark' ? '#666' : '#888',
     border: 'none',
-    backgroundColor: theme.palette.action.selected,
-    color: theme.palette.text.primary,
-  },
-  '& .MuiToggleButton-root.Mui-selected:hover': {
-    backgroundColor: theme.palette.action.selected,
+    boxShadow: theme.shadows[2],
+    '&:focus, &:hover, &.Mui-active': { boxShadow: theme.shadows[3] },
   },
 }));
 
+// Fixed target widths for thumbnails by size preset.
+// Heights are computed dynamically per-canvas from its aspect ratio.
 const SIZE_PRESETS = {
-  s: { tileH: 180, tileW: 120, scale: 1.0 },
-  m: { tileH: 270, tileW: 200, scale: 2.0 },
-  l: { tileH: 550, tileW: 390, scale: 4.0 },
+  s: { tileW: 120 },
+  m: { tileW: 200 },
+  l: { tileW: 390 },
 };
 
 const GAP = 20;
+// In 'fit' mode, reduce the column width slightly to avoid any rounding-driven X overflow.
+const FIT_NUDGE = 24; // px
+const FIT_LEFT_INSET = 16; // px left inset to align with SizeControls
+const FIT_CELL_SHRINK = 2; // additional in-cell shrink to be extra safe
 
 const Cell = React.memo(({ columnIndex, rowIndex, style, data }) => {
-  const { canvases, windowId, columnCount, thumbSize, tileW, tileH } = data;
+  const { canvases, windowId, columnCount, thumbSize, getTileW, getTileH } = data;
   const index = rowIndex * columnCount + columnIndex;
   if (index >= canvases.length) return null;
   const canvas = canvases[index];
 
+  const gapX = columnCount > 1 ? GAP : 0;
   const cellStyle = {
     ...style,
-    left: style.left + GAP / 2,
+    left: style.left + (columnCount === 1 ? FIT_LEFT_INSET : (gapX / 2)),
     top: style.top + GAP / 2,
-    width: style.width - GAP,
+    width: (style.width - gapX - (columnCount === 1 ? FIT_CELL_SHRINK : 0)),
     height: style.height - GAP,
   };
+  const tileW = getTileW();
+  const tileH = getTileH(index);
 
   return (
     <div style={cellStyle}>
@@ -103,15 +116,32 @@ const Cell = React.memo(({ columnIndex, rowIndex, style, data }) => {
   );
 }, areEqual);
 
-export function GalleryView({ canvases = [], windowId, currentCanvasId }) {
+export function GalleryView({ canvases = [], windowId, currentCanvasId, controlWidth }) {
   const { t } = useTranslation();
   const safe = (canvases || []).filter(c => c && (c.id || typeof c.index !== 'undefined'));
   const [thumbSize, setThumbSize] = useState('fit');
-  const preset = SIZE_PRESETS[thumbSize];
   const gridRef = useRef(null);
   // store latest computed layout values without re-render churn
   const layoutRef = useRef({ columnCount: 1 });
   const lastIdxRef = useRef(-1);
+  const sizeCacheRef = useRef({
+    width: 0,
+    columnCount: 1,
+    columnWidth: 0,
+    rowHeights: [],
+  });
+
+  // Derive aspect ratios for all canvases. Fallback ~0.7 if unknown.
+  const ratios = useMemo(() => safe.map((c) => {
+    try {
+      const w = typeof c.getWidth === 'function' ? c.getWidth() : (c?.width || c?.__jsonld?.width);
+      const h = typeof c.getHeight === 'function' ? c.getHeight() : (c?.height || c?.__jsonld?.height);
+      const r = Number(w) / Number(h);
+      return (Number.isFinite(r) && r > 0) ? r : 0.7;
+    } catch (_) {
+      return 0.7;
+    }
+  }), [safe]);
 
   // normalize IIIF ids (strip fragment)
   const normalizeId = (id) => (id || '').toString().split('#')[0];
@@ -148,17 +178,53 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId }) {
   return (
     <Root>
       <Bar>
-        <CompactGroup
-          exclusive
-          size="small"
-          value={thumbSize}
-          onChange={(e, val) => { if (val) setThumbSize(val); }}
-        >
-          <ToggleButton value="s" aria-label={t('thumbSizeSmall')}>S</ToggleButton>
-          <ToggleButton value="m" aria-label={t('thumbSizeMedium')}>M</ToggleButton>
-          <ToggleButton value="l" aria-label={t('thumbSizeLarge')}>L</ToggleButton>
-          <ToggleButton value="fit" aria-label={t('thumbSizeFit')}>F</ToggleButton>
-        </CompactGroup>
+        {(() => {
+          const SIZE_TO_INDEX = { s: 0, m: 1, l: 2, fit: 3 };
+          const INDEX_TO_SIZE = ['s', 'm', 'l', 'fit'];
+          const idx = SIZE_TO_INDEX[thumbSize] ?? 1;
+          const setIdx = (next) => setThumbSize(INDEX_TO_SIZE[Math.min(3, Math.max(0, next))]);
+          return (
+            <SizeControls>
+              <MiradorMenuButton
+                aria-label={t('thumbSizeSmall')}
+                onClick={() => setIdx(idx - 1)}
+                disabled={idx <= 0}
+                sx={(theme) => ({
+                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)',
+                  color: theme.palette.text.secondary,
+                  borderRadius: 2,
+                  width: 36,
+                  height: 28,
+                })}
+              >
+                <BiIcon name="dash" size={16} />
+              </MiradorMenuButton>
+              <SizeSlider
+                aria-label="Thumbnail size"
+                min={0}
+                max={3}
+                step={1}
+                value={idx}
+                onChange={(_, v) => setIdx(Array.isArray(v) ? v[0] : v)}
+                sx={{ width: controlWidth || 160 }}
+              />
+              <MiradorMenuButton
+                aria-label={t('thumbSizeLarge')}
+                onClick={() => setIdx(idx + 1)}
+                disabled={idx >= 3}
+                sx={(theme) => ({
+                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)',
+                  color: theme.palette.text.secondary,
+                  borderRadius: 2,
+                  width: 36,
+                  height: 28,
+                })}
+              >
+                <BiIcon name="plus" size={16} />
+              </MiradorMenuButton>
+            </SizeControls>
+          );
+        })()}
       </Bar>
 
       <Viewport>
@@ -166,33 +232,58 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId }) {
           {({ width, height }) => {
             if (!width || !height) return null;
 
-          let columnCount;
-          let rowCount;
-          let columnWidth;
-          let rowHeight;
+            // Determine columns from target width for this preset
+            let columnCount;
+            let columnWidth;
+            if (thumbSize === 'fit') {
+              columnCount = 1;
+              columnWidth = Math.max(1, Math.floor(width) - FIT_NUDGE - FIT_LEFT_INSET);
+            } else {
+              const target = (SIZE_PRESETS[thumbSize] || SIZE_PRESETS.m).tileW; // desired tile INNER width
+              // Determine how many target-width tiles (plus gaps) fit.
+              columnCount = Math.max(1, Math.floor((width + GAP) / (target + GAP)));
+              // Use fixed column width = target + GAP so tiles preserve requested width
+              columnWidth = target + GAP;
+            }
 
-          if (thumbSize === 'fit') {
-            columnCount = 1;
-            // Nudge down by GAP to avoid any X-overflow due to rounding + left/right spacing adjustments
-            const fitWidth = Math.max(1, width - GAP - 2);
-            columnWidth = fitWidth;
-            rowHeight = Math.max(1, Math.round(fitWidth * 1.7));
-            rowCount = safe.length;
-          } else {
-            columnCount = Math.max(1, Math.floor(width / preset.tileW));
-            rowCount = Math.ceil(safe.length / columnCount);
-            // Use computed width per column to avoid 1px overflow + X scroll due to rounding
-            columnWidth = Math.floor(width / columnCount);
-            rowHeight = preset.tileH;
-          }
+            const gapX = columnCount > 1 ? GAP : 0;
+            const tileInnerW = Math.max(1, columnWidth - gapX);
+            const rowCount = Math.ceil(safe.length / columnCount);
 
-          const tileW = columnWidth - GAP;
-          const tileH = rowHeight - GAP;
+            // Precompute row heights as the max tile height per row based on canvas ratios
+            const rowHeights = new Array(rowCount).fill(0).map((_, rowIndex) => {
+              let maxH = 0;
+              for (let c = 0; c < columnCount; c += 1) {
+                const idx = rowIndex * columnCount + c;
+                if (idx >= ratios.length) break;
+                const r = ratios[idx] || 0.7;
+                const h = Math.round(tileInnerW / r);
+                if (h > maxH) maxH = h;
+              }
+              // add GAP to produce the actual grid row height
+              return Math.max(1, maxH + GAP);
+            });
 
-          // expose latest column count for scroll effect
-          layoutRef.current = { columnCount };
+            // If layout-affecting values changed, reset measured cache
+            const cache = sizeCacheRef.current;
+            cache.width = width;
+            cache.columnCount = columnCount;
+            cache.columnWidth = columnWidth;
+            cache.rowHeights = rowHeights;
+            if (gridRef.current && typeof gridRef.current.resetAfterIndices === 'function') {
+              gridRef.current.resetAfterIndices({ columnIndex: 0, rowIndex: 0, shouldForceUpdate: true });
+            }
 
-          const itemData = { canvases: safe, windowId, columnCount, thumbSize, tileW, tileH };
+            const getTileW = () => tileInnerW;
+            const getTileH = (idx) => {
+              const r = ratios[idx] || 0.7;
+              return Math.max(1, Math.round(tileInnerW / r));
+            };
+
+            // expose latest column count for scroll effect
+            layoutRef.current = { columnCount };
+
+            const itemData = { canvases: safe, windowId, columnCount, thumbSize, getTileW, getTileH };
 
             return (
               <Grid
@@ -201,11 +292,15 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId }) {
                 height={height}
                 columnCount={columnCount}
                 rowCount={rowCount}
-                columnWidth={columnWidth}
-                rowHeight={rowHeight}
+                columnWidth={() => columnWidth}
+                rowHeight={(rowIndex) => sizeCacheRef.current.rowHeights[rowIndex] || (tileInnerW + GAP)}
                 itemData={itemData}
                 overscanRowCount={1}
                 overscanColumnCount={1}
+                itemKey={(params) => {
+                  const { columnIndex, rowIndex } = params;
+                  return rowIndex * columnCount + columnIndex;
+                }}
               >
                 {Cell}
               </Grid>
@@ -221,4 +316,5 @@ GalleryView.propTypes = {
   canvases: PropTypes.array,
   windowId: PropTypes.string.isRequired,
   currentCanvasId: PropTypes.string,
+  controlWidth: PropTypes.number,
 };

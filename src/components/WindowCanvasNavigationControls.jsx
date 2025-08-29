@@ -30,7 +30,7 @@ const Root = styled(Paper, { name: 'WindowCanvasNavigationControls', slot: 'root
   paddingLeft: '1rem',
   border: `none`,
   borderRadius: "7px",
-  boxShadow: "0px 10px 15px -3px rgba(0,0,0,0.1)"
+  boxShadow: "none"
 }));
 
 /**

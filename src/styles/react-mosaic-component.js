@@ -282,11 +282,14 @@ const globalReactMosaicStyles = {
   'input::before': {
     fontSize: "10px !important"
   },
-  'h1, h2, h3, h4, h5, h6, p, span': {
+  '.mirador-viewer h1, .mirador-viewer h2, .mirador-viewer h3, .mirador-viewer h4, .mirador-viewer h5, .mirador-viewer h6, .mirador-viewer p, .mirador-viewer span': {
     fontSize: "14px !important"
   },
-  'i': {
-    fontSize: "16px !important"
+  '.mirador-viewer i': {
+    fontSize: "24px !important"
+  },
+  '.mirador-viewer i.bi-arrows-fullscreen': {
+    fontSize: "20px !important"
   }
 };
 

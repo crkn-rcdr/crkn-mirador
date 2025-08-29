@@ -51,7 +51,8 @@ export function WindowTopBarTitle({
       </>
     );
   } else if (hideWindowTitle) {
-    title = (<StyledTitle />);
+    // When configured to hide, remove the title entirely
+    return null;
   } else {
     title = (
       <StyledTitleTypography>

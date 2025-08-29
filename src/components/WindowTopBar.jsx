@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { styled } from '@mui/material/styles';
+import { styled, alpha } from '@mui/material/styles';
 import MenuIcon from '@mui/icons-material/MenuSharp';
 import CloseIcon from '@mui/icons-material/CloseSharp';
 import Toolbar from '@mui/material/Toolbar';
@@ -41,44 +41,61 @@ const StyledToolbar = styled(Toolbar, { name: 'WindowTopBar', slot: 'toolbar' })
   }),
 }));
 
-// Shared pill-style toggle group (matches Gallery and Window styling)
+// Sleeker, rounded, theme-aware pill group for view options
 const PillGroup = styled(ToggleButtonGroup)(({ theme }) => ({
-  background: theme.palette.mode === 'dark' ? 'rgba(30,30,30,0.72)' : 'rgba(255,255,255,0.82)',
+  display: 'inline-flex',
+  alignItems: 'center',
+  background: theme.palette.mode === 'dark' ? 'rgba(30,30,30,0.6)' : 'rgba(255,255,255,0.9)',
   color: theme.palette.text.primary,
-  border: 'none',
-  borderRadius: 50,
-  boxShadow: theme.shadows[2],
-  padding: 6,
-  gap: 4,
+  border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)'}`,
+  borderRadius: 999,
+  backdropFilter: 'blur(6px)',
+  padding: '6px 8px',
+  gap: 8,
+
   '& .MuiToggleButton-root': {
     margin: 0,
-    minWidth: 28,
-    padding: '1px 4px',
-    fontSize: '0.72rem',
+    minWidth: 34,
+    height: 28,
+    padding: '2px 8px',
     lineHeight: 1,
     border: 'none',
-    borderRadius: 50,
+    borderRadius: 12,
+    transition: 'background-color 120ms ease, box-shadow 120ms ease, transform 60ms ease',
+    color: theme.palette.text.secondary,
   },
+
   // Ensure Bootstrap icons render at a consistent size
   '& .MuiToggleButton-root .bi': {
-    fontSize: '1rem',
+    fontSize: '1.05rem',
     lineHeight: 1,
     display: 'inline-block',
   },
   // Normalize MUI SVG icon sizes if any are used alongside
   '& .MuiToggleButton-root .MuiSvgIcon-root': {
-    fontSize: '1rem',
+    fontSize: '1.05rem',
   },
+
   '& .MuiToggleButton-root:hover': {
     backgroundColor: theme.palette.action.hover,
   },
+
+  '& .MuiToggleButton-root:active': {
+    transform: 'scale(0.98)',
+  },
+
   '& .MuiToggleButton-root.Mui-selected': {
-    border: 'none',
-    backgroundColor: theme.palette.action.selected,
     color: theme.palette.text.primary,
+    backgroundColor: theme.palette.mode === 'dark'
+      ? alpha(theme.palette.primary.main, 0.20)
+      : alpha(theme.palette.primary.main, 0.12),
+    transform: 'translateZ(0) scale(1.02)',
+  },
+  '& .MuiToggleButton-root.Mui-selected .bi, & .MuiToggleButton-root.Mui-selected .MuiSvgIcon-root': {
+    color: theme.palette.primary.main,
   },
   '& .MuiToggleButton-root.Mui-selected:hover': {
-    backgroundColor: theme.palette.action.selected,
+    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.14)' : 'rgba(0,0,0,0.08)',
   },
 }));
 

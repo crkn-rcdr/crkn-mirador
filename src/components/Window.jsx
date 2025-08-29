@@ -90,17 +90,7 @@ export function Window({
     </MinimalWindow>
   ), [windowId]);
 
-  const ELEMENT_MAP = {
-    a: (
-      <StyledPrimaryWindow
-        view={view}
-        windowId={windowId}
-        isFetching={isFetching}
-        sideBarOpen={sideBarOpen}
-      />
-    ),
-    b: <GalleryView windowId={windowId} />,
-  };
+  // (ELEMENT_MAP moved below state so it can use computed widths)
 
   const componentRef = useRef(null);
 
@@ -110,6 +100,7 @@ export function Window({
     return stored ? Number(JSON.parse(stored)) : 0;
   });
   const [minimumPaneSizePercentage, setMinimumPaneSizePercentage] = useState(0);
+  const [componentWidth, setComponentWidth] = useState(0);
 
   // View mode: 'both' | 'primary' | 'gallery'
   const [viewMode, setViewMode] = useState(() => {
@@ -125,6 +116,7 @@ export function Window({
   useEffect(() => {
     const width = componentRef.current?.getBoundingClientRect().width;
     if (width) {
+      setComponentWidth(width);
       const minimum = (160 / width) * 100; // 160px minimum for either pane
       setMinimumPaneSizePercentage(minimum);
       if (splitPercentage <= 0) setSplitPercentage(100 - minimum);
@@ -160,6 +152,21 @@ export function Window({
       }
     }
     setViewMode(nextMode);
+  };
+
+  // Build the element map after state has been initialized so GalleryView can
+  // receive a slider width that matches the minimum pane size (minus padding)
+  const galleryControlWidth = Math.max(120, Math.round(((componentWidth * minimumPaneSizePercentage) / 100) - 24));
+  const ELEMENT_MAP = {
+    a: (
+      <StyledPrimaryWindow
+        view={view}
+        windowId={windowId}
+        isFetching={isFetching}
+        sideBarOpen={sideBarOpen}
+      />
+    ),
+    b: <GalleryView windowId={windowId} controlWidth={galleryControlWidth} />,
   };
 
   // Ignore shortcuts while typing

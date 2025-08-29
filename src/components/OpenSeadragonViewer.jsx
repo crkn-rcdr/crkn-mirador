@@ -167,7 +167,7 @@ export function OpenSeadragonViewer({
       preserveViewport: true,
       showZoomControl: true,
       showHomeControl: true,
-      showFullPageControl: true,
+      showFullPageControl: false,
       showRotationControl: true,
       showFlipControl: true,
       showNavigator: false,
