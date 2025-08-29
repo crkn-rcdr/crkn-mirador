@@ -117,7 +117,7 @@ export function Window({
     const width = componentRef.current?.getBoundingClientRect().width;
     if (width) {
       setComponentWidth(width);
-      const minimum = (160 / width) * 100; // 160px minimum for either pane
+      const minimum = (200 / width) * 100; // 160px minimum for either pane
       setMinimumPaneSizePercentage(minimum);
       if (splitPercentage <= 0) setSplitPercentage(100 - minimum);
     }

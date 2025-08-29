@@ -1,5 +1,6 @@
 // components/GalleryView.jsx
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useElementSize } from '@custom-react-hooks/use-element-size';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -49,7 +50,7 @@ const SizeControls = styled('div')(({ theme }) => ({
   borderRadius: 16,
   boxShadow: theme.shadows[2],
   padding: '6px 10px',
-  minWidth: 220,
+  minWidth: 0,
 }));
 
 const SizeSlider = styled(Slider)(({ theme }) => ({
@@ -175,14 +176,21 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId, controlW
   }, [currentCanvasId, thumbSize, safe]);
   //<CompactToggleButton value="fit" aria-label="Fit width">F</CompactToggleButton> - todo with search term highlighting
 
+  const [barRef, barSize] = useElementSize();
+
   return (
     <Root>
-      <Bar>
+      <Bar ref={barRef}>
         {(() => {
           const SIZE_TO_INDEX = { s: 0, m: 1, l: 2, fit: 3 };
           const INDEX_TO_SIZE = ['s', 'm', 'l', 'fit'];
           const idx = SIZE_TO_INDEX[thumbSize] ?? 1;
           const setIdx = (next) => setThumbSize(INDEX_TO_SIZE[Math.min(3, Math.max(0, next))]);
+          // Let the slider shrink with available bar width, but never exceed current max
+          const currentMax = controlWidth || 160;
+          // Account for paddings, two buttons, and gaps (~120px total footprint)
+          const available = Math.max(80, Math.floor((barSize?.width || currentMax) - 120));
+          const sliderWidth = Math.min(currentMax, available);
           return (
             <SizeControls>
               <MiradorMenuButton
@@ -206,7 +214,7 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId, controlW
                 step={1}
                 value={idx}
                 onChange={(_, v) => setIdx(Array.isArray(v) ? v[0] : v)}
-                sx={{ width: controlWidth || 160 }}
+                sx={{ width: sliderWidth }}
               />
               <MiradorMenuButton
                 aria-label={t('thumbSizeLarge')}
