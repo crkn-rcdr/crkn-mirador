@@ -675,8 +675,13 @@ export default {
     preserveImageSizeOnResize: true,
     preserveViewport: true,
     showNavigationControl: true,
-    zoomPerClick: 1, // disable zoom-to-click
-    zoomPerDoubleClick: 2.0
+    // Use a normal zoom factor for controls; do NOT set to 1
+    // (a value of 1 disables zooming for both toolbar buttons and clicks)
+    zoomPerClick: 1.3,
+    // Keep double-click zoom factor
+    zoomPerDoubleClick: 2.0,
+    // Disable click-to-zoom on the image while preserving toolbar button zooming
+    gestureSettingsMouse: { clickToZoom: false }
   },
   export: {
     catalog: true,

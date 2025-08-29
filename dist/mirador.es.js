@@ -30694,9 +30694,13 @@ const Jm = {
     preserveImageSizeOnResize: !0,
     preserveViewport: !0,
     showNavigationControl: !0,
-    zoomPerClick: 1,
-    // disable zoom-to-click
-    zoomPerDoubleClick: 2
+    // Use a normal zoom factor for controls; do NOT set to 1
+    // (a value of 1 disables zooming for both toolbar buttons and clicks)
+    zoomPerClick: 1.3,
+    // Keep double-click zoom factor
+    zoomPerDoubleClick: 2,
+    // Disable click-to-zoom on the image while preserving toolbar button zooming
+    gestureSettingsMouse: { clickToZoom: !1 }
   },
   export: {
     catalog: !0,
@@ -103442,7 +103446,7 @@ function jF({
                     alignItems: "center",
                     justifyContent: "center",
                     height: "100%",
-                    lineHeight: 0.65,
+                    lineHeight: "0.5 !important",
                     "& .bi": { fontSize: "0.7rem", lineHeight: 1, verticalAlign: "middle" }
                   },
                   "& .MuiChip-label": {

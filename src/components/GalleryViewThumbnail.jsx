@@ -136,7 +136,7 @@ export function GalleryViewThumbnail({
                       alignItems: 'center',
                       justifyContent: 'center',
                       height: '100%',
-                      lineHeight: 0.65,
+                      lineHeight: '0.5 !important',
                       '& .bi': { fontSize: '0.7rem', lineHeight: 1, verticalAlign: 'middle' },
                     },
                     '& .MuiChip-label': {
