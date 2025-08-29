@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
-import ErrorIcon from '@mui/icons-material/ErrorOutlineSharp';
+import BiIcon from './BiIcon';
 
 const StyledTitleTypography = styled(TitleTypography)(({ theme }) => ({
   ...theme.typography.h6,
@@ -34,6 +34,7 @@ TitleTypography.propTypes = {
 export function WindowTopBarTitle({
   error = null, hideWindowTitle = false, isFetching = false, manifestTitle = '',
 }) {
+  const theme = useTheme();
   let title = null;
   if (isFetching) {
     title = (
@@ -44,7 +45,7 @@ export function WindowTopBarTitle({
   } else if (error) {
     title = (
       <>
-        <ErrorIcon color="error" />
+        <BiIcon name="exclamation-triangle" size={18} style={{ color: theme.palette.error.main, marginRight: 6 }} />
         <StyledTitleTypography color="textSecondary">
           {error}
         </StyledTitleTypography>

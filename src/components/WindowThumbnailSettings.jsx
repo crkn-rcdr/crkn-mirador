@@ -3,11 +3,10 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import ListSubheader from '@mui/material/ListSubheader';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
-import ThumbnailsOffIcon from '@mui/icons-material/CropDinSharp';
+import BiIcon from './BiIcon';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import ThumbnailNavigationBottomIcon from './icons/ThumbnailNavigationBottomIcon';
-import ThumbnailNavigationRightIcon from './icons/ThumbnailNavigationRightIcon';
+// Replaced custom/MUI icons with Bootstrap Icons
 
 const ThumbnailOption = styled(MenuItem, { name: 'WindowThumbnailSettings', slot: 'option' })(({ selected, theme }) => ({
   '& .MuiFormControlLabel-label': {
@@ -53,9 +52,9 @@ export function WindowThumbnailSettings({
           selected={thumbnailNavigationPosition === 'off'}
         >
           <FormControlLabel
-            control={
-              <ThumbnailsOffIcon color={thumbnailNavigationPosition === 'off' ? 'secondary' : undefined} fill="currentcolor" />
-            }
+            control={(
+              <BiIcon name="square" size={18} />
+            )}
             labelPlacement="bottom"
             value="off"
           />
@@ -68,9 +67,9 @@ export function WindowThumbnailSettings({
           selected={thumbnailNavigationPosition === 'far-bottom'}
         >
           <FormControlLabel
-            control={
-              <ThumbnailNavigationBottomIcon color={thumbnailNavigationPosition === 'far-bottom' ? 'secondary' : undefined} fill="currentcolor" />
-            }
+            control={(
+              <BiIcon name="layout-split" size={18} />
+            )}
             labelPlacement="bottom"
             value="far-bottom"
           />
@@ -84,11 +83,7 @@ export function WindowThumbnailSettings({
         >
           <FormControlLabel
             control={(
-              <ThumbnailNavigationRightIcon
-                color={thumbnailNavigationPosition === 'far-right' ? 'secondary' : undefined}
-                fill="currentcolor"
-                style={direction === 'rtl' ? { transform: 'rotate(180deg)' } : {}}
-              />
+              <BiIcon name={direction === 'rtl' ? 'layout-sidebar' : 'layout-sidebar-reverse'} size={18} />
             )}
             labelPlacement="bottom"
             value="far-right"

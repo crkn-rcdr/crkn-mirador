@@ -3,9 +3,7 @@ import { Children, cloneElement, forwardRef } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
-import CloseIcon from '@mui/icons-material/CloseSharp';
-import OpenInNewIcon from '@mui/icons-material/OpenInNewSharp';
-import MoveIcon from '@mui/icons-material/DragIndicatorSharp';
+// Removed unused MUI icon imports; Bootstrap icons are used elsewhere as needed
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Toolbar from '@mui/material/Toolbar';

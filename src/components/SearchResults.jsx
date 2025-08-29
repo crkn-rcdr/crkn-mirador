@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
-import BackIcon from '@mui/icons-material/ArrowBackSharp';
+import BiIcon from './BiIcon';
 import { announce } from '@react-aria/live-announcer';
 import { useTranslation } from 'react-i18next';
 import SearchHit from '../containers/SearchHit';
@@ -150,7 +150,7 @@ export function SearchResults({
       {focused && (
         <ScrollTo containerRef={containerRef} offsetTop={96} scrollTo>
           <Button onClick={toggleFocus} sx={{ textTransform: 'none' }} size="small">
-            <BackIcon />
+            <BiIcon name="arrow-left" size={16} />
             {t('backToResults')}
           </Button>
         </ScrollTo>

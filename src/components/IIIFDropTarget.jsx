@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import Backdrop from '@mui/material/Backdrop';
-import InsertDriveFileSharpIcon from '@mui/icons-material/InsertDriveFileSharp';
+import BiIcon from './BiIcon';
 import { grey } from '@mui/material/colors';
 import { v4 as uuid } from 'uuid';
 import { NativeTypes } from 'react-dnd-html5-backend';
@@ -130,7 +130,7 @@ export const IIIFDropTarget = (props) => {
     <div ref={drop} onDrop={hackForSafari} style={{ height: '100%', width: '100%' }}>
       {children}
       <Backdrop open={isActive} style={{ zIndex: 9999 }}>
-        <InsertDriveFileSharpIcon style={{ color: grey[400], fontSize: 256 }} />
+        <BiIcon name="file-earmark" style={{ color: grey[400], fontSize: 256 }} />
       </Backdrop>
     </div>
   );

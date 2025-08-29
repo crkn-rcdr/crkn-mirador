@@ -3,12 +3,10 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
 import ListSubheader from '@mui/material/ListSubheader';
-import SingleIcon from '@mui/icons-material/CropOriginalSharp';
-import ScrollViewIcon from '@mui/icons-material/ViewColumn';
+import BiIcon from './BiIcon';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import BookViewIcon from './icons/BookViewIcon';
-import GalleryViewIcon from './icons/GalleryViewIcon';
+// Removed custom and MUI icons in favor of Bootstrap icons
 
 const ViewOption = styled(MenuItem, { name: 'WindowViewSettings', slot: 'option' })(({ selected, theme }) => ({
   borderRadius: 50,
@@ -57,9 +55,9 @@ export function WindowViewSettings({
   };
 
   const iconMap = {
-    book: BookViewIcon,
-    scroll: ScrollViewIcon,
-    single: SingleIcon,
+    book: 'book',
+    scroll: 'columns',
+    single: 'app',
   };
 
   /** Suspiciously similar to a component, yet if it is invoked through JSX
@@ -76,7 +74,7 @@ export function WindowViewSettings({
     >
       <FormControlLabel
         value={value}
-        control={<Icon fill="currentcolor" color={windowViewType === value ? 'secondary' : undefined} />}
+        control={<BiIcon name={Icon} size={18} />}
         labelPlacement="bottom"
       />
     </ViewOption>

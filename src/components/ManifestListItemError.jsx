@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
-import ErrorIcon from '@mui/icons-material/ErrorOutlineSharp';
+import BiIcon from './BiIcon';
 import Grid2 from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
@@ -19,12 +19,7 @@ export function ManifestListItemError({
         <Grid2 container xs={12} sm={6}>
           <Grid2 xs={4} sm={3}>
             <Grid2 container justifyContent="center">
-              <ErrorIcon sx={{
-                color: 'error.main',
-                height: '2rem',
-                width: '2rem',
-              }}
-              />
+              <BiIcon name="exclamation-triangle" size={24} style={{ color: 'var(--mui-palette-error-main, #d32f2f)' }} />
             </Grid2>
           </Grid2>
           <Grid2 xs={8} sm={9}>

@@ -1,5 +1,5 @@
 import { useId, useState } from 'react';
-import SettingsIcon from '@mui/icons-material/SettingsSharp';
+import BiIcon from './BiIcon';
 import { useTranslation } from 'react-i18next';
 import WorkspaceMenu from '../containers/WorkspaceMenu';
 import MiradorMenuButton from '../containers/MiradorMenuButton';
@@ -34,7 +34,7 @@ export function WorkspaceMenuButton() {
         id="menuBtn"
         onClick={handleMenuClick}
       >
-        <SettingsIcon />
+        <BiIcon name="gear" size={18} />
       </MiradorMenuButton>
       <WorkspaceMenu
         anchorEl={anchorEl}

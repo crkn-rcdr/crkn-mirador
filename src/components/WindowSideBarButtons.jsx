@@ -4,13 +4,8 @@ import Badge from '@mui/material/Badge';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Tooltip from '@mui/material/Tooltip';
-import InfoIcon from '@mui/icons-material/InfoSharp';
-import AnnotationIcon from '@mui/icons-material/CommentSharp';
-import AttributionIcon from '@mui/icons-material/CopyrightSharp';
-import LayersIcon from '@mui/icons-material/LayersSharp';
-import SearchIcon from '@mui/icons-material/SearchSharp';
+import BiIcon from './BiIcon';
 import { useTranslation } from 'react-i18next';
-import CanvasIndexIcon from './icons/CanvasIndexIcon';
 
 const Root = styled(Tabs, { name: 'WindowSideBarButtons', slot: 'root' })({
   '& .MuiTabs-flexContainer': {
@@ -106,19 +101,19 @@ export function WindowSideBarButtons({
       { panels.info && (
         <TabButton
           value="info"
-          icon={(<InfoIcon />)}
+          icon={(<BiIcon name="info-square" size={18} />)}
         />
       )}
       { panels.attribution && (
         <TabButton
           value="attribution"
-          icon={(<AttributionIcon />)}
+          icon={(<BiIcon name="c-square" size={18} />)}
         />
       )}
       { panels.canvas && (
         <TabButton
           value="canvas"
-          icon={(<CanvasIndexIcon />)}
+          icon={(<BiIcon name="list-nested" size={18} />)}
         />
       )}
       {panels.annotations && (hasAnnotations || hasAnyAnnotations) && (
@@ -126,7 +121,7 @@ export function WindowSideBarButtons({
           value="annotations"
           icon={(
             <Badge overlap="rectangular" color="notification" invisible={!hasAnnotations} variant="dot">
-              <AnnotationIcon />
+              <BiIcon name="chat-dots" size={18} />
             </Badge>
           )}
         />
@@ -136,7 +131,7 @@ export function WindowSideBarButtons({
           value="search"
           icon={(
             <Badge overlap="rectangular" color="notification" invisible={!hasSearchResults} variant="dot">
-              <SearchIcon />
+              <BiIcon name="search" size={18} />
             </Badge>
           )}
         />
@@ -146,7 +141,7 @@ export function WindowSideBarButtons({
           value="layers"
           icon={(
             <Badge overlap="rectangular" color="notification" invisible={!hasCurrentLayers} variant="dot">
-              <LayersIcon />
+              <BiIcon name="layers" size={18} />
             </Badge>
           )}
         />

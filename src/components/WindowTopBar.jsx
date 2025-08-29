@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { styled, alpha } from '@mui/material/styles';
-import MenuIcon from '@mui/icons-material/MenuSharp';
-import CloseIcon from '@mui/icons-material/CloseSharp';
+// Replace MUI Menu icon with Bootstrap icon
+// MUI Close icon replaced with Bootstrap icon
 import Toolbar from '@mui/material/Toolbar';
 import AppBar from '@mui/material/AppBar';
 import { useTranslation } from 'react-i18next';
@@ -12,8 +12,6 @@ import WindowTopBarPluginMenu from '../containers/WindowTopBarPluginMenu';
 import WindowTopBarTitle from '../containers/WindowTopBarTitle';
 import MiradorMenuButton from '../containers/MiradorMenuButton';
 import FullScreenButton from '../containers/FullScreenButton';
-import WindowMaxIcon from './icons/WindowMaxIcon';
-import WindowMinIcon from './icons/WindowMinIcon';
 import ns from '../config/css-ns';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -131,7 +129,7 @@ export function WindowTopBar({
             onClick={toggleWindowSideBar}
             className={ns('window-menu-btn')}
           >
-            <MenuIcon />
+            <BiIcon name="list" size={16} />
           </MiradorMenuButton>
         )}
         <WindowTopBarTitle windowId={windowId} />
@@ -181,7 +179,7 @@ export function WindowTopBar({
             className={classNames(ns('window-close'), ns('window-menu-btn'))}
             onClick={removeWindow}
           >
-            <CloseIcon />
+            <BiIcon name="x-lg" size={16} />
           </MiradorMenuButton>
         )}
       </StyledToolbar>

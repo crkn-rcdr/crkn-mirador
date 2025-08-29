@@ -1,6 +1,6 @@
 import { useContext, useId, useState } from 'react';
 import PropTypes from 'prop-types';
-import MoreVertIcon from '@mui/icons-material/MoreVertSharp';
+import BiIcon from './BiIcon';
 import Menu from '@mui/material/Menu';
 import { useTranslation } from 'react-i18next';
 import MiradorMenuButton from '../containers/MiradorMenuButton';
@@ -11,7 +11,7 @@ import WorkspaceContext from '../contexts/WorkspaceContext';
  *
  */
 export function WindowTopBarPluginMenu({
-  PluginComponents = [], windowId, menuIcon = <MoreVertIcon />,
+  PluginComponents = [], windowId, menuIcon = <BiIcon name="three-dots-vertical" size={16} />,
 }) {
   const { t } = useTranslation();
   const container = useContext(WorkspaceContext);
