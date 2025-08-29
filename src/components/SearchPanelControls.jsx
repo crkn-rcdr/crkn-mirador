@@ -40,10 +40,19 @@ export function SearchPanelControls({
   }, [query]);
 
   useEffect(() => {
-    if (search && search !== '' && searchService) {
-      fetchSearch(windowId, companionWindowId, `${searchService.id}?${new URLSearchParams({ q: search })}`, search);
+    // Avoid firing a duplicate search when the query prop seeds local state
+    // (e.g., from defaultSearchQuery/contentSearch). Only fetch when the
+    // local search differs from the current query in state, or when a user
+    // explicitly enters a new value via the UI.
+    if (search && search !== '' && searchService && search !== query) {
+      fetchSearch(
+        windowId,
+        companionWindowId,
+        `${searchService.id}?${new URLSearchParams({ q: search })}`,
+        search,
+      );
     }
-  }, [search, searchService, companionWindowId, fetchSearch, windowId]);
+  }, [search, query, searchService, companionWindowId, fetchSearch, windowId]);
 
   /** */
   const handleChange = (event, value, reason) => {

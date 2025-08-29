@@ -26,6 +26,12 @@ export function* importConfig({ config: { thumbnailNavigation, windows } }) {
     windows.map((miradorWindow) => {
       const windowId = `window-${uuid()}`;
       const manifestId = miradorWindow.manifestId || miradorWindow.loadedManifest;
+      // Allow `contentSearch: { query: "..." }` in window config.
+      // If provided, seed the WindowTopBar search (without forcing the left sidebar open).
+      // Keep supporting `defaultSearchQuery` (legacy) to seed the left sidebar search panel.
+      const { contentSearch, ...restWindow } = (miradorWindow || {});
+      const defaultSearchQuery = restWindow.defaultSearchQuery || undefined;
+      const topBarSearchQuery = contentSearch && contentSearch.query ? contentSearch.query : undefined;
 
       return call(addWindow, {
         // these are default values ...
@@ -33,7 +39,9 @@ export function* importConfig({ config: { thumbnailNavigation, windows } }) {
         manifestId,
         thumbnailNavigationPosition: thumbnailNavigation && thumbnailNavigation.defaultPosition,
         // ... overridden by values from the window configuration ...
-        ...miradorWindow,
+        ...restWindow,
+        ...(defaultSearchQuery ? { defaultSearchQuery } : {}),
+        ...(topBarSearchQuery ? { topBarSearchQuery } : {}),
       });
     }),
   );

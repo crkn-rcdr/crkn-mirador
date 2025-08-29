@@ -30,6 +30,10 @@ export function addWindow({ companionWindows, manifest, ...options }) {
     const windowId = options.id || `window-${uuid()}`;
     const cwThumbs = `cw-${uuid()}`;
 
+    const allowSideBar = (config.window && typeof config.window.allowWindowSideBar !== 'undefined')
+      ? !!config.window.allowWindowSideBar
+      : true;
+
     const defaultCompanionWindows = [
       {
         content: 'thumbnailNavigation',
@@ -44,7 +48,7 @@ export function addWindow({ companionWindows, manifest, ...options }) {
       ),
     ];
 
-    if (options.sideBarPanel || config.window.defaultSideBarPanel || config.window.sideBarPanel) {
+    if (allowSideBar && (options.sideBarPanel || config.window.defaultSideBarPanel || config.window.sideBarPanel)) {
       defaultCompanionWindows.unshift(
         {
           content: options.sideBarPanel
@@ -73,9 +77,14 @@ export function addWindow({ companionWindows, manifest, ...options }) {
       rangeId: null,
       rotation: null,
       selectedAnnotations: {},
-      sideBarOpen: config.window.sideBarOpenByDefault !== undefined
-        ? config.window.sideBarOpenByDefault || !!options.defaultSearchQuery
-        : config.window.sideBarOpen || !!options.defaultSearchQuery,
+      // Only auto-open the sidebar (e.g., for a defaultSearchQuery) when the
+      // window configuration allows the sidebar at all.
+      sideBarOpen: (() => {
+        const sideBarOpenDefault = (typeof config.window.sideBarOpenByDefault !== 'undefined')
+          ? !!config.window.sideBarOpenByDefault
+          : !!config.window.sideBarOpen;
+        return allowSideBar && (sideBarOpenDefault || !!options.defaultSearchQuery);
+      })(),
       sideBarPanel: options.sideBarPanel
         || config.window.defaultSideBarPanel
         || config.window.sideBarPanel,

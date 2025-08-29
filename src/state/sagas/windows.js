@@ -120,16 +120,28 @@ export function* setWindowStartingCanvas(action) {
 /** @private */
 export function* setWindowDefaultSearchQuery(action) {
   // only for a brand new window
-  if (!action.window || !action.window.defaultSearchQuery) return;
+  if (!action.window) return;
 
-  const { id: windowId, defaultSearchQuery } = action.window;
+  const { id: windowId, defaultSearchQuery, topBarSearchQuery } = action.window;
   const searchService = yield select(getManifestSearchService, { windowId });
-  const companionWindowIds = yield select(getCompanionWindowIdsForPosition, { position: 'left', windowId });
-  const companionWindowId = companionWindowIds[0];
 
-  if (searchService && companionWindowId) {
-    const searchId = searchService && `${searchService.id}?q=${defaultSearchQuery}`;
-    yield put(fetchSearch(windowId, companionWindowId, searchId, defaultSearchQuery));
+  if (!searchService) return;
+
+  // Seed left sidebar search when `defaultSearchQuery` is provided (existing behavior)
+  if (defaultSearchQuery) {
+    const companionWindowIds = yield select(getCompanionWindowIdsForPosition, { position: 'left', windowId });
+    const companionWindowId = companionWindowIds[0];
+    if (companionWindowId) {
+      const searchId = `${searchService.id}?q=${defaultSearchQuery}`;
+      yield put(fetchSearch(windowId, companionWindowId, searchId, defaultSearchQuery));
+    }
+  }
+
+  // Seed WindowTopBar inline search when `topBarSearchQuery` is provided
+  if (topBarSearchQuery) {
+    const topBarCompanionWindowId = `${windowId}-topbar`;
+    const searchId = `${searchService.id}?q=${topBarSearchQuery}`;
+    yield put(fetchSearch(windowId, topBarCompanionWindowId, searchId, topBarSearchQuery));
   }
 }
 

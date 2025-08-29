@@ -629,6 +629,9 @@ export default {
       canvasId: 'https://iiif.harvardartmuseums.org/manifests/object/299843/page_2',
       thumbnailNavigationPosition: 'far-bottom',
       maximized: false,
+      // Seed a Content Search query on load:
+      // - defaultSearchQuery: 'ontario'           // seeds the left sidebar Search panel
+      // - contentSearch: { query: 'ontario' }     // seeds the WindowTopBar inline search
     }
     // ../state/actions/window.js `defaultOptions`
     // ../lib/MiradorViewer.js `windowAction`
