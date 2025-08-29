@@ -32,6 +32,7 @@ import {
   getMiradorCanvasWrapper,
   getMiradorManifestWrapper,
   getSelectedAnnotationId,
+  getSearchQuery,
 } from '../selectors';
 import { fetchManifests } from './iiif';
 
@@ -168,7 +169,16 @@ export function* setCurrentAnnotationsOnCurrentCanvas({
   annotationId, windowId, visibleCanvases,
 }) {
   const searches = yield select(getSearchForWindow, { windowId });
-  const companionWindowIds = Object.keys(searches || {});
+  let companionWindowIds = Object.keys(searches || {});
+  // If the topbar search was seeded from settings, don't use it to
+  // implicitly select the first annotation on initial canvas load.
+  try {
+    const win = yield select(getWindow, { windowId });
+    const topBarId = `${windowId}-topbar`;
+    if (win?.topBarSearchQuery && searches[topBarId]?.query === win.topBarSearchQuery) {
+      companionWindowIds = companionWindowIds.filter(id => id !== topBarId);
+    }
+  } catch (e) { /* ignore */ }
   if (companionWindowIds.length === 0) return;
 
   const annotationBySearch = yield select(
@@ -229,6 +239,15 @@ export function* updateVisibleCanvases({ windowId }) {
 export function* setCanvasOfFirstSearchResult({ companionWindowId, windowId }) {
   const { switchCanvasOnSearch } = yield select(getWindowConfig, { windowId });
   if (!switchCanvasOnSearch) return;
+
+  // Do not auto-jump when the query was seeded via settings (top bar)
+  try {
+    const win = yield select(getWindow, { windowId });
+    const q = yield select(getSearchQuery, { companionWindowId, windowId });
+    if (companionWindowId === `${windowId}-topbar` && win?.topBarSearchQuery && String(q) === String(win.topBarSearchQuery)) {
+      return;
+    }
+  } catch (e) { /* ignore */ }
 
   let annotations = yield select(
     getSortedSearchAnnotationsForCompanionWindow,

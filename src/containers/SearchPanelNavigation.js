@@ -13,6 +13,7 @@ import {
   getThemeDirection,
   getWindowViewType,
   getManifestSearchService,
+  getWindow,
 } from '../state/selectors';
 
 /**
@@ -42,6 +43,14 @@ const mapStateToProps = (state, { companionWindowId, windowId }) => {
     query: getSearchQuery(state, { companionWindowId, windowId }) || '',
     viewType: getWindowViewType(state, { windowId }),
     isV2,
+    // If this is the topbar search and its current query matches
+    // the configured topBarSearchQuery from settings, skip auto-selecting
+    // the first result on initial load.
+    skipInitialSelect: (() => {
+      const win = getWindow(state, { windowId }) || {};
+      const q = getSearchQuery(state, { companionWindowId, windowId }) || '';
+      return (companionWindowId === `${windowId}-topbar`) && !!win.topBarSearchQuery && String(q) === String(win.topBarSearchQuery);
+    })(),
     selectedContentSearchAnnotation: getSelectedContentSearchAnnotationIds(state, {
       companionWindowId,
       windowId,

@@ -69,6 +69,7 @@ export function SearchPanelNavigation({
   query,
   viewType,
   isV2 = false,
+  skipInitialSelect = false,
 }) {
   const { t } = useTranslation();
 
@@ -86,15 +87,16 @@ export function SearchPanelNavigation({
   const [pendingNext, setPendingNext] = useState(false);
 
   useEffect(() => {
-    // Auto-select first hit on initial load
+    // Auto-select first hit on initial load unless explicitly skipped
     if (!pendingNext && prevLoadedCountRef.current === 0 && searchHits.length > 0) {
+      prevLoadedCountRef.current = searchHits.length;
+      if (skipInitialSelect) return; // do not jump on config-seeded queries
       const firstAnno = searchHits[0]?.annotations?.[0];
       if (firstAnno) {
         selectAnnotation(firstAnno);
         const canvasId = getCanvasIdFromAnnotation(firstAnno, searchAnnotations);
         if (canvasId) setCurrentCanvas(windowId, canvasId);
       }
-      prevLoadedCountRef.current = searchHits.length;
       return;
     }
 
@@ -112,7 +114,7 @@ export function SearchPanelNavigation({
     } else if (!pendingNext) {
       prevLoadedCountRef.current = searchHits.length;
     }
-  }, [searchHits, pendingNext, searchAnnotations, selectAnnotation, setCurrentCanvas, windowId]);
+  }, [searchHits, pendingNext, searchAnnotations, selectAnnotation, setCurrentCanvas, windowId, skipInitialSelect]);
 
   const goToSearchResult = (hitIndex) => {
     if (hitIndex < 0) return;
@@ -188,4 +190,5 @@ SearchPanelNavigation.propTypes = {
   query: PropTypes.string,
   viewType: PropTypes.string,
   isV2: PropTypes.bool,
+  skipInitialSelect: PropTypes.bool,
 };
