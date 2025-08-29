@@ -125,7 +125,11 @@ export function SearchPanelControls({
                 sx: {
                   ...((params.InputLabelProps && params.InputLabelProps.sx) || {}),
                   fontSize: '14px',
-                  '&.MuiInputLabel-shrink': { fontSize: '14px' },
+                  '&.MuiInputLabel-shrink': {
+                    fontSize: '14px',
+                    transform: 'translate(0, 6px) scale(0.85)',
+                    transformOrigin: 'left top',
+                  },
                 },
               }}
               InputProps={{
