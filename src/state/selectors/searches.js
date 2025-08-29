@@ -296,7 +296,8 @@ const getAnnotationById = createSelector(
 export const getCanvasForAnnotation = createSelector(
   [getAnnotationById, (state, { windowId }) => canvasId => getCanvas(state, { canvasId, windowId })],
   (annotation, getCanvasById) => {
-    const canvasId = annotation?.targetId;
+    const raw = annotation?.targetId || '';
+    const canvasId = raw.toString().split('#')[0];
     return canvasId ? getCanvasById(canvasId) : undefined;
   },
 );

@@ -142,11 +142,7 @@ const globalWindowViewerStyles = {
   },
   'canvas': {
     pointerEvents: "none"
-  },
-  '.mirador-osd-navigation i': {
-    fontSize: "24px !important"
   }
-
 };
 
 export default globalWindowViewerStyles;

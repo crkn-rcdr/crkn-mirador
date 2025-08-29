@@ -22,6 +22,7 @@ import {
   getCanvasForAnnotation,
   getSelectedContentSearchAnnotationIds,
   getSortedSearchAnnotationsForCompanionWindow,
+  getSortedSearchHitsForCompanionWindow,
   getVisibleCanvasIds,
   getWorkspace,
   getElasticLayout,
@@ -215,29 +216,45 @@ export function* updateVisibleCanvases({ windowId }) {
 /** @private */
 export function* setCanvasOfFirstSearchResult({ companionWindowId, windowId }) {
   const { switchCanvasOnSearch } = yield select(getWindowConfig, { windowId });
-  if (!switchCanvasOnSearch) {
-    return;
+  if (!switchCanvasOnSearch) return;
+
+  let annotations = yield select(
+    getSortedSearchAnnotationsForCompanionWindow,
+    { companionWindowId, windowId },
+  );
+  // Fallback: some search services use only `hits` and omit resources
+  if (!annotations || annotations.length === 0) {
+    const hits = yield select(getSortedSearchHitsForCompanionWindow, { companionWindowId, windowId });
+    if (hits && hits.length > 0 && Array.isArray(hits[0].annotations) && hits[0].annotations[0]) {
+      annotations = [{ id: hits[0].annotations[0] }];
+    }
   }
-  const selectedIds = yield select(getSelectedContentSearchAnnotationIds, {
-    companionWindowId, windowId,
-  });
-
-  if (selectedIds.length !== 0) return;
-
-  const annotations = yield select(getSortedSearchAnnotationsForCompanionWindow, { companionWindowId, windowId });
   if (!annotations || annotations.length === 0) return;
 
-  yield put(selectAnnotation(windowId, annotations[0].id));
+  const first = annotations[0];
+  // Select the first annotation and sync selection state for this companion
+  yield put(selectAnnotation(windowId, first.id));
+  yield put(setContentSearchCurrentAnnotation(windowId, companionWindowId, [first.id]));
+
+  // And immediately ensure the canvas matches
+  const canvas = yield select(getCanvasForAnnotation, { annotationId: first.id, windowId });
+  if (canvas) {
+    const { canvasId: currentCanvasId } = yield select(getWindow, { windowId });
+    if (currentCanvasId !== canvas.id) {
+      const thunk = yield call(setCanvas, windowId, canvas.id);
+      yield put(thunk);
+    }
+  }
 }
 
 /** @private */
 export function* setCanvasforSelectedAnnotation({ annotationId, windowId }) {
-  const canvasIds = yield select(getVisibleCanvasIds, { windowId });
-  const canvas = yield select(getCanvasForAnnotation, {
-    annotationId, windowId,
-  });
+  const canvas = yield select(getCanvasForAnnotation, { annotationId, windowId });
+  if (!canvas) return;
 
-  if (!canvas || canvasIds.includes(canvas.id)) return;
+  // Only switch if it's not already the current canvas
+  const { canvasId: currentCanvasId } = yield select(getWindow, { windowId });
+  if (currentCanvasId === canvas.id) return;
 
   const thunk = yield call(setCanvas, windowId, canvas.id);
   yield put(thunk);

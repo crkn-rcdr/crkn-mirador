@@ -86,6 +86,18 @@ export function SearchPanelNavigation({
   const [pendingNext, setPendingNext] = useState(false);
 
   useEffect(() => {
+    // Auto-select first hit on initial load
+    if (!pendingNext && prevLoadedCountRef.current === 0 && searchHits.length > 0) {
+      const firstAnno = searchHits[0]?.annotations?.[0];
+      if (firstAnno) {
+        selectAnnotation(firstAnno);
+        const canvasId = getCanvasIdFromAnnotation(firstAnno, searchAnnotations);
+        if (canvasId) setCurrentCanvas(windowId, canvasId);
+      }
+      prevLoadedCountRef.current = searchHits.length;
+      return;
+    }
+
     if (pendingNext && searchHits.length > prevLoadedCountRef.current) {
       // select first new hit
       const newIndex = prevLoadedCountRef.current; // first of newly fetched page

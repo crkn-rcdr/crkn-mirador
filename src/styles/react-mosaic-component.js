@@ -290,7 +290,13 @@ const globalReactMosaicStyles = {
   },
   '.mirador-viewer i.bi-arrows-fullscreen': {
     fontSize: "20px !important"
-  }
+  },
+  '.mirador-osd-navigation i': {
+    fontSize: "24px !important"
+  },
+  '.MuiChip-icon::before': {
+    fontSize: "12px !important"
+  },
 };
 
 export default globalReactMosaicStyles;

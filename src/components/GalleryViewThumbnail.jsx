@@ -23,9 +23,9 @@ const Root = styled('div', { name: 'GalleryView', slot: 'thumbnail' })(
     height: '100%',
     boxSizing: 'border-box',
     transition: 'background-color 120ms ease',
-    // Use inset box-shadow to avoid any clipping from parent containers
+    // Use inset box-shadow to indicate the selected canvas only.
+    // Do not add a border for the current search hit to avoid the blue outline.
     ...(ownerState?.selected ? { boxShadow: `inset 0 0 0 2px ${theme.palette.primary.main}` } : {}),
-    ...(ownerState?.highlighted && !ownerState?.selected ? { boxShadow: `inset 0 0 0 2px ${theme.palette.info.main}` } : {}),
   }),
 );
 
@@ -111,7 +111,7 @@ export function GalleryViewThumbnail({
             <TopLeft>
               <Tooltip title={t('searchHitsCount', { count: searchAnnotationsCount })} arrow>
                 <Chip
-                  icon={<BiIcon name="search" size={12} />}
+                  icon={<BiIcon name="search" size={'0.7rem'} />}
                   label={searchAnnotationsCount}
                   size="small"
                   aria-label={t('searchHitsCount', { count: searchAnnotationsCount })}
@@ -119,6 +119,8 @@ export function GalleryViewThumbnail({
                     pointerEvents: 'auto',
                     height: 20,
                     borderRadius: 12,
+                    display: 'inline-flex',
+                    alignItems: 'center',
                     // Softer translucent background and always-light icon/text for better contrast
                     bgcolor: theme.palette.mode === 'dark'
                       ? 'rgba(20,20,20,0.55)'
@@ -127,16 +129,25 @@ export function GalleryViewThumbnail({
                     boxShadow: '0 2px 6px rgba(0,0,0,0.18)',
                     backdropFilter: 'blur(2px)',
                     '& .MuiChip-icon': {
-                      mr: 0.25,
-                      color: 'inherit',
-                      opacity: 0.9,
+                      mr: 0.5,
+                      color: (theme.palette.highlights && theme.palette.highlights.primary) || '#ffff00',
+                      opacity: 1,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      height: '100%',
+                      lineHeight: 0.65,
+                      '& .bi': { fontSize: '0.7rem', lineHeight: 1, verticalAlign: 'middle' },
                     },
                     '& .MuiChip-label': {
                       px: 0.5,
                       fontSize: '0.7rem',
-                      fontWeight: 500, // less bold
+                      fontWeight: 600,
                       letterSpacing: 0.15,
-                      lineHeight: 1.2,
+                      lineHeight: 1,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      color: (theme.palette.highlights && theme.palette.highlights.primary) || '#ffff00',
                     },
                   })}
                 />
