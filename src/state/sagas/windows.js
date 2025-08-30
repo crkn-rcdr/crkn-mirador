@@ -33,7 +33,9 @@ import {
   getMiradorManifestWrapper,
   getSelectedAnnotationId,
   getSearchQuery,
+  getWindowIds,
 } from '../selectors';
+import { getCanvasIndex } from '../selectors/sequences';
 import { fetchManifests } from './iiif';
 
 /** */
@@ -97,6 +99,44 @@ export function* setWindowStartingCanvas(action) {
   const { canvasId, canvasIndex, manifestId } = action.payload || action.window;
 
   const windowId = action.id || action.window.id;
+
+  // If URL has ?pageNum=N, prefer that as the initial canvas (1-based)
+  let urlPageIndex;
+  try {
+    if (typeof window !== 'undefined' && window?.location) {
+      const url = new URL(window.location.href);
+      const p = url.searchParams.get('pageNum');
+      if (p != null) {
+        const n = parseInt(p, 10);
+        if (Number.isFinite(n) && n > 0) urlPageIndex = n - 1;
+      }
+    }
+  } catch (e) { /* ignore URL parsing errors */ }
+
+  // URL pageNum takes precedence when valid
+  if (typeof urlPageIndex === 'number') {
+    // Only apply on initial load (first window) to avoid overriding
+    // explicit canvas selections for subsequent windows created later
+    try {
+      const windowIds = yield select(getWindowIds);
+      if (Array.isArray(windowIds) && windowIds.length > 1) {
+        // Multiple windows already exist; do not override
+        // fall through to default logic
+      } else {
+        const getMiradorManifest = yield select(getMiradorManifestWrapper);
+        const manifestoInstance = yield select(getManifestoInstance, { manifestId });
+        if (manifestoInstance) {
+          const miradorManifest = getMiradorManifest(manifestoInstance);
+          const startByUrl = miradorManifest && miradorManifest.canvasAt(urlPageIndex);
+          if (startByUrl) {
+            const thunk = yield call(setCanvas, windowId, startByUrl.id, null, { preserveViewport: !!(action && action.payload) });
+            yield put(thunk);
+            return;
+          }
+        }
+      }
+    } catch (e) { /* ignore */ }
+  }
 
   if (canvasId) {
     const thunk = yield call(setCanvas, windowId, canvasId, null, { preserveViewport: !!action.payload });
@@ -291,6 +331,29 @@ export function* setCanvasforSelectedAnnotation({ annotationId, windowId }) {
   yield put(thunk);
 }
 
+/**
+ * Sync the URL `pageNum` query param with the current canvas index (1-based)
+ * Triggers on any canvas change regardless of initiating component.
+ */
+export function* syncUrlWithCanvas({ windowId }) {
+  try {
+    // Determine the current (0-based) canvas index for the window
+    const index = yield select(getCanvasIndex, { windowId });
+    const pageNum = String((Number.isFinite(index) ? index : 0) + 1);
+
+    if (typeof window !== 'undefined' && window?.history && window?.location) {
+      const url = new URL(window.location.href);
+      const params = new URLSearchParams(url.search);
+      params.set('pageNum', pageNum);
+      url.search = params.toString();
+      // Do not create additional history entries; keep navigation smooth
+      window.history.replaceState(window.history.state, '', url.toString());
+    }
+  } catch (e) {
+    // Silently ignore URL sync failures to avoid impacting viewer behavior
+  }
+}
+
 /** Fetch info responses for the visible canvases */
 export function* fetchInfoResponses({ visibleCanvases: visibleCanvasIds, windowId }) {
   const canvases = yield select(getCanvases, { windowId });
@@ -323,6 +386,7 @@ export default function* windowsSaga() {
     takeEvery(ActionTypes.UPDATE_WINDOW, setCanvasOnNewSequence),
     takeEvery(ActionTypes.SET_CANVAS, setCurrentAnnotationsOnCurrentCanvas),
     takeEvery(ActionTypes.SET_CANVAS, fetchInfoResponses),
+    takeEvery(ActionTypes.SET_CANVAS, syncUrlWithCanvas),
     takeEvery(ActionTypes.UPDATE_COMPANION_WINDOW, fetchCollectionManifests),
     takeEvery(ActionTypes.SET_WINDOW_VIEW_TYPE, updateVisibleCanvases),
     takeEvery(ActionTypes.RECEIVE_SEARCH, setCanvasOfFirstSearchResult),

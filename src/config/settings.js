@@ -392,7 +392,7 @@ export default {
               position: 'relative',
             }),
           }),
-          label: ({ ownerState }) => ({
+          label: ({ ownerState, theme }) => ({
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             lineHeight: '1.5em',
@@ -409,12 +409,20 @@ export default {
               WebkitLineClamp: 2,
             }),
             ...(ownerState?.variant === 'inside' && {
-              background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
+              // Softer, multi-stop gradient for improved readability
+              background: 'linear-gradient(to top, '
+                + 'rgba(0,0,0,0.78) 0%, '
+                + 'rgba(0,0,0,0.55) 35%, '
+                + 'rgba(0,0,0,0.25) 65%, '
+                + 'rgba(0,0,0,0.06) 85%, '
+                + 'rgba(0,0,0,0) 100%)',
               bottom: '5px',
               boxSizing: 'border-box',
               left: '0px',
               padding: '4px',
               position: 'absolute',
+              textShadow: '0 1px 2px rgba(0,0,0,0.6)',
+              backdropFilter: 'blur(1.5px)',
               width: '100%',
             }),
           }),
