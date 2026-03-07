@@ -1,7 +1,7 @@
 // has 2 windows, one gaugin and one bodleian
 export default {
   catalog: [
-    { manifestId: 'https://crkn-iiif-api.azurewebsites.net/manifest/69429/m07w6736rf13' },
+    { manifestId: 'https://crkn-iiif-api.azurewebsites.net/manifest/69429/m0k35m907q57' },
     { manifestId: 'https://iiif.harvardartmuseums.org/manifests/object/299843' },
     { manifestId: 'https://media.nga.gov/public/manifests/nga_highlights.json', provider: 'National Gallery of Art' },
     { manifestId: 'https://wellcomelibrary.org/iiif/b18035723/manifest', provider: 'Wellcome Library' },
@@ -19,6 +19,6 @@ export default {
     transitions: {},
   },
   windows: [{
-    manifestId: 'https://crkn-iiif-api.azurewebsites.net/manifest/69429/m07w6736rf13',
+    manifestId: 'https://crkn-iiif-api.azurewebsites.net/manifest/69429/m0k35m907q57',
   }],
 };

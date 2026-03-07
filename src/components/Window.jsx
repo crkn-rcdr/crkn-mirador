@@ -102,9 +102,10 @@ export function Window({
   const [minimumPaneSizePercentage, setMinimumPaneSizePercentage] = useState(0);
   const [componentWidth, setComponentWidth] = useState(0);
 
-  // View mode: 'both' | 'primary' | 'gallery'
+  // View mode: 'both' | 'gallery'
   const [viewMode, setViewMode] = useState(() => {
-    return localStorage.getItem('windowViewMode') || 'both';
+    const stored = localStorage.getItem('windowViewMode');
+    return stored === 'gallery' ? 'gallery' : 'both';
   });
 
   // Remember last "both" split to restore
@@ -178,9 +179,9 @@ export function Window({
     return role === 'textbox' || role === 'combobox' || role === 'searchbox' || role === 'spinbutton';
   };
 
-  // Keyboard: "g" or Ctrl/⌘+g cycles: both → primary → gallery → both
+  // Keyboard: "g" or Ctrl/⌘+g cycles: both ↔ gallery
   useEffect(() => {
-    const order = ['both', 'primary', 'gallery'];
+    const order = ['both', 'gallery'];
     const onKeyDown = (e) => {
       if (isTypingTarget(e.target)) return;
       const key = (e.key || '').toLowerCase();
@@ -235,10 +236,6 @@ export function Window({
                 onChange={handleChangeSplit}
                 resize={{ minimumPaneSizePercentage }}
               />
-            )}
-
-            {viewMode === 'primary' && (
-              <StyledMosaic key="primary" renderTile={(id) => ELEMENT_MAP[id]} initialValue="a" />
             )}
 
             {viewMode === 'gallery' && (

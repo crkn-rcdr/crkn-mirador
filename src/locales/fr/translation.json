@@ -113,6 +113,7 @@
     "rights": "Licence",
     "scroll": "Défilement horizontal",
     "searchInputLabel": "Chercher un mot",
+    "searchUnavailable": "La recherche n'est pas disponible",
     "searchNextResult": "Résultat suivant",
     "searchNoResults": "Aucun résultat trouvé",
     "searchPreviousResult": "Résultat précédent",

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import userEvent from '@testing-library/user-event';
 import { Utils } from 'manifesto.js';
 import { getCanvasWorld } from '../../utils/mirador-wrappers';
-import { OpenSeadragonViewer } from '../../../src/components/OpenSeadragonViewer';
+import { OpenSeadragonViewer, expandSearchHitRect } from '../../../src/components/OpenSeadragonViewer';
 import fixture from '../../fixtures/version-2/019.json';
 import { OSDReferences } from '../../../src/plugins/OSDReferences';
 
@@ -114,5 +114,31 @@ describe('OpenSeadragonViewer', () => {
 
       vi.useRealTimers();
     });
+  });
+});
+
+describe('expandSearchHitRect', () => {
+  it('adds extra context padding while preserving the hit center', () => {
+    const rect = expandSearchHitRect(
+      { x: 10, y: 20, width: 100, height: 50 },
+      { x: 0, y: 0, width: 200, height: 100 },
+    );
+
+    expect(rect.width).toBeCloseTo(170);
+    expect(rect.height).toBeCloseTo(85);
+    expect(rect.x).toBeCloseTo(-25);
+    expect(rect.y).toBeCloseTo(2.5);
+  });
+
+  it('enforces a minimum visible area for tiny hits', () => {
+    const rect = expandSearchHitRect(
+      { x: 0, y: 0, width: 10, height: 10 },
+      { x: 0, y: 0, width: 1000, height: 800 },
+    );
+
+    expect(rect.width).toBe(200);
+    expect(rect.height).toBe(160);
+    expect(rect.x).toBe(-95);
+    expect(rect.y).toBe(-75);
   });
 });

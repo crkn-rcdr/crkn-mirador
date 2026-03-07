@@ -1,10 +1,13 @@
 import PropTypes from 'prop-types';
 // Using Bootstrap icons
-import { styled } from '@mui/material/styles';
+import { useEffect, useRef, useState } from 'react';
+import { styled, alpha } from '@mui/material/styles';
 import BiIcon from './BiIcon';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 import MiradorMenuButton from '../containers/MiradorMenuButton';
+
+const TOPBAR_FONT_STACK = '"Roboto", "Helvetica Neue", Arial, sans-serif';
 
 /** Helper to parse canvasId from annotation target */
 function getCanvasIdFromAnnotation(annotation, searchAnnotations = []) {
@@ -23,32 +26,41 @@ function getCanvasIdFromAnnotation(annotation, searchAnnotations = []) {
   return null;
 }
 
-/**
- * SearchPanelNavigation
- */
-import { useEffect, useRef, useState } from 'react';
-
 const NavPill = styled('div')(({ theme }) => ({
   display: 'inline-flex',
   alignItems: 'center',
-  gap: 6,
-  padding: 0,
-  background: 'transparent',
+  gap: 2,
+  backgroundColor: 'transparent',
+  border: 'none',
+  borderLeft: `1px solid ${alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.3 : 0.16)}`,
   borderRadius: 0,
-  boxShadow: 'none',
-  backdropFilter: 'none',
-  // Force the standard app font stack to avoid serif fallbacks
-  fontFamily: theme.typography.fontFamily,
+  marginLeft: 6,
+  padding: '1px 0 1px 6px',
+  fontFamily: TOPBAR_FONT_STACK,
   fontSize: theme.typography.body2.fontSize,
   lineHeight: theme.typography.body2.lineHeight,
   color: theme.palette.text.primary,
   '& .count': {
-    padding: '0 6px',
+    minWidth: 38,
+    padding: '0 2px',
+    textAlign: 'center',
+    fontWeight: 600,
+    color: theme.palette.text.secondary,
+    fontVariantNumeric: 'tabular-nums',
+    letterSpacing: 0,
   },
-  '& .MuiIconButton-root': {
-    width: 34,
-    height: 34,
-    borderRadius: 18,
+  '&& .MuiIconButton-root': {
+    width: 32,
+    height: 32,
+    borderRadius: 9,
+    border: 'none',
+    boxShadow: 'none',
+    backgroundColor: 'transparent',
+    color: theme.palette.text.secondary,
+  },
+  '&& .MuiIconButton-root:hover': {
+    backgroundColor: 'transparent',
+    color: theme.palette.primary.main,
   },
 }));
 
@@ -125,8 +137,6 @@ export function SearchPanelNavigation({
       }
       return;
     }
-    console.log("dv", hitIndex); // ✅ debug log
-
     const annotation = searchHits[hitIndex].annotations[0];
     selectAnnotation(annotation);
 

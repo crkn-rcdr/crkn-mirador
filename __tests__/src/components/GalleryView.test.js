@@ -31,6 +31,11 @@ describe('GalleryView', () => {
     expect(buttons.length).toBe(3);
   });
 
+  it('defaults thumbnail size slider to the smallest option', () => {
+    createWrapper({ setCanvas });
+    expect(screen.getByRole('slider', { name: 'Thumbnail size' })).toHaveAttribute('aria-valuenow', '0');
+  });
+
   describe('when viewingDirection="right-to-left"', () => {
     it('sets up Paper to be rtl', () => {
       createWrapper({

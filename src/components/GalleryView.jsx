@@ -120,7 +120,7 @@ const Cell = React.memo(({ columnIndex, rowIndex, style, data }) => {
 export function GalleryView({ canvases = [], windowId, currentCanvasId, controlWidth }) {
   const { t } = useTranslation();
   const safe = (canvases || []).filter(c => c && (c.id || typeof c.index !== 'undefined'));
-  const [thumbSize, setThumbSize] = useState('fit');
+  const [thumbSize, setThumbSize] = useState('s');
   const gridRef = useRef(null);
   // store latest computed layout values without re-render churn
   const layoutRef = useRef({ columnCount: 1 });
@@ -184,7 +184,7 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId, controlW
         {(() => {
           const SIZE_TO_INDEX = { s: 0, m: 1, l: 2, fit: 3 };
           const INDEX_TO_SIZE = ['s', 'm', 'l', 'fit'];
-          const idx = SIZE_TO_INDEX[thumbSize] ?? 1;
+          const idx = SIZE_TO_INDEX[thumbSize] ?? 0;
           const setIdx = (next) => setThumbSize(INDEX_TO_SIZE[Math.min(3, Math.max(0, next))]);
           // Let the slider shrink with available bar width, but never exceed current max
           const currentMax = controlWidth || 160;

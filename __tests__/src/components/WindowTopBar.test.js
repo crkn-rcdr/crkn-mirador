@@ -104,4 +104,18 @@ describe('WindowTopBar', () => {
     const button = screen.queryByRole('button', { name: 'Maximize window' });
     expect(button).not.toBeInTheDocument();
   });
+
+  it('shows a localized unavailable search message when content search is missing', () => {
+    render(<Subject showSearchUnavailable />);
+
+    expect(screen.getByRole('textbox', { name: 'search terms' })).toHaveValue('Search is not available');
+  });
+
+  it('renders only split and gallery view toggles with labels below icons', async () => {
+    render(<Subject viewMode="both" onChangeViewMode={vi.fn()} />);
+
+    expect(screen.getByRole('button', { name: 'Split view' })).toHaveTextContent('Split view');
+    expect(screen.getByRole('button', { name: 'Gallery only' })).toHaveTextContent('Gallery only');
+    expect(screen.queryByRole('button', { name: 'Primary only' })).not.toBeInTheDocument();
+  });
 });

@@ -4,21 +4,22 @@ import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
 import BiIcon from './BiIcon';
 
+const TOPBAR_FONT_STACK = '"Roboto", "Helvetica Neue", Arial, sans-serif';
+
 const StyledTitleTypography = styled(TitleTypography)(({ theme }) => ({
   ...theme.typography.h6,
   flexGrow: 1,
   paddingLeft: theme.spacing(0.5),
+  fontFamily: TOPBAR_FONT_STACK,
+  fontWeight: 500,
+  fontSize: '1rem',
+  lineHeight: 1.25,
 }));
 
-const StyledTitle = styled('div')(({ theme }) => ({
-  ...theme.typography.h6,
-  flexGrow: 1,
-  paddingLeft: theme.spacing(0.5),
-}));
 /** */
 function TitleTypography({ children, ...props }) {
   return (
-    <Typography variant="h2" noWrap color="inherit" {...props}>
+    <Typography component="h2" variant="h6" noWrap color="inherit" {...props}>
       {children}
     </Typography>
   );

@@ -22,6 +22,32 @@ const StyledSection = styled('section')({
   },
 });
 
+/**
+ * Expand a search-hit rect so we keep more context and avoid over-zooming tiny matches.
+ */
+export function expandSearchHitRect(vpRect, itemRect, paddingRatio = 0.35, minItemCoverageRatio = 0.2) {
+  if (!vpRect) return null;
+
+  const centerX = vpRect.x + (vpRect.width / 2);
+  const centerY = vpRect.y + (vpRect.height / 2);
+
+  const paddedWidth = vpRect.width * (1 + (paddingRatio * 2));
+  const paddedHeight = vpRect.height * (1 + (paddingRatio * 2));
+
+  const minWidth = itemRect ? (itemRect.width * minItemCoverageRatio) : 0;
+  const minHeight = itemRect ? (itemRect.height * minItemCoverageRatio) : 0;
+
+  const width = Math.max(paddedWidth, minWidth);
+  const height = Math.max(paddedHeight, minHeight);
+
+  return {
+    height,
+    width,
+    x: centerX - (width / 2),
+    y: centerY - (height / 2),
+  };
+}
+
 export function OpenSeadragonViewer({
   children = null,
   label = null,
@@ -312,10 +338,16 @@ export function OpenSeadragonViewer({
       const item = viewer.world.getItemAt(itemIndex);
       if (!item || !item.imageToViewportRectangle) return;
       const vpRect = item.imageToViewportRectangle(new OpenSeadragon.Rect(x, y, w, h));
-      // Add slight padding for context
-      const padX = vpRect.width * 0.1;
-      const padY = vpRect.height * 0.1;
-      const padded = new OpenSeadragon.Rect(vpRect.x - padX, vpRect.y - padY, vpRect.width + 2 * padX, vpRect.height + 2 * padY);
+      const itemRect = item.getBounds ? item.getBounds() : null;
+      const expandedRect = expandSearchHitRect(vpRect, itemRect);
+      if (!expandedRect) return;
+
+      const padded = new OpenSeadragon.Rect(
+        expandedRect.x,
+        expandedRect.y,
+        expandedRect.width,
+        expandedRect.height,
+      );
       viewer.viewport.fitBoundsWithConstraints(padded, true);
     };
 

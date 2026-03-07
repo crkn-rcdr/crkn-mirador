@@ -26,7 +26,7 @@ const getMatch = (option) => (isObject(option) ? option.match : option);
 /** */
 export function SearchPanelControls({
   autocompleteService = undefined, companionWindowId, fetchSearch, query = '',
-  searchIsFetching = false, searchService, windowId,
+  searchIsFetching = false, searchService, windowId, showUnavailableMessage = false,
 }) {
   const { t } = useTranslation();
   const [input, setInput] = useState(query);
@@ -103,6 +103,44 @@ export function SearchPanelControls({
   };
 
   const id = `search-${companionWindowId}`;
+
+  if (showUnavailableMessage) {
+    return (
+      <StyledForm
+        aria-label={t('searchTitle')}
+        onSubmit={event => event.preventDefault()}
+      >
+        <TextField
+          id={id}
+          value={t('searchUnavailable')}
+          label={t('searchInputLabel')}
+          variant="standard"
+          InputLabelProps={{
+            sx: {
+              fontSize: '14px',
+              '&.MuiInputLabel-shrink': {
+                fontSize: '14px',
+                transform: 'translate(0, 6px) scale(0.85)',
+                transformOrigin: 'left top',
+              },
+            },
+          }}
+          InputProps={{
+            readOnly: true,
+            endAdornment: (
+              <InputAdornment sx={{ position: 'relative' }} position="end">
+                <MiradorMenuButton aria-label={t('searchSubmitAria')} disabled type="button">
+                  <BiIcon name="search" size={16} />
+                </MiradorMenuButton>
+              </InputAdornment>
+            ),
+          }}
+          sx={{ width: '100%' }}
+        />
+      </StyledForm>
+    );
+  }
+
   return (
     <>
       <StyledForm
@@ -182,6 +220,7 @@ SearchPanelControls.propTypes = {
   searchIsFetching: PropTypes.bool,
   searchService: PropTypes.shape({
     id: PropTypes.string,
-  }).isRequired,
+  }),
+  showUnavailableMessage: PropTypes.bool,
   windowId: PropTypes.string.isRequired,
 };
