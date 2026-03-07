@@ -85574,20 +85574,21 @@ Xre.NODE_ENV !== "production" && (Kre.propTypes = {
    */
   value: c.any
 });
-const E9 = '"Roboto", "Helvetica Neue", Arial, sans-serif', D5e = he(lC, { name: "WindowTopBar", slot: "root" })(() => ({
+const E9 = '"Roboto", "Helvetica Neue", Arial, sans-serif', D5e = he(lC, { name: "WindowTopBar", slot: "root" })(({ theme: e }) => ({
   zIndex: 1100,
-  backgroundColor: "transparent",
+  backgroundColor: e.palette.mode === "dark" ? "#1f2328" : "#ffffff",
   boxShadow: "none"
 })), I5e = he(ew, { name: "WindowTopBar", slot: "toolbar" })(({ ownerState: e, theme: t }) => ({
   "--topbar-control-size": "40px",
-  backgroundColor: t.palette.mode === "dark" ? "#1f2328" : "#f3f5f6",
+  backgroundColor: t.palette.mode === "dark" ? "#1f2328" : "#ffffff",
   borderTop: "2px solid",
   borderTopColor: e != null && e.focused ? t.palette.primary.main : "transparent",
+  alignItems: "center",
   minHeight: 74,
   paddingLeft: t.spacing(1.25),
   paddingRight: t.spacing(1.25),
   justifyContent: "flex-start",
-  gap: t.spacing(0.9),
+  gap: t.spacing(1.25),
   backdropFilter: "none",
   borderBottom: `1px solid ${Zs(t.palette.text.primary, t.palette.mode === "dark" ? 0.22 : 0.09)}`,
   fontFamily: E9,
@@ -85637,16 +85638,16 @@ const E9 = '"Roboto", "Helvetica Neue", Arial, sans-serif', D5e = he(lC, { name:
   borderRadius: 0,
   marginTop: 0,
   padding: 0,
-  gap: e.spacing(1.2),
+  gap: e.spacing(1.05),
   "& .MuiToggleButton-root": {
     margin: 0,
     minWidth: 0,
-    height: 42,
-    padding: "0 0 8px",
+    height: "var(--topbar-control-size)",
+    padding: 0,
     lineHeight: 1.1,
     border: "none",
     borderRadius: 0,
-    borderBottom: "3px solid transparent",
+    borderBottom: "1px solid transparent",
     transition: "color 120ms ease, border-color 120ms ease, transform 60ms ease",
     color: e.palette.text.secondary,
     display: "inline-flex",
@@ -85700,9 +85701,15 @@ const E9 = '"Roboto", "Helvetica Neue", Arial, sans-serif', D5e = he(lC, { name:
   alignItems: "center",
   display: "flex",
   flex: "1 1 420px",
-  gap: e.spacing(1),
+  gap: e.spacing(1.3),
   minWidth: 240,
   maxWidth: 560,
+  "&.title-hidden": {
+    flex: "0 0 auto",
+    gap: e.spacing(0.75),
+    maxWidth: "none",
+    minWidth: "auto"
+  },
   "& .MuiTypography-root": {
     color: e.palette.text.primary,
     fontWeight: 500,
@@ -85714,6 +85721,7 @@ const E9 = '"Roboto", "Helvetica Neue", Arial, sans-serif', D5e = he(lC, { name:
     whiteSpace: "nowrap"
   }
 })), N5e = he("div")(({ theme: e }) => ({
+  alignSelf: "center",
   alignItems: "center",
   backgroundColor: "transparent",
   border: "none",
@@ -85724,6 +85732,9 @@ const E9 = '"Roboto", "Helvetica Neue", Arial, sans-serif', D5e = he(lC, { name:
   gap: e.spacing(0.25),
   maxWidth: 760,
   minWidth: 320,
+  marginTop: e.spacing(-0.5),
+  marginLeft: e.spacing(0.5),
+  marginRight: e.spacing(0.5),
   padding: e.spacing(0, 0, 0),
   "& form": {
     alignItems: "center",
@@ -85759,11 +85770,11 @@ const E9 = '"Roboto", "Helvetica Neue", Arial, sans-serif', D5e = he(lC, { name:
     }
   },
   "& .MuiInputBase-input": {
-    paddingTop: e.spacing(0.85),
-    paddingBottom: e.spacing(0.55)
+    paddingTop: e.spacing(0.3),
+    paddingBottom: e.spacing(0.15)
   },
   "& .MuiInputLabel-root.MuiInputLabel-shrink": {
-    transform: "translate(0, 5px) scale(0.82)",
+    transform: "translate(0, -1px) scale(0.82)",
     transformOrigin: "left top"
   },
   "& .MuiInputAdornment-positionEnd": {
@@ -85819,9 +85830,10 @@ const E9 = '"Roboto", "Helvetica Neue", Arial, sans-serif', D5e = he(lC, { name:
   }
 })), P5e = he("div")(({ theme: e }) => ({
   alignItems: "center",
+  alignSelf: "center",
   display: "flex",
   flex: "0 0 auto",
-  gap: e.spacing(0.55),
+  gap: e.spacing(0.65),
   marginLeft: "auto",
   "& .mirador-window-menu-btn": {
     height: "var(--topbar-control-size)",
@@ -85853,31 +85865,32 @@ function Qre({
   viewMode: x = void 0,
   onChangeViewMode: C = void 0,
   hasSearchService: S = !1,
-  showSearchUnavailable: _ = !1
+  showSearchUnavailable: _ = !1,
+  hideWindowTitle: O = !1
 }) {
-  const { t: O } = jt(), A = arguments[0];
-  return /* @__PURE__ */ R.jsx(D5e, { component: y, "aria-label": O("windowNavigation"), position: "relative", color: "default", enableColorOnDark: !0, children: /* @__PURE__ */ R.jsxs(
+  const { t: A } = jt(), M = arguments[0];
+  return /* @__PURE__ */ R.jsx(D5e, { component: y, "aria-label": A("windowNavigation"), position: "relative", color: "default", enableColorOnDark: !0, children: /* @__PURE__ */ R.jsxs(
     I5e,
     {
       disableGutters: !0,
       onMouseDown: f,
-      ownerState: A,
+      ownerState: M,
       className: $n(un("window-top-bar")),
       variant: "dense",
       children: [
-        v && /* @__PURE__ */ R.jsxs(C9, { children: [
+        v && /* @__PURE__ */ R.jsxs(C9, { className: O ? "title-hidden" : void 0, children: [
           /* @__PURE__ */ R.jsx(
             Cr,
             {
-              "aria-label": O("toggleWindowSideBar"),
+              "aria-label": A("toggleWindowSideBar"),
               onClick: n,
               className: un("window-menu-btn"),
               children: /* @__PURE__ */ R.jsx(Bt, { name: "list", size: 16 })
             }
           ),
-          /* @__PURE__ */ R.jsx(T9, { windowId: t })
+          !O && /* @__PURE__ */ R.jsx(T9, { windowId: t })
         ] }),
-        !v && /* @__PURE__ */ R.jsx(C9, { children: /* @__PURE__ */ R.jsx(T9, { windowId: t }) }),
+        !v && !O && /* @__PURE__ */ R.jsx(C9, { children: /* @__PURE__ */ R.jsx(T9, { windowId: t }) }),
         (S || _) && /* @__PURE__ */ R.jsx(N5e, { children: /* @__PURE__ */ R.jsx(
           CJ,
           {
@@ -85900,18 +85913,18 @@ function Qre({
               exclusive: !0,
               size: "small",
               value: x,
-              onChange: (M, P) => {
-                P && C(P);
+              onChange: (P, N) => {
+                N && C(N);
               },
-              "aria-label": O("windowViewMode"),
+              "aria-label": A("windowViewMode"),
               children: [
-                /* @__PURE__ */ R.jsxs(_B, { value: "both", "aria-label": O("splitView"), children: [
+                /* @__PURE__ */ R.jsxs(_B, { value: "both", "aria-label": A("splitView"), children: [
                   /* @__PURE__ */ R.jsx(Bt, { name: "layout-split", size: 16 }),
-                  /* @__PURE__ */ R.jsx("span", { className: "view-label", children: O("splitView") })
+                  /* @__PURE__ */ R.jsx("span", { className: "view-label", children: A("splitView") })
                 ] }),
-                /* @__PURE__ */ R.jsxs(_B, { value: "gallery", "aria-label": O("galleryOnly"), children: [
+                /* @__PURE__ */ R.jsxs(_B, { value: "gallery", "aria-label": A("galleryOnly"), children: [
                   /* @__PURE__ */ R.jsx(Bt, { name: "grid-3x3-gap", size: 16 }),
-                  /* @__PURE__ */ R.jsx("span", { className: "view-label", children: O("galleryOnly") })
+                  /* @__PURE__ */ R.jsx("span", { className: "view-label", children: A("galleryOnly") })
                 ] })
               ]
             }
@@ -85922,7 +85935,7 @@ function Qre({
           s && /* @__PURE__ */ R.jsx(
             Cr,
             {
-              "aria-label": O("closeWindow"),
+              "aria-label": A("closeWindow"),
               className: $n(un("window-close"), un("window-menu-btn")),
               onClick: e,
               children: /* @__PURE__ */ R.jsx(Bt, { name: "x-lg", size: 16 })
@@ -85954,10 +85967,11 @@ Qre.propTypes = {
   viewMode: c.oneOf(["both", "gallery"]),
   onChangeViewMode: c.func,
   hasSearchService: c.bool,
-  showSearchUnavailable: c.bool
+  showSearchUnavailable: c.bool,
+  hideWindowTitle: c.bool
 };
 const k5e = (e, { windowId: t }) => {
-  const n = uu(e, { windowId: t }), r = qh(e, { windowId: t }), i = HT(e, { windowId: t }), o = i && !i.missing && !i.isFetching && !i.error;
+  const n = uu(e, { windowId: t }), r = !!(n.hideWindowTitle || n.showWindowTitle === !1 || n.windowTitle === !1), i = qh(e, { windowId: t }), o = HT(e, { windowId: t }), s = o && !o.missing && !o.isFetching && !o.error;
   return {
     allowClose: n.allowClose,
     allowFullscreen: n.allowFullscreen,
@@ -85966,8 +85980,9 @@ const k5e = (e, { windowId: t }) => {
     allowWindowSideBar: n.allowWindowSideBar,
     focused: NW(e, { windowId: t }),
     maximized: n.maximized,
-    hasSearchService: !!r,
-    showSearchUnavailable: o && !r
+    hideWindowTitle: r,
+    hasSearchService: !!i,
+    showSearchUnavailable: s && !i
   };
 }, L5e = (e, { windowId: t }) => ({
   focusWindow: () => e(UE(t)),
