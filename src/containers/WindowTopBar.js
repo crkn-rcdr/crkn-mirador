@@ -13,6 +13,11 @@ import { WindowTopBar } from '../components/WindowTopBar';
 /** mapStateToProps */
 const mapStateToProps = (state, { windowId }) => {
   const config = getWindowConfig(state, { windowId });
+  const hideWindowTitle = Boolean(
+    config.hideWindowTitle
+    || config.showWindowTitle === false
+    || config.windowTitle === false
+  );
   const searchService = getManifestSearchService(state, { windowId });
   const manifestStatus = getManifestStatus(state, { windowId });
   const manifestLoaded = manifestStatus
@@ -28,6 +33,7 @@ const mapStateToProps = (state, { windowId }) => {
     allowWindowSideBar: config.allowWindowSideBar,
     focused: isFocused(state, { windowId }),
     maximized: config.maximized,
+    hideWindowTitle,
     hasSearchService: !!searchService,
     showSearchUnavailable: manifestLoaded && !searchService,
   };

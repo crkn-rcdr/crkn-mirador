@@ -105,6 +105,11 @@ describe('WindowTopBar', () => {
     expect(button).not.toBeInTheDocument();
   });
 
+  it('does not render a title when hideWindowTitle is true', () => {
+    render(<Subject hideWindowTitle />);
+    expect(screen.queryByRole('heading')).not.toBeInTheDocument();
+  });
+
   it('shows a localized unavailable search message when content search is missing', () => {
     render(<Subject showSearchUnavailable />);
 

@@ -20,22 +20,23 @@ import SearchPanelControls from '../containers/SearchPanelControls';
 
 const TOPBAR_FONT_STACK = '"Roboto", "Helvetica Neue", Arial, sans-serif';
 
-const Root = styled(AppBar, { name: 'WindowTopBar', slot: 'root' })(() => ({
+const Root = styled(AppBar, { name: 'WindowTopBar', slot: 'root' })(({ theme }) => ({
   zIndex: 1100,
-  backgroundColor: 'transparent',
+  backgroundColor: theme.palette.mode === 'dark' ? '#1f2328' : '#ffffff',
   boxShadow: 'none',
 }));
 
 const StyledToolbar = styled(Toolbar, { name: 'WindowTopBar', slot: 'toolbar' })(({ ownerState, theme }) => ({
   '--topbar-control-size': '40px',
-  backgroundColor: theme.palette.mode === 'dark' ? '#1f2328' : '#f3f5f6',
+  backgroundColor: theme.palette.mode === 'dark' ? '#1f2328' : '#ffffff',
   borderTop: '2px solid',
   borderTopColor: ownerState?.focused ? theme.palette.primary.main : 'transparent',
+  alignItems: 'center',
   minHeight: 74,
   paddingLeft: theme.spacing(1.25),
   paddingRight: theme.spacing(1.25),
   justifyContent: 'flex-start',
-  gap: theme.spacing(0.9),
+  gap: theme.spacing(1.25),
   backdropFilter: 'none',
   borderBottom: `1px solid ${alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.22 : 0.09)}`,
   fontFamily: TOPBAR_FONT_STACK,
@@ -87,17 +88,17 @@ const PillGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   borderRadius: 0,
   marginTop: 0,
   padding: 0,
-  gap: theme.spacing(1.2),
+  gap: theme.spacing(1.05),
 
   '& .MuiToggleButton-root': {
     margin: 0,
     minWidth: 0,
-    height: 42,
-    padding: '0 0 8px',
+    height: 'var(--topbar-control-size)',
+    padding: 0,
     lineHeight: 1.1,
     border: 'none',
     borderRadius: 0,
-    borderBottom: `3px solid transparent`,
+    borderBottom: `1px solid transparent`,
     transition: 'color 120ms ease, border-color 120ms ease, transform 60ms ease',
     color: theme.palette.text.secondary,
     display: 'inline-flex',
@@ -158,9 +159,15 @@ const LeftGroup = styled('div')(({ theme }) => ({
   alignItems: 'center',
   display: 'flex',
   flex: '1 1 420px',
-  gap: theme.spacing(1),
+  gap: theme.spacing(1.3),
   minWidth: 240,
   maxWidth: 560,
+  '&.title-hidden': {
+    flex: '0 0 auto',
+    gap: theme.spacing(0.75),
+    maxWidth: 'none',
+    minWidth: 'auto',
+  },
   '& .MuiTypography-root': {
     color: theme.palette.text.primary,
     fontWeight: 500,
@@ -174,6 +181,7 @@ const LeftGroup = styled('div')(({ theme }) => ({
 }));
 
 const SearchSlot = styled('div')(({ theme }) => ({
+  alignSelf: 'center',
   alignItems: 'center',
   backgroundColor: 'transparent',
   border: 'none',
@@ -184,6 +192,9 @@ const SearchSlot = styled('div')(({ theme }) => ({
   gap: theme.spacing(0.25),
   maxWidth: 760,
   minWidth: 320,
+  marginTop: theme.spacing(-0.5),
+  marginLeft: theme.spacing(0.5),
+  marginRight: theme.spacing(0.5),
   padding: theme.spacing(0, 0, 0),
   '& form': {
     alignItems: 'center',
@@ -219,11 +230,11 @@ const SearchSlot = styled('div')(({ theme }) => ({
     },
   },
   '& .MuiInputBase-input': {
-    paddingTop: theme.spacing(0.85),
-    paddingBottom: theme.spacing(0.55),
+    paddingTop: theme.spacing(0.3),
+    paddingBottom: theme.spacing(0.15),
   },
   '& .MuiInputLabel-root.MuiInputLabel-shrink': {
-    transform: 'translate(0, 5px) scale(0.82)',
+    transform: 'translate(0, -1px) scale(0.82)',
     transformOrigin: 'left top',
   },
   '& .MuiInputAdornment-positionEnd': {
@@ -281,9 +292,10 @@ const SearchSlot = styled('div')(({ theme }) => ({
 
 const RightGroup = styled('div')(({ theme }) => ({
   alignItems: 'center',
+  alignSelf: 'center',
   display: 'flex',
   flex: '0 0 auto',
-  gap: theme.spacing(0.55),
+  gap: theme.spacing(0.65),
   marginLeft: 'auto',
   '& .mirador-window-menu-btn': {
     height: 'var(--topbar-control-size)',
@@ -309,6 +321,7 @@ export function WindowTopBar({
   onChangeViewMode = undefined,
   hasSearchService = false,
   showSearchUnavailable = false,
+  hideWindowTitle = false,
 }) {
   const { t } = useTranslation();
   const ownerState = arguments[0]; // eslint-disable-line prefer-rest-params
@@ -323,7 +336,7 @@ export function WindowTopBar({
         variant="dense"
       >
         {allowWindowSideBar && (
-          <LeftGroup>
+          <LeftGroup className={hideWindowTitle ? 'title-hidden' : undefined}>
             <MiradorMenuButton
               aria-label={t('toggleWindowSideBar')}
               onClick={toggleWindowSideBar}
@@ -331,10 +344,10 @@ export function WindowTopBar({
             >
               <BiIcon name="list" size={16} />
             </MiradorMenuButton>
-            <WindowTopBarTitle windowId={windowId} />
+            {!hideWindowTitle && <WindowTopBarTitle windowId={windowId} />}
           </LeftGroup>
         )}
-        {!allowWindowSideBar && (
+        {!allowWindowSideBar && !hideWindowTitle && (
           <LeftGroup>
             <WindowTopBarTitle windowId={windowId} />
           </LeftGroup>
@@ -417,4 +430,5 @@ WindowTopBar.propTypes = {
   onChangeViewMode: PropTypes.func,
   hasSearchService: PropTypes.bool,
   showSearchUnavailable: PropTypes.bool,
+  hideWindowTitle: PropTypes.bool,
 };
