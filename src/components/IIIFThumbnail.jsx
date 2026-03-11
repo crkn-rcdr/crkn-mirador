@@ -14,7 +14,10 @@ const Label = styled('span', { name: 'IIIFThumbnail', slot: 'label' })(({ theme 
 }));
 
 const Image = styled('img', { name: 'IIIFThumbnail', slot: 'image' })(() => ({
+  display: 'block',
   height: 'auto',
+  objectFit: 'contain',
+  objectPosition: 'center',
   width: 'auto',
 }));
 
@@ -57,7 +60,13 @@ const LazyLoadedImage = ({
       width: undefined,
     };
 
-    if (!image) return { ...style, height: maxHeight, width: maxWidth };
+    if (!image) {
+      return {
+        ...style,
+        maxHeight,
+        maxWidth,
+      };
+    }
 
     const { height: thumbHeight, width: thumbWidth } = image;
     if (thumbHeight && thumbWidth) {
@@ -91,8 +100,12 @@ const LazyLoadedImage = ({
       // The thumbnail wasn't retrieved via an Image API service,
       // and its dimensions are not specified in the JSON-LD
       // (note that this may result in a blurry image)
-      styleProps.width = maxWidth;
-      styleProps.height = maxHeight;
+      styleProps.maxWidth = maxWidth;
+      styleProps.maxHeight = maxHeight;
+      styleProps.width = undefined;
+      styleProps.height = undefined;
+      styleProps.objectFit = 'contain';
+      styleProps.objectPosition = 'left top';
     }
 
     return {

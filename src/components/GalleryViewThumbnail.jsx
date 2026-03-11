@@ -13,19 +13,26 @@ const Root = styled('div', { name: 'GalleryView', slot: 'thumbnail' })(
   ({ ownerState, theme }) => ({
     '&:focus': { outline: 'none' },
     '&:hover': { backgroundColor: theme.palette.action.hover },
+    alignItems: 'flex-start',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
     cursor: 'pointer',
     // Margin here caused overflow beyond grid cells; spacing comes from Grid gap.
     margin: 0,
+    border: '2px solid transparent',
     borderRadius: theme.shape.borderRadius * 1.5,
     padding: theme.spacing(1),
+    paddingTop: ownerState?.isMobileStrip ? theme.spacing(1.25) : theme.spacing(1),
     position: 'relative',
     width: '100%',
     height: '100%',
     boxSizing: 'border-box',
+    overflow: 'visible',
     transition: 'background-color 120ms ease',
-    // Use inset box-shadow to indicate the selected canvas only.
-    // Do not add a border for the current search hit to avoid the blue outline.
-    ...(ownerState?.selected ? { boxShadow: `inset 0 0 0 2px ${theme.palette.primary.main}` } : {}),
+    ...(ownerState?.selected && {
+      borderColor: theme.palette.primary.main,
+    }),
   }),
 );
 
@@ -61,16 +68,19 @@ export function GalleryViewThumbnail({
   thumbSize = 'm',      // 's' | 'm' | 'l'
   tileW,                // new: inner cell width from Grid (already minus gap)
   tileH,                // new: inner cell height from Grid (already minus gap)
+  isMobileStrip = false,
 }) {
   const myRef = useRef();
   const [requestedAnnotations, setRequestedAnnotations] = useState(false);
   const { t } = useTranslation();
 
   // Prefer tile-based sizing from Grid to avoid mismatch/overlap.
-  const pad = 16; // Root padding (8 top + 8 bottom) with MUI spacing(1)
+  const pad = isMobileStrip ? 20 : 16; // add top breathing room in strip to avoid visual clipping
+  const baseLabelReserve = thumbSize === 's' ? 40 : 44;
+  const labelReserve = isMobileStrip ? (baseLabelReserve + 8) : baseLabelReserve;
   const maxHeight = (typeof tileH === 'number' && tileH > 0)
-    ? Math.max(1, tileH - pad)
-    : Math.max(1, Math.round(((typeof config.height === 'number' ? config.height : 100) * ((thumbSize === 'l') ? 4.0 : 2.0))));
+    ? Math.max(1, tileH - pad - labelReserve)
+    : Math.max(1, Math.round(((typeof config.height === 'number' ? config.height : 100) * ((thumbSize === 'l') ? 4.0 : 2.0))) - labelReserve);
 
   const maxWidth = (typeof tileW === 'number' && tileW > 0)
     ? Math.max(1, tileW - pad)
@@ -88,7 +98,7 @@ export function GalleryViewThumbnail({
     else setCanvas(canvas.id);
   };
 
-  const ownerState = { selected, highlighted };
+  const ownerState = { selected, highlighted, isMobileStrip };
 
   return (
     <InView onChange={handleIntersection}>
@@ -212,6 +222,7 @@ GalleryViewThumbnail.propTypes = {
   highlighted: PropTypes.bool,
   setCanvas: PropTypes.func.isRequired,
   matchingTerms: PropTypes.arrayOf(PropTypes.string),
+  isMobileStrip: PropTypes.bool,
   thumbSize: PropTypes.oneOf(['s','m','l']),
   tileW: PropTypes.number,
   tileH: PropTypes.number,
@@ -225,6 +236,7 @@ export default React.memo(GalleryViewThumbnail, (prev, next) => (
   prev.config?.height === next.config?.height &&
   prev.config?.width === next.config?.width &&
   (prev.canvas?.id || prev.canvas?.index) === (next.canvas?.id || next.canvas?.index) &&
+  prev.isMobileStrip === next.isMobileStrip &&
   prev.thumbSize === next.thumbSize &&
   prev.tileW === next.tileW &&
   prev.tileH === next.tileH

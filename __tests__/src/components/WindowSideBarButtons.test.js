@@ -73,17 +73,7 @@ describe('WindowSideBarButtons', () => {
   });
 
   describe('search', () => {
-    it('by default is off', () => {
-      expect(screen.queryByRole('tab', { name: 'Search' })).not.toBeInTheDocument();
-    });
-
-    it('can be configured to be on', () => {
-      wrapper = createWrapper({ hasSearchService: true, panels: { search: true }, windowId });
-      expect(screen.getByRole('tab', { name: 'Search' })).toBeInTheDocument();
-    });
-
-    it('has a badge indicating if the search panel has active annotations', () => {
-      let tab;
+    it('never renders a search tab even if enabled in panel config', () => {
       wrapper = createWrapper({
         hasSearchResults: true,
         hasSearchService: true,
@@ -92,22 +82,8 @@ describe('WindowSideBarButtons', () => {
         },
         windowId,
       });
-      tab = screen.getByRole('tab', { name: 'Search' });
-      expect(tab.querySelector('.MuiBadge-dot:not(.MuiBadge-invisible)')).toBeInTheDocument();
 
-      wrapper.unmount();
-
-      wrapper = createWrapper({
-        hasSearchResults: false,
-        hasSearchService: true,
-        panels: {
-          search: true,
-        },
-        windowId,
-      });
-      tab = screen.getByRole('tab', { name: 'Search' });
-
-      expect(tab.querySelector('.MuiBadge-dot.MuiBadge-invisible')).toBeInTheDocument();
+      expect(screen.queryByRole('tab', { name: 'Search' })).not.toBeInTheDocument();
     });
   });
 

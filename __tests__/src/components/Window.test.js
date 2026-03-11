@@ -1,5 +1,6 @@
 import { MosaicWindowContext } from 'react-mosaic-component2';
 import { render, screen } from '@tests/utils/test-utils';
+import { waitFor } from '@testing-library/react';
 
 import { Window } from '../../../src/components/Window';
 
@@ -95,5 +96,28 @@ describe('Window', () => {
       );
       expect(connectDragSource).not.toHaveBeenCalled();
     });
+  });
+
+  it('disables split-handle resizing in mobile layout', async () => {
+    const originalGetBoundingClientRect = HTMLElement.prototype.getBoundingClientRect;
+    HTMLElement.prototype.getBoundingClientRect = vi.fn(() => ({
+      bottom: 900,
+      height: 900,
+      left: 0,
+      right: 500,
+      toJSON: () => {},
+      top: 0,
+      width: 500,
+      x: 0,
+      y: 0,
+    }));
+
+    const { container } = createWrapper();
+
+    await waitFor(() => {
+      expect(container.querySelector('.mosaic-split')).toBeNull(); // eslint-disable-line testing-library/no-node-access, testing-library/no-container
+    });
+
+    HTMLElement.prototype.getBoundingClientRect = originalGetBoundingClientRect;
   });
 });

@@ -3,6 +3,7 @@ import { lazy, useContext, useCallback, useEffect, useState, useRef } from 'reac
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { MosaicWindowContext, Mosaic } from 'react-mosaic-component2';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
@@ -30,6 +31,10 @@ const StyledMosaic = styled(Mosaic)({
 
 const rowMixin = { display: 'flex', flex: '1', flexDirection: 'row', minHeight: 0 };
 const columnMixin = { display: 'flex', flex: '1', flexDirection: 'column', minHeight: 0 };
+const MOBILE_SPLIT_BREAKPOINT = 1100;
+const TABLET_SPLIT_MIN_WIDTH = 768;
+const MOBILE_PRIMARY_PANE_PERCENTAGE = 65;
+const TABLET_PRIMARY_PANE_PERCENTAGE = 65;
 
 const Root = styled(Paper, { name: 'Window', slot: 'root' })(({ ownerState, theme }) => ({
   ...columnMixin,
@@ -82,6 +87,7 @@ export function Window({
   manifestError = null,
 }) {
   const { t } = useTranslation();
+  const isTabletViewport = useMediaQuery(`(min-width:${TABLET_SPLIT_MIN_WIDTH}px)`);
   const ownerState = arguments[0]; // eslint-disable-line prefer-rest-params
 
   const ErrorWindow = useCallback(({ error }) => (
@@ -115,13 +121,34 @@ export function Window({
   });
 
   useEffect(() => {
-    const width = componentRef.current?.getBoundingClientRect().width;
-    if (width) {
-      setComponentWidth(width);
-      const minimum = (200 / width) * 100; // 160px minimum for either pane
-      setMinimumPaneSizePercentage(minimum);
-      if (splitPercentage <= 0) setSplitPercentage(100 - minimum);
+    const node = componentRef.current;
+    if (!node) return undefined;
+
+    const updateDimensions = () => {
+      const nextWidth = node.getBoundingClientRect().width;
+      if (!nextWidth) return;
+
+      setComponentWidth((prev) => (Math.abs(prev - nextWidth) > 0.5 ? nextWidth : prev));
+
+      const nextMinimum = (200 / nextWidth) * 100;
+      setMinimumPaneSizePercentage((prev) => (Math.abs(prev - nextMinimum) > 0.05 ? nextMinimum : prev));
+
+      setSplitPercentage((prev) => (prev <= 0 ? (100 - nextMinimum) : prev));
+    };
+
+    updateDimensions();
+
+    if (typeof ResizeObserver !== 'undefined') {
+      const observer = new ResizeObserver(updateDimensions);
+      observer.observe(node);
+      return () => observer.disconnect();
     }
+
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+
+  useEffect(() => {
     localStorage.setItem('splitPercentage', JSON.stringify(splitPercentage));
     localStorage.setItem('windowViewMode', viewMode);
     if (viewMode === 'both' && splitPercentage > 0) {
@@ -158,6 +185,18 @@ export function Window({
   // Build the element map after state has been initialized so GalleryView can
   // receive a slider width that matches the minimum pane size (minus padding)
   const galleryControlWidth = Math.max(120, Math.round(((componentWidth * minimumPaneSizePercentage) / 100) - 24));
+  const useMobileSplitLayout = componentWidth > 0 && componentWidth <= MOBILE_SPLIT_BREAKPOINT;
+  const effectiveViewMode = useMobileSplitLayout ? 'both' : viewMode;
+  const effectiveSplitDirection = useMobileSplitLayout ? 'column' : 'row';
+  const effectiveMinimumPaneSizePercentage = useMobileSplitLayout
+    ? Math.min(45, Math.max(20, minimumPaneSizePercentage))
+    : minimumPaneSizePercentage;
+  const effectiveSplitPercentage = useMobileSplitLayout
+    ? (isTabletViewport ? TABLET_PRIMARY_PANE_PERCENTAGE : MOBILE_PRIMARY_PANE_PERCENTAGE)
+    : splitPercentage;
+  const effectiveResize = useMobileSplitLayout
+    ? 'DISABLED'
+    : { minimumPaneSizePercentage: effectiveMinimumPaneSizePercentage };
   const ELEMENT_MAP = {
     a: (
       <StyledPrimaryWindow
@@ -167,7 +206,13 @@ export function Window({
         sideBarOpen={sideBarOpen}
       />
     ),
-    b: <GalleryView windowId={windowId} controlWidth={galleryControlWidth} />,
+    b: (
+      <GalleryView
+        windowId={windowId}
+        controlWidth={galleryControlWidth}
+        isBottomStrip={effectiveSplitDirection === 'column'}
+      />
+    ),
   };
 
   // Ignore shortcuts while typing
@@ -187,6 +232,7 @@ export function Window({
       const key = (e.key || '').toLowerCase();
       const ctrlLike = e.ctrlKey || e.metaKey;
       if ((key === 'g' && !e.shiftKey && !e.altKey) || (ctrlLike && key === 'g')) {
+        if (useMobileSplitLayout) return;
         e.preventDefault();
         const idx = order.indexOf(viewMode);
         const next = order[(idx + 1) % order.length];
@@ -195,7 +241,7 @@ export function Window({
     };
     window.addEventListener('keydown', onKeyDown, { passive: false });
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [viewMode]); // switchViewMode closes over latest state
+  }, [viewMode, useMobileSplitLayout]); // switchViewMode closes over latest state
 
   return (
     <ErrorBoundary FallbackComponent={ErrorWindow}>
@@ -213,8 +259,8 @@ export function Window({
           component={workspaceType === 'mosaic' && windowDraggable ? DraggableNavBar : undefined}
           windowId={windowId}
           windowDraggable={windowDraggable}
-          viewMode={viewMode}
-          onChangeViewMode={(mode) => switchViewMode(mode)}
+          viewMode={effectiveViewMode}
+          onChangeViewMode={useMobileSplitLayout ? undefined : ((mode) => switchViewMode(mode))}
         />
         <IIIFAuthentication windowId={windowId} />
         {manifestError && <ErrorContent error={{ stack: manifestError }} windowId={windowId} />}
@@ -223,22 +269,22 @@ export function Window({
           <ContentColumn>
             {/* View toggle now lives in WindowTopBar */}
 
-            {viewMode === 'both' && (
+            {effectiveViewMode === 'both' && (
               <StyledMosaic
-                key="both"
+                key={useMobileSplitLayout ? 'both-mobile' : 'both'}
                 renderTile={(id) => ELEMENT_MAP[id]}
                 initialValue={{
-                  direction: 'row',
+                  direction: effectiveSplitDirection,
                   first: 'a',
                   second: 'b',
-                  splitPercentage,
+                  splitPercentage: effectiveSplitPercentage,
                 }}
-                onChange={handleChangeSplit}
-                resize={{ minimumPaneSizePercentage }}
+                onChange={useMobileSplitLayout ? undefined : handleChangeSplit}
+                resize={effectiveResize}
               />
             )}
 
-            {viewMode === 'gallery' && (
+            {effectiveViewMode === 'gallery' && (
               <StyledMosaic key="gallery" renderTile={(id) => ELEMENT_MAP[id]} initialValue="b" />
             )}
 

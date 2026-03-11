@@ -19,6 +19,8 @@ const globalWindowViewerStyles = {
     marginTop: '0'
   },
   '.viewer-wrap': {
+    height: '100%',
+    position: 'relative',
     width: '100%',
   },
   '.MuiInputBase-sizeSmall': {
@@ -66,10 +68,10 @@ const globalWindowViewerStyles = {
     content: '"\\f138"', // bi-arrow-right-circle
   },
   'div[title="Rotate left"]::before': {
-    content: '"\\f116"', // bi-arrow-counterclockwise
+    content: '"\\f117"', // bi-arrow-clockwise
   },
   'div[title="Rotate right"]::before': {
-    content: '"\\f117"', // bi-arrow-clockwise
+    content: '"\\f116"', // bi-arrow-counterclockwise
   },
   'div[title="Flip Horizontally"]::before': {
     content: '"\\f6a2"', // bi-arrow-left-right

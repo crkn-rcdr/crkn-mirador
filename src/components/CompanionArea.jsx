@@ -5,25 +5,46 @@ import classNames from 'classnames';
 import CompanionWindowFactory from '../containers/CompanionWindowFactory';
 import ns from '../config/css-ns';
 
+const VIEWER_FLOATING_CONTROLS_Z_INDEX = 100000000;
+const COMPANION_OVERLAY_Z_INDEX = VIEWER_FLOATING_CONTROLS_Z_INDEX + 1;
+
 const Root = styled('div', { name: 'CompanionArea', slot: 'root' })(({ ownerState, theme }) => ({
   display: 'flex',
   minHeight: 0,
   position: 'relative',
-  zIndex: theme.zIndex.appBar - 2,
+  zIndex: COMPANION_OVERLAY_Z_INDEX,
+  ...((ownerState.position === 'left') && {
+    [theme.breakpoints.down('sm')]: {
+      bottom: 0,
+      left: 48,
+      minWidth: 0,
+      position: 'absolute',
+      right: 0,
+      top: 0,
+      zIndex: COMPANION_OVERLAY_Z_INDEX,
+    },
+  }),
   ...((ownerState.position === 'bottom' || ownerState.position === 'far-bottom') && {
     flexDirection: 'column',
     width: '100%',
-  })
+  }),
 }));
 
-const Container = styled('div', { name: 'CompanionArea', slot: 'container' })(({ ownerState }) => ({
+const Container = styled('div', { name: 'CompanionArea', slot: 'container' })(({ ownerState, theme }) => ({
   display: ownerState?.companionAreaOpen ? 'flex' : 'none',
+  position: 'relative',
+  zIndex: COMPANION_OVERLAY_Z_INDEX,
   ...((ownerState?.position === 'bottom' || ownerState?.position === 'far-bottom') && {
     flexDirection: 'column',
     width: '100%',
   }),
   ...((ownerState?.position === 'left' && (ownerState?.companionWindowIds && ownerState.companionWindowIds.length > 0)) && {
     minWidth: '235px',
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: '100%',
+      minWidth: '100%',
+      width: '100%',
+    },
   }),
 }));
 

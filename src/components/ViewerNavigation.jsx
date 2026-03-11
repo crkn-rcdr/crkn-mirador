@@ -53,6 +53,7 @@ export function ViewerNavigation({
         className={ns('previous-canvas-button')}
         disabled={!hasPreviousCanvas}
         onClick={() => { hasPreviousCanvas && setPreviousCanvas(); }}
+        TooltipProps={{ disableTouchListener: true }}
       >
         <i className="bi bi-arrow-left"></i>
       </MiradorMenuButton>
@@ -61,18 +62,25 @@ export function ViewerNavigation({
         className={ns('next-canvas-button')}
         disabled={!hasNextCanvas}
         onClick={() => { hasNextCanvas && setNextCanvas(); }}
+        TooltipProps={{ disableTouchListener: true }}
       >
         <i className="bi bi-arrow-right"></i>
       </MiradorMenuButton>
       <Autocomplete
         size="small"
-        disablePortal
+        disablePortal={false}
         value={(canvasIndex+1).toString()}
         onChange={(event, newValue) => {
+          if (!newValue) return;
           //setCanvasSelectValue(newValue);
           setCanvas(canvases[parseInt(newValue)-1].id)
         }}
         options={canvasSelectOptions}
+        slotProps={{
+          popper: {
+            style: { zIndex: 100000003 },
+          },
+        }}
         sx={{ width: 100, display: "inline-block", marginRight: "1rem"}}
         renderInput={(params) => <TextField {...params} label={t('canvasIndex')} />}
       />

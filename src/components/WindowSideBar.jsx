@@ -4,20 +4,23 @@ import Drawer from '@mui/material/Drawer';
 import { useTranslation } from 'react-i18next';
 import WindowSideBarButtons from '../containers/WindowSideBarButtons';
 
-const Root = styled(Drawer, { name: 'WindowSideBar', slot: 'root' })(({ theme }) => ({
+const VIEWER_FLOATING_CONTROLS_Z_INDEX = 100000000;
+const SIDEBAR_OVERLAY_Z_INDEX = VIEWER_FLOATING_CONTROLS_Z_INDEX + 2;
+
+const Root = styled(Drawer, { name: 'WindowSideBar', slot: 'root' })(() => ({
+  border: 'none !important',
+  borderRadius: '0 7px 7px 0',
+  boxShadow: '0px 10px 15px -3px rgba(0,0,0,0.1)',
   flexShrink: 0,
   order: -1000,
-  zIndex: theme.zIndex.appBar - 1,
-  border: "none !important",
-  borderRadius: "0 7px 7px 0",
-  boxShadow: "0px 10px 15px -3px rgba(0,0,0,0.1)"
+  zIndex: SIDEBAR_OVERLAY_Z_INDEX,
 }));
 
 const Nav = styled('nav', { name: 'WindowSideBar', slot: 'nav' })({
+  border: 'none !important',
+  borderRadius: '7px 0 0 7px',
   position: 'relative !important',
   width: 48,
-  border: "none !important",
-  borderRadius: "7px 0 0 7px"
 });
 
 /**

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { styled, alpha } from '@mui/material/styles';
 // Replace MUI Menu icon with Bootstrap icon
@@ -32,11 +33,15 @@ const StyledToolbar = styled(Toolbar, { name: 'WindowTopBar', slot: 'toolbar' })
   borderTop: '2px solid',
   borderTopColor: ownerState?.focused ? theme.palette.primary.main : 'transparent',
   alignItems: 'center',
+  display: 'flex',
+  flexWrap: 'wrap',
+  alignContent: 'center',
   minHeight: 74,
   paddingLeft: theme.spacing(1.25),
   paddingRight: theme.spacing(1.25),
   justifyContent: 'flex-start',
-  gap: theme.spacing(1.25),
+  gap: theme.spacing(1.5),
+  rowGap: theme.spacing(0.45),
   backdropFilter: 'none',
   borderBottom: `1px solid ${alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.22 : 0.09)}`,
   fontFamily: TOPBAR_FONT_STACK,
@@ -69,13 +74,44 @@ const StyledToolbar = styled(Toolbar, { name: 'WindowTopBar', slot: 'toolbar' })
   [theme.breakpoints.down('lg')]: {
     minHeight: 70,
     paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1),
-    gap: theme.spacing(0.75),
+    paddingRight: theme.spacing(1.25),
+    gap: theme.spacing(1),
+    rowGap: theme.spacing(0.45),
     '& .MuiIconButton-root': {
       width: 37,
       height: 37,
       borderRadius: 11,
     },
+  },
+  [theme.breakpoints.down('sm')]: {
+    minHeight: 'auto',
+    paddingTop: theme.spacing(0.5),
+    paddingBottom: theme.spacing(0.6),
+    gap: theme.spacing(0.75),
+    rowGap: theme.spacing(0.45),
+  },
+}));
+
+const TopRow = styled('div')(({ theme }) => ({
+  width: '100%',
+  minWidth: 0,
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(1),
+}));
+
+const SecondaryRow = styled('div')(({ theme }) => ({
+  width: '100%',
+  minWidth: 0,
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing(1.1),
+  minHeight: 40,
+  marginTop: 0,
+  [theme.breakpoints.down('sm')]: {
+    minHeight: 'auto',
+    flexWrap: 'wrap',
+    rowGap: theme.spacing(0.6),
   },
 }));
 
@@ -88,7 +124,7 @@ const PillGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   borderRadius: 0,
   marginTop: 0,
   padding: 0,
-  gap: theme.spacing(1.05),
+  gap: theme.spacing(1.6),
 
   '& .MuiToggleButton-root': {
     margin: 0,
@@ -110,9 +146,9 @@ const PillGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   },
 
   '& .MuiToggleButton-root .view-label': {
-    fontSize: '0.92rem',
+    fontSize: '1rem',
     lineHeight: 1.1,
-    fontWeight: 500,
+    fontWeight: 400,
     color: theme.palette.text.secondary,
     textTransform: 'none',
     letterSpacing: 0,
@@ -148,7 +184,7 @@ const PillGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   },
   '& .MuiToggleButton-root.Mui-selected .view-label': {
     color: theme.palette.primary.main,
-    fontWeight: 600,
+    fontWeight: 500,
   },
   '& .MuiToggleButton-root.Mui-selected:hover': {
     backgroundColor: 'transparent',
@@ -158,10 +194,10 @@ const PillGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 const LeftGroup = styled('div')(({ theme }) => ({
   alignItems: 'center',
   display: 'flex',
-  flex: '1 1 420px',
-  gap: theme.spacing(1.3),
-  minWidth: 240,
-  maxWidth: 560,
+  flex: '1 1 auto',
+  gap: theme.spacing(1.5),
+  minWidth: 0,
+  maxWidth: 'none',
   '&.title-hidden': {
     flex: '0 0 auto',
     gap: theme.spacing(0.75),
@@ -178,46 +214,74 @@ const LeftGroup = styled('div')(({ theme }) => ({
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
   },
+  [theme.breakpoints.down('lg')]: {
+    flex: '1 1 260px',
+    minWidth: 0,
+    maxWidth: 'none',
+  },
+  [theme.breakpoints.down('sm')]: {
+    flex: '1 1 auto',
+    minWidth: 0,
+    maxWidth: '100%',
+    gap: theme.spacing(0.75),
+    '& .MuiTypography-root': {
+      fontSize: '0.92rem',
+    },
+  },
 }));
 
-const SearchSlot = styled('div')(({ theme }) => ({
-  alignSelf: 'center',
+const SearchSlot = styled('div')(({ theme, ownerState }) => ({
+  alignSelf: 'flex-end',
   alignItems: 'center',
   backgroundColor: 'transparent',
   border: 'none',
-  borderBottom: `1px solid ${alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.26 : 0.16)}`,
+  borderBottom: ownerState?.showUnavailable
+    ? 'none'
+    : `1px solid ${alpha(theme.palette.text.primary, theme.palette.mode === 'dark' ? 0.26 : 0.16)}`,
   borderRadius: 0,
   display: 'flex',
   flex: '1 1 520px',
   gap: theme.spacing(0.25),
-  maxWidth: 760,
+  height: 'var(--topbar-control-size)',
+  maxWidth: 'none',
   minWidth: 320,
-  marginTop: theme.spacing(-0.5),
+  marginTop: 1,
   marginLeft: theme.spacing(0.5),
-  marginRight: theme.spacing(0.5),
-  padding: theme.spacing(0, 0, 0),
+  marginRight: theme.spacing(1.75),
+  padding: 0,
   '& form': {
     alignItems: 'center',
     display: 'flex',
     flex: 1,
+    height: '100%',
     minWidth: 0,
-    paddingBottom: 0,
-    paddingRight: 0,
+    margin: 0,
+    paddingBottom: '0 !important',
+    paddingRight: '0 !important',
   },
   '& .MuiAutocomplete-root': {
+    alignItems: 'center',
+    display: 'flex',
+    height: '100%',
     width: '100%',
   },
   '& .MuiInputLabel-root': {
     color: theme.palette.text.secondary,
+    fontSize: '0.875rem !important',
     fontWeight: 400,
     letterSpacing: 0,
+    lineHeight: 1.2,
+    transform: 'translate(0, 12px) scale(1) !important',
   },
   '& .MuiInputLabel-root.Mui-focused': {
     color: theme.palette.text.secondary,
   },
   '& .MuiInputBase-root': {
-    fontSize: '0.99rem',
+    fontSize: '0.875rem',
     fontWeight: 400,
+    height: '100%',
+    lineHeight: 1.25,
+    minHeight: '100%',
     alignItems: 'center',
     '&:before': {
       borderBottom: 'none',
@@ -230,11 +294,11 @@ const SearchSlot = styled('div')(({ theme }) => ({
     },
   },
   '& .MuiInputBase-input': {
-    paddingTop: theme.spacing(0.3),
-    paddingBottom: theme.spacing(0.15),
+    paddingTop: 0,
+    paddingBottom: 0,
   },
   '& .MuiInputLabel-root.MuiInputLabel-shrink': {
-    transform: 'translate(0, -1px) scale(0.82)',
+    transform: 'translate(0, 1px) scale(0.82) !important',
     transformOrigin: 'left top',
   },
   '& .MuiInputAdornment-positionEnd': {
@@ -279,10 +343,20 @@ const SearchSlot = styled('div')(({ theme }) => ({
     flexBasis: 360,
     minWidth: 260,
   },
+  [theme.breakpoints.down('lg')]: {
+    flex: '1 1 300px',
+    minWidth: 220,
+    marginLeft: 0,
+  },
   [theme.breakpoints.down('sm')]: {
+    flex: '1 0 100%',
+    height: 'var(--topbar-control-size)',
     maxWidth: '100%',
+    marginBottom: 0,
+    marginTop: 1,
+    marginLeft: 0,
+    marginRight: 0,
     minWidth: 0,
-    order: 3,
     width: '100%',
     '& form': {
       minWidth: 0,
@@ -294,15 +368,44 @@ const RightGroup = styled('div')(({ theme }) => ({
   alignItems: 'center',
   alignSelf: 'center',
   display: 'flex',
-  flex: '0 0 auto',
-  gap: theme.spacing(0.65),
+  flex: '0 1 auto',
+  flexShrink: 0,
+  gap: theme.spacing(1.45),
   marginLeft: 'auto',
+  minWidth: 'max-content',
+  paddingLeft: theme.spacing(2),
+  paddingRight: theme.spacing(0.25),
+  '& .mirador-window-menu-btn': {
+    height: 'var(--topbar-control-size)',
+    marginTop: 0,
+    width: 'var(--topbar-control-size)',
+  },
+  '& .mirador-window-close': {
+    marginRight: theme.spacing(0.15),
+  },
+  [theme.breakpoints.down('sm')]: {
+    gap: theme.spacing(1),
+    paddingLeft: theme.spacing(1.1),
+    marginLeft: 0,
+  },
+}));
+
+const TopRowActions = styled('div')(({ theme }) => ({
+  alignItems: 'center',
+  display: 'flex',
+  flex: '0 0 auto',
+  flexShrink: 0,
+  gap: theme.spacing(0.7),
+  marginLeft: 'auto',
+  minWidth: 'max-content',
+  paddingRight: theme.spacing(0.2),
   '& .mirador-window-menu-btn': {
     height: 'var(--topbar-control-size)',
     marginTop: 0,
     width: 'var(--topbar-control-size)',
   },
   [theme.breakpoints.down('sm')]: {
+    gap: theme.spacing(0.45),
     marginLeft: 0,
   },
 }));
@@ -324,7 +427,12 @@ export function WindowTopBar({
   hideWindowTitle = false,
 }) {
   const { t } = useTranslation();
+  const [showSecondaryLayer, setShowSecondaryLayer] = useState(true);
   const ownerState = arguments[0]; // eslint-disable-line prefer-rest-params
+  const hasSearch = hasSearchService || showSearchUnavailable;
+  const hideHeaderToggle = hideWindowTitle && !allowClose;
+  const shouldShowTopRow = !hideHeaderToggle;
+  const shouldShowSecondaryRow = hideHeaderToggle || showSecondaryLayer;
 
   return (
     <Root component={component} aria-label={t('windowNavigation')} position="relative" color="default" enableColorOnDark>
@@ -335,76 +443,97 @@ export function WindowTopBar({
         className={classNames(ns('window-top-bar'))}
         variant="dense"
       >
-        {allowWindowSideBar && (
-          <LeftGroup className={hideWindowTitle ? 'title-hidden' : undefined}>
-            <MiradorMenuButton
-              aria-label={t('toggleWindowSideBar')}
-              onClick={toggleWindowSideBar}
-              className={ns('window-menu-btn')}
-            >
-              <BiIcon name="list" size={16} />
-            </MiradorMenuButton>
-            {!hideWindowTitle && <WindowTopBarTitle windowId={windowId} />}
-          </LeftGroup>
-        )}
-        {!allowWindowSideBar && !hideWindowTitle && (
-          <LeftGroup>
-            <WindowTopBarTitle windowId={windowId} />
-          </LeftGroup>
+        {shouldShowTopRow && (
+          <TopRow>
+            {!hideWindowTitle ? (
+              <LeftGroup>
+                <WindowTopBarTitle windowId={windowId} />
+              </LeftGroup>
+            ) : (
+              <LeftGroup className="title-hidden" />
+            )}
+
+            <TopRowActions>
+              {!hideHeaderToggle && (
+                <MiradorMenuButton
+                  aria-label={showSecondaryLayer ? 'Hide header options' : 'Show header options'}
+                  className={ns('window-menu-btn')}
+                  onClick={() => setShowSecondaryLayer(v => !v)}
+                >
+                  <BiIcon name={showSecondaryLayer ? 'chevron-up' : 'chevron-down'} size={16} />
+                </MiradorMenuButton>
+              )}
+              {allowFullscreen && (
+                <FullScreenButton className={ns('window-menu-btn')} />
+              )}
+              {allowClose && (
+                <MiradorMenuButton
+                  aria-label={t('closeWindow')}
+                  className={classNames(ns('window-close'), ns('window-menu-btn'))}
+                  onClick={removeWindow}
+                >
+                  <BiIcon name="x-lg" size={16} />
+                </MiradorMenuButton>
+              )}
+            </TopRowActions>
+          </TopRow>
         )}
 
-        {/* Inline search controls (or unavailable message after manifest load) */}
-        {(hasSearchService || showSearchUnavailable) && (
-          <SearchSlot>
-            <SearchPanelControls
-              companionWindowId={`${windowId}-topbar`}
-              windowId={windowId}
-              showUnavailableMessage={showSearchUnavailable}
-            />
-          </SearchSlot>
-        )}
-        <RightGroup>
-          {allowTopMenuButton && (
-            <WindowTopMenu
-              windowId={windowId}
-              open
-            />
-          )}
-          {/* View toggle (optional) */}
-          {onChangeViewMode && (
-            <PillGroup
-              exclusive
-              size="small"
-              value={viewMode}
-              onChange={(e, val) => { if (val) onChangeViewMode(val); }}
-              aria-label={t('windowViewMode')}
-            >
-              <ToggleButton value="both" aria-label={t('splitView')}>
-                <BiIcon name="layout-split" size={16} />
-                <span className="view-label">{t('splitView')}</span>
-              </ToggleButton>
-              <ToggleButton value="gallery" aria-label={t('galleryOnly')}>
-                <BiIcon name="grid-3x3-gap" size={16} />
-                <span className="view-label">{t('galleryOnly')}</span>
-              </ToggleButton>
-            </PillGroup>
-          )}
+        {shouldShowSecondaryRow && (
+          <SecondaryRow>
+            {allowWindowSideBar && (
+              <MiradorMenuButton
+                aria-label={t('toggleWindowSideBar')}
+                onClick={toggleWindowSideBar}
+                className={ns('window-menu-btn')}
+              >
+                <BiIcon name="list" size={16} />
+              </MiradorMenuButton>
+            )}
+            {hasSearch && (
+              <SearchSlot ownerState={{ showUnavailable: showSearchUnavailable }}>
+                <SearchPanelControls
+                  companionWindowId={`${windowId}-topbar`}
+                  windowId={windowId}
+                  showUnavailableMessage={showSearchUnavailable}
+                />
+              </SearchSlot>
+            )}
+            <RightGroup>
+              {allowTopMenuButton && (
+                <WindowTopMenu
+                  windowId={windowId}
+                  open
+                />
+              )}
+              {/* View toggle (optional) */}
+              {onChangeViewMode && (
+                <PillGroup
+                  exclusive
+                  size="small"
+                  value={viewMode}
+                  onChange={(e, val) => { if (val) onChangeViewMode(val); }}
+                  aria-label={t('windowViewMode')}
+                >
+                  <ToggleButton value="both" aria-label={t('splitView')}>
+                    <BiIcon name="layout-split" size={16} />
+                    <span className="view-label">{t('splitView')}</span>
+                  </ToggleButton>
+                  <ToggleButton value="gallery" aria-label={t('galleryOnly')}>
+                    <BiIcon name="grid-3x3-gap" size={16} />
+                    <span className="view-label">{t('galleryOnly')}</span>
+                  </ToggleButton>
+                </PillGroup>
+              )}
 
-          <WindowTopBarPluginArea windowId={windowId} />
-          <WindowTopBarPluginMenu windowId={windowId} />
-          {allowFullscreen && (
-            <FullScreenButton className={ns('window-menu-btn')} />
-          )}
-          {allowClose && (
-            <MiradorMenuButton
-              aria-label={t('closeWindow')}
-              className={classNames(ns('window-close'), ns('window-menu-btn'))}
-              onClick={removeWindow}
-            >
-              <BiIcon name="x-lg" size={16} />
-            </MiradorMenuButton>
-          )}
-        </RightGroup>
+              <WindowTopBarPluginArea windowId={windowId} />
+              <WindowTopBarPluginMenu windowId={windowId} />
+              {allowFullscreen && !shouldShowTopRow && (
+                <FullScreenButton className={ns('window-menu-btn')} />
+              )}
+            </RightGroup>
+          </SecondaryRow>
+        )}
       </StyledToolbar>
     </Root>
   );

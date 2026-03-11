@@ -391,6 +391,15 @@ export default {
               height: 'inherit',
               position: 'relative',
             }),
+            ...(ownerState?.variant === 'outside' && {
+              alignItems: 'flex-start',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-start',
+              minWidth: 0,
+              overflow: 'visible',
+              width: '100%',
+            }),
           }),
           label: ({ ownerState, theme }) => ({
             overflow: 'hidden',
@@ -402,12 +411,17 @@ export default {
               WebkitLineClamp: 1,
               whiteSpace: 'nowrap',
             }),
-            ...(ownerState?.variant === 'outside' && {
-              display: '-webkit-box',
-              maxHeight: '3em',
-              MozBoxOrient: 'vertical',
-              WebkitLineClamp: 2,
-            }),
+              ...(ownerState?.variant === 'outside' && {
+                display: '-webkit-box',
+                marginTop: theme.spacing(0.5),
+                maxHeight: '3em',
+                MozBoxOrient: 'vertical',
+                WebkitLineClamp: 2,
+                overflowWrap: 'break-word',
+                textAlign: 'left',
+                width: '100%',
+                wordBreak: 'normal',
+              }),
             ...(ownerState?.variant === 'inside' && {
               // Softer, multi-stop gradient for improved readability
               background: 'linear-gradient(to top, '
@@ -429,6 +443,11 @@ export default {
           image: ({ ownerState }) => ({
             ...(ownerState?.border && {
               border: '1px solid rgba(0, 0, 0, 0.125)',
+            }),
+            ...(ownerState?.variant === 'outside' && {
+              marginLeft: 0,
+              marginRight: 'auto',
+              objectPosition: 'left top',
             }),
           })
         }

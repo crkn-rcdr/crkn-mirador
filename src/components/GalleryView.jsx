@@ -82,24 +82,66 @@ const SIZE_PRESETS = {
 };
 
 const GAP = 20;
+const STRIP_MIN_TILE_W = 120;
+const STRIP_MAX_TILE_W = 240;
+const STRIP_MIN_VISIBLE = 4;
+const STRIP_MAX_VISIBLE = 7;
+const THUMB_ROOT_PAD = 16; // matches GalleryViewThumbnail Root padding (8 top + 8 bottom)
+const OUTSIDE_LABEL_RESERVE_S = 40;
+const OUTSIDE_LABEL_RESERVE_DEFAULT = 44;
+const STRIP_EXTRA_LABEL_RESERVE = 10;
+const SINGLE_COLUMN_NUDGE = 30;
+const SINGLE_COLUMN_INSET = Math.floor(SINGLE_COLUMN_NUDGE / 2);
 // In 'fit' mode, reduce the column width slightly to avoid any rounding-driven X overflow.
 const FIT_NUDGE = 24; // px
 const FIT_LEFT_INSET = 16; // px left inset to align with SizeControls
 const FIT_CELL_SHRINK = 2; // additional in-cell shrink to be extra safe
 
+const VerticalGridOuter = React.forwardRef(({ style, ...props }, ref) => (
+  <div
+    ref={ref}
+    style={{ ...style, overflowX: 'hidden', overflowY: 'auto' }}
+    {...props}
+  />
+));
+
+VerticalGridOuter.displayName = 'VerticalGridOuter';
+
+const HorizontalStripOuter = React.forwardRef(({ style, ...props }, ref) => (
+  <div
+    ref={ref}
+    style={{
+      ...style,
+      boxSizing: 'border-box',
+      overflowX: 'auto',
+      overflowY: 'visible',
+      paddingBottom: 2,
+      paddingTop: 4,
+    }}
+    {...props}
+  />
+));
+
+HorizontalStripOuter.displayName = 'HorizontalStripOuter';
+
 const Cell = React.memo(({ columnIndex, rowIndex, style, data }) => {
-  const { canvases, windowId, columnCount, thumbSize, getTileW, getTileH } = data;
+  const {
+    canvases, windowId, columnCount, thumbSize, getTileW, getTileH, isMobileStrip,
+  } = data;
   const index = rowIndex * columnCount + columnIndex;
   if (index >= canvases.length) return null;
   const canvas = canvases[index];
 
   const gapX = columnCount > 1 ? GAP : 0;
+  const stripTopInset = isMobileStrip ? 8 : 0;
+  const useFitInset = !isMobileStrip && thumbSize === 'fit';
+  const useSingleColumnInset = !isMobileStrip && !useFitInset && columnCount === 1;
   const cellStyle = {
     ...style,
-    left: style.left + (columnCount === 1 ? FIT_LEFT_INSET : (gapX / 2)),
-    top: style.top + GAP / 2,
-    width: (style.width - gapX - (columnCount === 1 ? FIT_CELL_SHRINK : 0)),
-    height: style.height - GAP,
+    left: style.left + (useFitInset ? FIT_LEFT_INSET : (useSingleColumnInset ? SINGLE_COLUMN_INSET : (gapX / 2))),
+    top: style.top + GAP / 2 + stripTopInset,
+    width: (style.width - gapX - (useFitInset ? FIT_CELL_SHRINK : 0)),
+    height: style.height - GAP - stripTopInset,
   };
   const tileW = getTileW();
   const tileH = getTileH(index);
@@ -112,13 +154,21 @@ const Cell = React.memo(({ columnIndex, rowIndex, style, data }) => {
         thumbSize={thumbSize}
         tileW={tileW}
         tileH={tileH}
+        isMobileStrip={isMobileStrip}
       />
     </div>
   );
 }, areEqual);
 
-export function GalleryView({ canvases = [], windowId, currentCanvasId, controlWidth }) {
+export function GalleryView({
+  canvases = [],
+  windowId,
+  currentCanvasId,
+  controlWidth,
+  isBottomStrip = false,
+}) {
   const { t } = useTranslation();
+  const isMobileStrip = !!isBottomStrip;
   const safe = (canvases || []).filter(c => c && (c.id || typeof c.index !== 'undefined'));
   const [thumbSize, setThumbSize] = useState('s');
   const gridRef = useRef(null);
@@ -168,7 +218,7 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId, controlW
 
     // Fallback: approximate using rowHeight if needed
     if (typeof gridRef.current.scrollToItem !== 'function' && typeof gridRef.current.scrollTo === 'function') {
-      const rowHeight = (thumbSize === 's' ? SIZE_PRESETS.s.tileH : thumbSize === 'm' ? SIZE_PRESETS.m.tileH : SIZE_PRESETS.l.tileH);
+      const rowHeight = (thumbSize === 's' ? SIZE_PRESETS.s.tileW : thumbSize === 'm' ? SIZE_PRESETS.m.tileW : SIZE_PRESETS.l.tileW);
       gridRef.current.scrollTo({ scrollTop: Math.max(0, rowIndex * rowHeight) });
     }
 
@@ -180,6 +230,7 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId, controlW
 
   return (
     <Root>
+      {!isMobileStrip && (
       <Bar ref={barRef}>
         {(() => {
           const SIZE_TO_INDEX = { s: 0, m: 1, l: 2, fit: 3 };
@@ -234,6 +285,7 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId, controlW
           );
         })()}
       </Bar>
+      )}
 
       <Viewport>
         <AutoSizer>
@@ -243,29 +295,58 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId, controlW
             // Determine columns from target width for this preset
             let columnCount;
             let columnWidth;
-            if (thumbSize === 'fit') {
+            const baseLabelReserve = thumbSize === 's' ? OUTSIDE_LABEL_RESERVE_S : OUTSIDE_LABEL_RESERVE_DEFAULT;
+            const nonStripTileChrome = THUMB_ROOT_PAD + baseLabelReserve;
+            const stripTileChrome = THUMB_ROOT_PAD + baseLabelReserve + STRIP_EXTRA_LABEL_RESERVE;
+            const stripVisibleCount = Math.max(
+              STRIP_MIN_VISIBLE,
+              Math.min(
+                STRIP_MAX_VISIBLE,
+                Math.round(width / 150),
+              ),
+            );
+            const visibleThumbs = Math.max(1, Math.min(stripVisibleCount, safe.length || stripVisibleCount));
+            const candidateStripTileW = Math.floor((width - (Math.max(0, visibleThumbs - 1) * GAP)) / visibleThumbs);
+            const mobileStripTileW = Math.max(
+              STRIP_MIN_TILE_W,
+              Math.min(STRIP_MAX_TILE_W, candidateStripTileW),
+            );
+            const stripTileH = Math.max(stripTileChrome + 1, height - GAP);
+            if (isMobileStrip) {
+              // Mobile: render one horizontal strip and rely on native horizontal scrolling.
+              columnCount = Math.max(1, safe.length);
+              columnWidth = mobileStripTileW + GAP;
+            } else if (thumbSize === 'fit') {
               columnCount = 1;
               columnWidth = Math.max(1, Math.floor(width) - FIT_NUDGE - FIT_LEFT_INSET);
             } else {
               const target = (SIZE_PRESETS[thumbSize] || SIZE_PRESETS.m).tileW; // desired tile INNER width
+              const availableWidth = Math.max(1, Math.floor(width));
               // Determine how many target-width tiles (plus gaps) fit.
-              columnCount = Math.max(1, Math.floor((width + GAP) / (target + GAP)));
-              // Use fixed column width = target + GAP so tiles preserve requested width
-              columnWidth = target + GAP;
+              columnCount = Math.max(1, Math.floor((availableWidth + GAP) / (target + GAP)));
+              if (columnCount > 1) {
+                // Fill the row width exactly to avoid horizontal overflow on narrow side panes.
+                const tileInnerWidth = Math.max(1, Math.floor((availableWidth - ((columnCount - 1) * GAP)) / columnCount));
+                columnWidth = tileInnerWidth + GAP;
+              } else {
+                columnWidth = Math.max(1, availableWidth - SINGLE_COLUMN_NUDGE);
+              }
             }
 
             const gapX = columnCount > 1 ? GAP : 0;
             const tileInnerW = Math.max(1, columnWidth - gapX);
-            const rowCount = Math.ceil(safe.length / columnCount);
+            const rowCount = isMobileStrip ? 1 : Math.ceil(safe.length / columnCount);
 
             // Precompute row heights as the max tile height per row based on canvas ratios
-            const rowHeights = new Array(rowCount).fill(0).map((_, rowIndex) => {
+            const rowHeights = isMobileStrip
+              ? [Math.max(1, stripTileH + GAP)]
+              : new Array(rowCount).fill(0).map((_, rowIndex) => {
               let maxH = 0;
               for (let c = 0; c < columnCount; c += 1) {
                 const idx = rowIndex * columnCount + c;
                 if (idx >= ratios.length) break;
                 const r = ratios[idx] || 0.7;
-                const h = Math.round(tileInnerW / r);
+                const h = Math.round(tileInnerW / r) + nonStripTileChrome;
                 if (h > maxH) maxH = h;
               }
               // add GAP to produce the actual grid row height
@@ -282,29 +363,41 @@ export function GalleryView({ canvases = [], windowId, currentCanvasId, controlW
               gridRef.current.resetAfterIndices({ columnIndex: 0, rowIndex: 0, shouldForceUpdate: true });
             }
 
-            const getTileW = () => tileInnerW;
+            const getTileW = () => (isMobileStrip ? mobileStripTileW : tileInnerW);
             const getTileH = (idx) => {
+              if (isMobileStrip) {
+                return stripTileH;
+              }
               const r = ratios[idx] || 0.7;
-              return Math.max(1, Math.round(tileInnerW / r));
+              return Math.max(1, Math.round(tileInnerW / r) + nonStripTileChrome);
             };
 
             // expose latest column count for scroll effect
             layoutRef.current = { columnCount };
 
-            const itemData = { canvases: safe, windowId, columnCount, thumbSize, getTileW, getTileH };
+            const itemData = {
+              canvases: safe,
+              windowId,
+              columnCount,
+              thumbSize,
+              getTileW,
+              getTileH,
+              isMobileStrip,
+            };
 
             return (
               <Grid
                 ref={gridRef}
                 width={width}
                 height={height}
+                outerElementType={isMobileStrip ? HorizontalStripOuter : VerticalGridOuter}
                 columnCount={columnCount}
                 rowCount={rowCount}
                 columnWidth={() => columnWidth}
                 rowHeight={(rowIndex) => sizeCacheRef.current.rowHeights[rowIndex] || (tileInnerW + GAP)}
                 itemData={itemData}
-                overscanRowCount={1}
-                overscanColumnCount={1}
+                overscanRowCount={isMobileStrip ? 0 : 1}
+                overscanColumnCount={isMobileStrip ? 2 : 1}
                 itemKey={(params) => {
                   const { columnIndex, rowIndex } = params;
                   return rowIndex * columnCount + columnIndex;
@@ -325,4 +418,5 @@ GalleryView.propTypes = {
   windowId: PropTypes.string.isRequired,
   currentCanvasId: PropTypes.string,
   controlWidth: PropTypes.number,
+  isBottomStrip: PropTypes.bool,
 };

@@ -42,18 +42,22 @@ export class ThumbnailCanvasGrouping extends PureComponent {
       index, style, data, currentCanvasId, showThumbnailLabels,
     } = this.props;
     const {
-      canvasGroupings, position, height,
+      canvasGroupings, position, height, spacing = 8,
     } = data;
     const currentGroupings = canvasGroupings[index];
-    const SPACING = 8;
+    const SPACING = spacing;
+    const topInset = position === 'far-bottom' ? Math.max(2, Math.floor(SPACING / 2)) : SPACING;
+    const canvasMaxHeight = position === 'far-right'
+      ? style.height - (1.5 * SPACING)
+      : Math.max(1, height - Math.ceil(SPACING / 2));
     return (
       <div
         style={{
           ...style,
           boxSizing: 'content-box',
-          height: (Number.isInteger(style.height)) ? style.height - SPACING : null,
+          height: (Number.isInteger(style.height)) ? style.height - topInset : null,
           left: (Number.isInteger(style.left)) ? style.left + SPACING : null,
-          top: style.top + SPACING,
+          top: style.top + topInset,
           width: (Number.isInteger(style.width)) ? style.width - SPACING : null,
         }}
         className={ns('thumbnail-nav-container')}
@@ -72,7 +76,7 @@ export class ThumbnailCanvasGrouping extends PureComponent {
               outline: `9px solid ${theme.palette.action.hover}`,
               outlineOffset: '-2px',
             },
-            height: (position === 'far-right') ? 'auto' : `${height - SPACING}px`,
+            height: (position === 'far-right') ? 'auto' : `${canvasMaxHeight}px`,
             outline: currentGroupings.map(canvas => canvas.id).includes(currentCanvasId) ? `2px solid ${theme.palette.primary.main}` : 0,
             ...(currentGroupings.map(canvas => canvas.id).includes(currentCanvasId) && {
               outlineOffset: '3px',
@@ -88,7 +92,7 @@ export class ThumbnailCanvasGrouping extends PureComponent {
               key={canvas.id}
               resource={canvas}
               labelled={showThumbnailLabels}
-              maxHeight={(position === 'far-right') ? style.height - (1.5 * SPACING) : height - (1.5 * SPACING)}
+              maxHeight={canvasMaxHeight}
               variant="inside"
             />
           ))}

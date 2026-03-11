@@ -7,6 +7,7 @@ import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Toolbar from '@mui/material/Toolbar';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
 import { Rnd } from 'react-rnd';
 import { useElementSize } from '@custom-react-hooks/use-element-size';
@@ -34,12 +35,24 @@ const StyledCloseButton = styled(MiradorMenuButton, { name: 'CompanionWindow', s
 export const CompanionWindow = forwardRef((props, innerRef) => {
   const {
     ariaLabel = undefined, classes = {}, direction, id, paperClassName = '', onCloseClick = () => {}, updateCompanionWindow = undefined, isDisplayed = false,
+    content = null,
     position = null, title = null, children = undefined, titleControls = null,
     defaultSidebarPanelWidth = 235, defaultSidebarPanelHeight = 201,
   } = props;
   const [sizeRef, size] = useElementSize();
   const { t } = useTranslation();
   const locale = useSelector(state => getCompanionWindowLocale(state, { companionWindowId: id }), [id]);
+  const isMobile = useMediaQuery('(max-width:600px)');
+  const isCompactWidth = useMediaQuery('(max-width:1100px)');
+  const isMobileLeft = isMobile && position === 'left';
+  const isMobileThumbnail = isMobile && content === 'thumbnailNavigation';
+  const isBottom = (position === 'bottom' || position === 'far-bottom');
+  const isCompactBottomThumbnail = isBottom && content === 'thumbnailNavigation' && isCompactWidth;
+  const isMobileResizableDisabled = isMobileLeft || isMobileThumbnail || isCompactBottomThumbnail;
+  const compactBottomThumbnailHeight = 150;
+  const resolvedSidebarPanelHeight = isCompactBottomThumbnail
+    ? Math.min(defaultSidebarPanelHeight, compactBottomThumbnailHeight)
+    : defaultSidebarPanelHeight;
 
   /** */
   const openInNewStyle = direction === 'rtl' ? { transform: 'scale(-1, 1)' } : {};
@@ -83,8 +96,6 @@ export const CompanionWindow = forwardRef((props, innerRef) => {
     return base;
   })();
 
-  const isBottom = (position === 'bottom' || position === 'far-bottom');
-
   const childrenWithAdditionalProps = Children.map(children, (child) => {
     if (!child) return null;
     return cloneElement(
@@ -103,7 +114,10 @@ export const CompanionWindow = forwardRef((props, innerRef) => {
       ref={mergeRefs(innerRef, sizeRef)}
       style={{
         display: isDisplayed ? null : 'none',
+        marginRight: isMobileLeft ? 0 : undefined,
+        maxWidth: isMobileLeft ? '100%' : undefined,
         order: position === 'left' ? -1 : null,
+        width: isMobileLeft ? '100%' : undefined,
       }}
       className={[ns(`companion-window-${position}`), paperClassName, position === 'bottom' ? classes.horizontal : classes.vertical].join(' ')}
       square
@@ -115,13 +129,22 @@ export const CompanionWindow = forwardRef((props, innerRef) => {
           style={{ display: 'inherit', position: 'inherit' }}
           ownerState={props}
           default={{
-            height: isBottom ? defaultSidebarPanelHeight : '100%',
-            width: isBottom ? 'auto' : defaultSidebarPanelWidth,
+            height: isBottom ? resolvedSidebarPanelHeight : '100%',
+            width: isBottom ? 'auto' : (isMobileLeft ? '100%' : defaultSidebarPanelWidth),
           }}
           disableDragging
-          enableResizing={resizeHandles}
+          enableResizing={isMobileResizableDisabled ? {
+            bottom: false,
+            bottomLeft: false,
+            bottomRight: false,
+            left: false,
+            right: false,
+            top: false,
+            topLeft: false,
+            topRight: false,
+          } : resizeHandles}
           minHeight={50}
-          minWidth={position === 'left' ? 235 : 100}
+          minWidth={isMobileLeft ? '100%' : (position === 'left' ? 235 : 100)}
         >
 
           <StyledToolbar
@@ -161,6 +184,7 @@ CompanionWindow.propTypes = {
   ariaLabel: PropTypes.string,
   children: PropTypes.node,
   classes: PropTypes.objectOf(PropTypes.string),
+  content: PropTypes.string,
   defaultSidebarPanelHeight: PropTypes.number,
   defaultSidebarPanelWidth: PropTypes.number,
   direction: PropTypes.string.isRequired,

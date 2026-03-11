@@ -8,6 +8,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
+import Typography from '@mui/material/Typography';
 import BiIcon from './BiIcon';
 import { useTranslation } from 'react-i18next';
 import MiradorMenuButton from '../containers/MiradorMenuButton';
@@ -17,6 +18,27 @@ const StyledForm = styled('form', { name: 'SearchPanelControls', slot: 'form' })
   paddingBottom: theme.spacing(1),
   paddingRight: theme.spacing(1.5),
   width: '100%',
+}));
+
+const UnavailableNote = styled(Typography, { name: 'SearchPanelControls', slot: 'unavailableNote' })(({ theme }) => ({
+  ...theme.typography.h6,
+  alignItems: 'center',
+  color: theme.palette.text.secondary,
+  cursor: 'default',
+  display: 'flex',
+  fontFamily: '"Roboto", "Helvetica Neue", Arial, sans-serif',
+  fontSize: '1rem',
+  fontWeight: 500,
+  letterSpacing: 0,
+  lineHeight: 1.25,
+  minHeight: 40,
+  overflow: 'hidden',
+  padding: theme.spacing(0, 0.5),
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '0.92rem',
+  },
 }));
 
 /** Sometimes an autocomplete match can be a simple string, other times an object
@@ -110,33 +132,9 @@ export function SearchPanelControls({
         aria-label={t('searchTitle')}
         onSubmit={event => event.preventDefault()}
       >
-        <TextField
-          id={id}
-          value={t('searchUnavailable')}
-          label={t('searchInputLabel')}
-          variant="standard"
-          InputLabelProps={{
-            sx: {
-              fontSize: '14px',
-              '&.MuiInputLabel-shrink': {
-                fontSize: '14px',
-                transform: 'translate(0, 6px) scale(0.85)',
-                transformOrigin: 'left top',
-              },
-            },
-          }}
-          InputProps={{
-            readOnly: true,
-            endAdornment: (
-              <InputAdornment sx={{ position: 'relative' }} position="end">
-                <MiradorMenuButton aria-label={t('searchSubmitAria')} disabled type="button">
-                  <BiIcon name="search" size={16} />
-                </MiradorMenuButton>
-              </InputAdornment>
-            ),
-          }}
-          sx={{ width: '100%' }}
-        />
+        <UnavailableNote component="div" variant="h6" noWrap aria-label={t('searchUnavailable')}>
+          {t('searchUnavailable')}
+        </UnavailableNote>
       </StyledForm>
     );
   }

@@ -77,8 +77,6 @@ export function WindowSideBarButtons({
   hasAnyAnnotations = false,
   hasAnyLayers = false,
   hasCurrentLayers = false,
-  hasSearchResults = false,
-  hasSearchService = false,
   panels = [],
   PluginComponents = null,
   sideBarPanel = 'closed',
@@ -126,16 +124,6 @@ export function WindowSideBarButtons({
           )}
         />
       )}
-      {panels.search && hasSearchService && (
-        <TabButton
-          value="search"
-          icon={(
-            <Badge overlap="rectangular" color="notification" invisible={!hasSearchResults} variant="dot">
-              <BiIcon name="search" size={18} />
-            </Badge>
-          )}
-        />
-      )}
       { panels.layers && hasAnyLayers && (
         <TabButton
           value="layers"
@@ -164,8 +152,6 @@ WindowSideBarButtons.propTypes = {
   hasAnyAnnotations: PropTypes.bool,
   hasAnyLayers: PropTypes.bool,
   hasCurrentLayers: PropTypes.bool,
-  hasSearchResults: PropTypes.bool,
-  hasSearchService: PropTypes.bool,
   panels: PropTypes.objectOf(PropTypes.bool),
   PluginComponents: PropTypes.array, // eslint-disable-line react/forbid-prop-types
   sideBarPanel: PropTypes.string,

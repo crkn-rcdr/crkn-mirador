@@ -19,7 +19,15 @@ const StyledTitleTypography = styled(TitleTypography)(({ theme }) => ({
 /** */
 function TitleTypography({ children, ...props }) {
   return (
-    <Typography component="h2" variant="h6" noWrap color="inherit" {...props}>
+    <Typography
+      component="div"
+      variant="h6"
+      noWrap
+      color="inherit"
+      role="heading"
+      aria-level={2}
+      {...props}
+    >
       {children}
     </Typography>
   );

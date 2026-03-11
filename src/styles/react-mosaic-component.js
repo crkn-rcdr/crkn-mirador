@@ -288,7 +288,7 @@ const globalReactMosaicStyles = {
   '.mirador-viewer i': {
     fontSize: "24px !important"
   },
-  '.mirador-viewer i.bi-arrows-fullscreen': {
+  '.mirador-viewer i.bi-arrows-fullscreen, .mirador-viewer i.bi-fullscreen, .mirador-viewer i.bi-fullscreen-exit': {
     fontSize: "20px !important"
   },
   '.mirador-osd-navigation i': {
