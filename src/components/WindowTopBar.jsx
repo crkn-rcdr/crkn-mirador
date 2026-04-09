@@ -7,7 +7,6 @@ import Toolbar from '@mui/material/Toolbar';
 import AppBar from '@mui/material/AppBar';
 import { useTranslation } from 'react-i18next';
 import classNames from 'classnames';
-import WindowTopMenu from '../containers/WindowTopMenu';
 import WindowTopBarPluginArea from '../containers/WindowTopBarPluginArea';
 import WindowTopBarPluginMenu from '../containers/WindowTopBarPluginMenu';
 import WindowTopBarTitle from '../containers/WindowTopBarTitle';
@@ -311,13 +310,17 @@ const SearchSlot = styled('div')(({ theme, ownerState }) => ({
     borderRadius: 10,
     border: 'none',
     backgroundColor: 'transparent',
+    color: theme.palette.primary.main,
+    position: 'relative',
+    top: -6,
   },
   '& .MuiInputAdornment-positionEnd .MuiIconButton-root:hover': {
     backgroundColor: 'transparent',
-    color: theme.palette.primary.main,
+    color: theme.palette.primary.dark,
   },
   '& .MuiInputAdornment-positionEnd .MuiIconButton-root .bi': {
     fontSize: '1rem',
+    color: theme.palette.primary.main,
   },
   '& .MuiCircularProgress-root': {
     transform: 'scale(0.6)',
@@ -349,15 +352,15 @@ const SearchSlot = styled('div')(({ theme, ownerState }) => ({
     marginLeft: 0,
   },
   [theme.breakpoints.down('sm')]: {
-    flex: '1 0 100%',
+    flex: '1 1 auto',
     height: 'var(--topbar-control-size)',
-    maxWidth: '100%',
+    maxWidth: 'none',
     marginBottom: 0,
-    marginTop: 1,
+    marginTop: 0,
     marginLeft: 0,
     marginRight: 0,
     minWidth: 0,
-    width: '100%',
+    width: 'auto',
     '& form': {
       minWidth: 0,
     },
@@ -387,6 +390,35 @@ const RightGroup = styled('div')(({ theme }) => ({
     gap: theme.spacing(1),
     paddingLeft: theme.spacing(1.1),
     marginLeft: 0,
+  },
+}));
+
+const ControlCluster = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  justifyContent: 'center',
+  gap: theme.spacing(0.15),
+  minWidth: 0,
+  '& .cluster-label': {
+    color: alpha(theme.palette.text.primary, 0.72),
+    fontSize: '0.67rem',
+    fontWeight: 600,
+    letterSpacing: '0.04em',
+    lineHeight: 1,
+    textTransform: 'uppercase',
+    whiteSpace: 'nowrap',
+  },
+  '& .cluster-helper': {
+    color: theme.palette.text.secondary,
+    fontSize: '0.67rem',
+    lineHeight: 1.1,
+    whiteSpace: 'nowrap',
+  },
+  [theme.breakpoints.down('sm')]: {
+    '& .cluster-label, & .cluster-helper': {
+      fontSize: '0.62rem',
+    },
   },
 }));
 
@@ -427,6 +459,7 @@ export function WindowTopBar({
   hideWindowTitle = false,
 }) {
   const { t } = useTranslation();
+  const windowViewModeLabel = t('windowViewMode');
   const [showSecondaryLayer, setShowSecondaryLayer] = useState(true);
   const ownerState = arguments[0]; // eslint-disable-line prefer-rest-params
   const hasSearch = hasSearchService || showSearchUnavailable;
@@ -500,30 +533,26 @@ export function WindowTopBar({
               </SearchSlot>
             )}
             <RightGroup>
-              {allowTopMenuButton && (
-                <WindowTopMenu
-                  windowId={windowId}
-                  open
-                />
-              )}
               {/* View toggle (optional) */}
               {onChangeViewMode && (
-                <PillGroup
-                  exclusive
-                  size="small"
-                  value={viewMode}
-                  onChange={(e, val) => { if (val) onChangeViewMode(val); }}
-                  aria-label={t('windowViewMode')}
-                >
-                  <ToggleButton value="both" aria-label={t('splitView')}>
-                    <BiIcon name="layout-split" size={16} />
-                    <span className="view-label">{t('splitView')}</span>
-                  </ToggleButton>
-                  <ToggleButton value="gallery" aria-label={t('galleryOnly')}>
-                    <BiIcon name="grid-3x3-gap" size={16} />
-                    <span className="view-label">{t('galleryOnly')}</span>
-                  </ToggleButton>
-                </PillGroup>
+                <ControlCluster>
+                  <PillGroup
+                    exclusive
+                    size="small"
+                    value={viewMode}
+                    onChange={(e, val) => { if (val) onChangeViewMode(val); }}
+                    aria-label={windowViewModeLabel}
+                  >
+                    <ToggleButton value="both" aria-label={t('splitView')}>
+                      <BiIcon name="layout-split" size={16} />
+                      <span className="view-label">{t('splitView')}</span>
+                    </ToggleButton>
+                    <ToggleButton value="gallery" aria-label={t('galleryOnly')}>
+                      <BiIcon name="grid-3x3-gap" size={16} />
+                      <span className="view-label">{t('galleryOnly')}</span>
+                    </ToggleButton>
+                  </PillGroup>
+                </ControlCluster>
               )}
 
               <WindowTopBarPluginArea windowId={windowId} />

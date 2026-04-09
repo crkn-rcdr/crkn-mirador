@@ -34,7 +34,7 @@ describe('PrimaryWindow', () => {
     createWrapper({ isFetching: false, view: 'gallery' });
     await screen.findByTestId('test-window');
     await waitFor(() => {
-      expect(document.querySelector('#xyz-gallery')).toBeInTheDocument(); // eslint-disable-line testing-library/no-node-access
+      expect(document.querySelector('[class*="GalleryView-root"]')).toBeInTheDocument(); // eslint-disable-line testing-library/no-node-access
     });
   });
   it('should render <CollectionDialog> and <SelectCollection> if manifest is collection and isCollectionDialogVisible', async () => {

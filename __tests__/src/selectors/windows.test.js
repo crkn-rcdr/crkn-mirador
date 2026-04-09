@@ -77,6 +77,8 @@ describe('getWindowTitles', () => {
 });
 
 describe('getWindowViewType', () => {
+  const windowViewPreferenceKey = 'mirador.windowViewTypePreference';
+
   const state = {
     config: {
       window: {
@@ -99,8 +101,13 @@ describe('getWindowViewType', () => {
       d: { id: 'd', manifestId: 'x' },
       e: { id: 'e', manifestId: 'x', view: 'book' },
       f: { id: 'f', manifestId: 'y' },
+      g: { id: 'g', manifestId: 'x', view: 'gallery' },
     },
   };
+
+  beforeEach(() => {
+    window.localStorage.removeItem(windowViewPreferenceKey);
+  });
 
   it('should return view type if window exists', () => {
     const received = getWindowViewType(state, { windowId: 'a' });
@@ -131,6 +138,23 @@ describe('getWindowViewType', () => {
     const received = getWindowViewType(state, { windowId: 'f' });
     expect(received).toEqual('book');
   });
+
+  it('should ignore legacy gallery window view and resolve a deep zoom mode', () => {
+    const received = getWindowViewType(state, { windowId: 'g' });
+    expect(received).toEqual('single');
+  });
+
+  it('should use the persisted preference when it is allowed for the manifest', () => {
+    window.localStorage.setItem(windowViewPreferenceKey, 'book');
+    const received = getWindowViewType(state, { windowId: 'f' });
+    expect(received).toEqual('book');
+  });
+
+  it('should ignore persisted preference when it is not allowed for the manifest', () => {
+    window.localStorage.setItem(windowViewPreferenceKey, 'scroll');
+    const received = getWindowViewType(state, { windowId: 'f' });
+    expect(received).toEqual('book');
+  });
 });
 
 describe('getAllowedWindowViewTypes', () => {
@@ -154,12 +178,12 @@ describe('getAllowedWindowViewTypes', () => {
 
   it('should return unrestricted view types', () => {
     const received = getAllowedWindowViewTypes(state, { manifestId: 'x' });
-    expect(received).toEqual(['single', 'gallery']);
+    expect(received).toEqual(['single']);
   });
 
   it('should return view types where behaviors match', () => {
     const received = getAllowedWindowViewTypes(state, { manifestId: 'y' });
-    expect(received).toEqual(['single', 'book', 'gallery']);
+    expect(received).toEqual(['single', 'book']);
   });
 });
 

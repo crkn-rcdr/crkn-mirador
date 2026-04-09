@@ -1,6 +1,11 @@
 import { v4 as uuid } from 'uuid';
 import ActionTypes from './action-types';
 import { miradorSlice } from '../selectors/utils';
+import {
+  persistWindowViewType,
+  persistWindowSideBarOpen,
+  readPersistedWindowSideBarOpen,
+} from '../../lib/windowViewPreferences';
 
 /**
  * focusWindow - action creator
@@ -26,6 +31,7 @@ export function addWindow({ companionWindows, manifest, ...options }) {
   return (dispatch, getState) => {
     const { config, workspace: { windowIds = [] } } = miradorSlice(getState());
     const numWindows = windowIds.length;
+    const persistedSideBarOpen = readPersistedWindowSideBarOpen();
 
     const windowId = options.id || `window-${uuid()}`;
     const cwThumbs = `cw-${uuid()}`;
@@ -83,7 +89,10 @@ export function addWindow({ companionWindows, manifest, ...options }) {
         const sideBarOpenDefault = (typeof config.window.sideBarOpenByDefault !== 'undefined')
           ? !!config.window.sideBarOpenByDefault
           : !!config.window.sideBarOpen;
-        return allowSideBar && (sideBarOpenDefault || !!options.defaultSearchQuery);
+        const preferredSideBarOpen = (typeof persistedSideBarOpen === 'boolean')
+          ? persistedSideBarOpen
+          : sideBarOpenDefault;
+        return allowSideBar && (preferredSideBarOpen || !!options.defaultSearchQuery);
       })(),
       sideBarPanel: options.sideBarPanel
         || config.window.defaultSideBarPanel
@@ -163,7 +172,14 @@ export function removeWindow(windowId) {
  * @memberof ActionCreators
  */
 export function toggleWindowSideBar(windowId) {
-  return { type: ActionTypes.TOGGLE_WINDOW_SIDE_BAR, windowId };
+  return (dispatch, getState) => {
+    const state = getState();
+    const current = !!(state?.windows?.[windowId]?.sideBarOpen);
+    const next = !current;
+
+    dispatch({ type: ActionTypes.TOGGLE_WINDOW_SIDE_BAR, windowId });
+    persistWindowSideBarOpen(next);
+  };
 }
 
 /**
@@ -194,10 +210,14 @@ export function setWindowThumbnailPosition(windowId, position) {
  * @memberof ActionCreators
  */
 export function setWindowViewType(windowId, viewType) {
-  return {
-    type: ActionTypes.SET_WINDOW_VIEW_TYPE,
-    viewType,
-    windowId,
+  return (dispatch) => {
+    dispatch({
+      type: ActionTypes.SET_WINDOW_VIEW_TYPE,
+      viewType,
+      windowId,
+    });
+
+    persistWindowViewType(viewType);
   };
 }
 

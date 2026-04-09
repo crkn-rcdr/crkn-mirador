@@ -159,6 +159,8 @@
     "window": "Window: {{label}}",
     "windowMenu": "Window views & thumbnail display",
     "windowNavigation": "Window navigation",
+    "deepZoomLayout": "Deep zoom layout",
+    "deepZoomLayoutSplitOnly": "Available in Split mode",
     "windowViewMode": "Window view mode",
     "splitView": "Split view",
     "primaryOnly": "Primary only",

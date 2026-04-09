@@ -120,4 +120,16 @@ describe('Window', () => {
 
     HTMLElement.prototype.getBoundingClientRect = originalGetBoundingClientRect;
   });
+
+  it('renders PrimaryWindow in gallery mode so left companion area remains available', async () => {
+    localStorage.setItem('windowViewMode', 'gallery');
+    createWrapper();
+
+    await waitFor(() => {
+      expect(document.querySelector('.mirador-primary-window')).toBeInTheDocument(); // eslint-disable-line testing-library/no-node-access
+      expect(document.querySelector('.mirador-companion-area-left')).toBeInTheDocument(); // eslint-disable-line testing-library/no-node-access
+    });
+
+    localStorage.removeItem('windowViewMode');
+  });
 });

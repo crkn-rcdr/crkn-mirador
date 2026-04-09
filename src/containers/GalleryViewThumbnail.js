@@ -7,6 +7,7 @@ import { GalleryViewThumbnail } from '../components/GalleryViewThumbnail';
 import {
   getSearchAnnotationsForWindow,
   getCurrentCanvas,
+  getVisibleCanvasIds,
   getConfig,
   getPresentAnnotationsOnSelectedCanvases,
   getCompanionWindowsForContent,
@@ -28,6 +29,7 @@ const mapStateToProps = (state, { canvas, windowId }) => {
   }
 
   const currentCanvas = getCurrentCanvas(state, { windowId });
+  const visibleCanvasIds = getVisibleCanvasIds(state, { windowId }) || [];
   const searchAnnotations = getSearchAnnotationsForWindow(state, { windowId }) || [];
   const selectedAnnotationId = state.windows?.[windowId]?.selectedAnnotationId;
 
@@ -96,7 +98,10 @@ const mapStateToProps = (state, { canvas, windowId }) => {
     })(),
     config: getConfig(state).galleryView,
     searchAnnotationsCount: canvasAnnotations.length,
-    selected: !!currentCanvas && normalizeId(currentCanvas.id) === normalizeId(canvas.id),
+    selected: (
+      visibleCanvasIds.some(id => normalizeId(id) === normalizeId(canvas.id))
+      || (!!currentCanvas && normalizeId(currentCanvas.id) === normalizeId(canvas.id))
+    ),
     highlighted: isHighlighted,
     searchTerms,
     searchSnippets,

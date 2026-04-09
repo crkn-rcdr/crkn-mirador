@@ -2,7 +2,12 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { withPlugins } from '../extend/withPlugins';
 import { GalleryView } from '../components/GalleryView';
-import { getCanvases, getSequenceViewingDirection, getWindow } from '../state/selectors';
+import {
+  getCanvases,
+  getSequenceViewingDirection,
+  getWindow,
+  getWindowViewType,
+} from '../state/selectors';
 
 /**
  * mapStateToProps - to hook up connect
@@ -16,6 +21,7 @@ const mapStateToProps = (state, { windowId }) => {
   return {
     canvases,
     viewingDirection: getSequenceViewingDirection(state, { windowId }),
+    viewType: getWindowViewType(state, { windowId }),
     // Force updates when selection changes
     currentCanvasId: (getWindow(state, { windowId }) || {}).canvasId,
   };

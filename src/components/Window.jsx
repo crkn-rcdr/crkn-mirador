@@ -14,6 +14,7 @@ import CompanionArea from '../containers/CompanionArea';
 import MinimalWindow from '../containers/MinimalWindow';
 import ErrorContent from '../containers/ErrorContent';
 import IIIFAuthentication from '../containers/IIIFAuthentication';
+import { readPersistedWindowDisplayMode, persistWindowDisplayMode } from '../lib/windowViewPreferences';
 import { PluginHook } from './PluginHook';
 
 // Floating view selector (kept out of the top bar)
@@ -31,9 +32,9 @@ const StyledMosaic = styled(Mosaic)({
 
 const rowMixin = { display: 'flex', flex: '1', flexDirection: 'row', minHeight: 0 };
 const columnMixin = { display: 'flex', flex: '1', flexDirection: 'column', minHeight: 0 };
-const MOBILE_SPLIT_BREAKPOINT = 1100;
+const MOBILE_SPLIT_BREAKPOINT = 700;
 const TABLET_SPLIT_MIN_WIDTH = 768;
-const MOBILE_PRIMARY_PANE_PERCENTAGE = 65;
+const MOBILE_PRIMARY_PANE_PERCENTAGE = 74;
 const TABLET_PRIMARY_PANE_PERCENTAGE = 65;
 
 const Root = styled(Paper, { name: 'Window', slot: 'root' })(({ ownerState, theme }) => ({
@@ -110,6 +111,8 @@ export function Window({
 
   // View mode: 'both' | 'gallery'
   const [viewMode, setViewMode] = useState(() => {
+    const persisted = readPersistedWindowDisplayMode();
+    if (persisted) return persisted;
     const stored = localStorage.getItem('windowViewMode');
     return stored === 'gallery' ? 'gallery' : 'both';
   });
@@ -133,7 +136,13 @@ export function Window({
       const nextMinimum = (200 / nextWidth) * 100;
       setMinimumPaneSizePercentage((prev) => (Math.abs(prev - nextMinimum) > 0.05 ? nextMinimum : prev));
 
-      setSplitPercentage((prev) => (prev <= 0 ? (100 - nextMinimum) : prev));
+      setSplitPercentage((prev) => {
+        const minSplit = Math.max(0, nextMinimum);
+        const maxSplit = Math.max(minSplit, 100 - minSplit);
+        const fallbackSplit = 100 - nextMinimum;
+        const baseSplit = prev <= 0 ? fallbackSplit : prev;
+        return Math.min(maxSplit, Math.max(minSplit, baseSplit));
+      });
     };
 
     updateDimensions();
@@ -151,6 +160,7 @@ export function Window({
   useEffect(() => {
     localStorage.setItem('splitPercentage', JSON.stringify(splitPercentage));
     localStorage.setItem('windowViewMode', viewMode);
+    persistWindowDisplayMode(viewMode);
     if (viewMode === 'both' && splitPercentage > 0) {
       localStorage.setItem('galleryLastSplit', JSON.stringify(splitPercentage));
       setLastOpenSplit(splitPercentage);
@@ -167,10 +177,18 @@ export function Window({
   const switchViewMode = (nextMode) => {
     if (!nextMode || nextMode === viewMode) return;
     if (nextMode === 'both') {
-      // restore split (respect minimum)
+      // Restore the previous split and only clamp to valid min/max bounds.
       const width = componentRef.current?.getBoundingClientRect().width;
       const minPct = width ? (160 / width) * 100 : minimumPaneSizePercentage;
-      const restored = Math.max(minPct ? (100 - minPct) : 0, lastOpenSplit || 70);
+      const minSplit = Number.isFinite(minPct) ? Math.max(0, minPct) : 0;
+      const maxSplit = Math.max(minSplit, 100 - minSplit);
+      const preferredSplit = Number.isFinite(lastOpenSplit) && lastOpenSplit > 0
+        ? lastOpenSplit
+        : splitPercentage;
+      const fallbackSplit = Number.isFinite(preferredSplit) && preferredSplit > 0
+        ? preferredSplit
+        : maxSplit;
+      const restored = Math.min(maxSplit, Math.max(minSplit, fallbackSplit));
       setSplitPercentage(restored);
     } else if (viewMode === 'both') {
       // leaving "both": remember split
@@ -211,6 +229,7 @@ export function Window({
         windowId={windowId}
         controlWidth={galleryControlWidth}
         isBottomStrip={effectiveSplitDirection === 'column'}
+        showDeepZoomLayoutControls={effectiveViewMode === 'both'}
       />
     ),
   };
@@ -285,7 +304,13 @@ export function Window({
             )}
 
             {effectiveViewMode === 'gallery' && (
-              <StyledMosaic key="gallery" renderTile={(id) => ELEMENT_MAP[id]} initialValue="b" />
+              <StyledPrimaryWindow
+                key="gallery"
+                view="gallery"
+                windowId={windowId}
+                isFetching={isFetching}
+                sideBarOpen={sideBarOpen}
+              />
             )}
 
             <StyledCompanionAreaBottom windowId={windowId} position="bottom" />

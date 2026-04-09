@@ -73,11 +73,22 @@ const StyledToggleGroup = styled(ToggleButtonGroup, { name: 'WindowViewSettings'
  *
  */
 export function WindowViewSettings({
-  handleClose = () => {}, windowViewType, viewTypes = [], setWindowViewType, windowId,
+  handleClose = () => {},
+  windowViewType,
+  viewTypes = [],
+  setWindowViewType,
+  windowId,
+  disabled = false,
 }) {
   const { t } = useTranslation();
+  const deepZoomViewTypes = (viewTypes || []).filter(value => value !== 'gallery');
+  const selectedDeepZoomView = deepZoomViewTypes.includes(windowViewType)
+    ? windowViewType
+    : deepZoomViewTypes[0];
+
   const handleChange = (value) => {
-    if (!value || value === windowViewType) return;
+    if (disabled) return;
+    if (!value || value === selectedDeepZoomView) return;
     setWindowViewType(windowId, value);
     handleClose();
   };
@@ -89,19 +100,20 @@ export function WindowViewSettings({
   };
 
   // Only show when there are multiple view options available
-  if (!Array.isArray(viewTypes) || viewTypes.length <= 1) return null;
+  if (!Array.isArray(deepZoomViewTypes) || deepZoomViewTypes.length <= 1) return null;
   return (
     <StyledToggleGroup
       exclusive
       size="small"
-      value={windowViewType}
+      value={selectedDeepZoomView}
       onChange={(event, value) => handleChange(value)}
       aria-label={t('windowViewMode')}
     >
-      {viewTypes.map(value => (
+      {deepZoomViewTypes.map(value => (
         <ToggleButton
           key={value}
           value={value}
+          disabled={disabled}
           aria-label={t(value)}
         >
           <BiIcon name={iconMap[value] || 'app'} size={16} />
@@ -114,6 +126,7 @@ export function WindowViewSettings({
 
 WindowViewSettings.propTypes = {
   handleClose: PropTypes.func,
+  disabled: PropTypes.bool,
   setWindowViewType: PropTypes.func.isRequired,
   viewTypes: PropTypes.arrayOf(PropTypes.string),
   windowId: PropTypes.string.isRequired,

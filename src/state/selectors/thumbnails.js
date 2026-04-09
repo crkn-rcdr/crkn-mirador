@@ -7,8 +7,18 @@ import { ThumbnailFactory } from '../../lib/ThumbnailFactory';
 
 /** memoize thumbnail opts for selector */
 export const getIiifThumbnailOpts = createSelector(
-  [getThumbnailsConfig, (state, maxHeight, maxWidth) => maxHeight, (state, maxHeight, maxWidth) => maxWidth],
-  (thumbnails, maxHeight, maxWidth) => ({ maxHeight, maxWidth, preferredFormats: thumbnails.preferredFormats }),
+  [
+    getThumbnailsConfig,
+    (state, maxHeight, maxWidth) => maxHeight,
+    (state, maxHeight, maxWidth) => maxWidth,
+    (state, maxHeight, maxWidth, preferFullRes = false) => preferFullRes,
+  ],
+  (thumbnails, maxHeight, maxWidth, preferFullRes) => ({
+    maxHeight,
+    maxWidth,
+    preferFullRes,
+    preferredFormats: thumbnails.preferredFormats,
+  }),
 );
 
 /**

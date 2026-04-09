@@ -27,11 +27,34 @@ const Image = styled('img', { name: 'IIIFThumbnail', slot: 'image' })(() => ({
  */
 const LazyLoadedImage = ({
   border = false, placeholder, style = {}, thumbnail = null,
-  resource, maxHeight = null, maxWidth = null, ...props
+  resource,
+  maxHeight = null,
+  maxWidth = null,
+  requestMaxHeight = null,
+  requestMaxWidth = null,
+  preferFullRes = false,
+  ...props
 }) => {
   const { ref, inView } = useInView();
   const [loaded, setLoaded] = useState(false);
-  const thumbnailService = useThumbnailService(maxHeight, maxWidth);
+  const [requestFailureLevel, setRequestFailureLevel] = useState(0);
+  const requestDivisor = 2 ** requestFailureLevel;
+  const effectiveRequestMaxHeight = (requestMaxHeight ?? maxHeight)
+    ? Math.max(120, Math.round((requestMaxHeight ?? maxHeight) / requestDivisor))
+    : null;
+  const effectiveRequestMaxWidth = (requestMaxWidth ?? maxWidth)
+    ? Math.max(120, Math.round((requestMaxWidth ?? maxWidth) / requestDivisor))
+    : null;
+  const effectivePreferFullRes = preferFullRes && requestFailureLevel === 0;
+  const thumbnailService = useThumbnailService(
+    effectiveRequestMaxHeight,
+    effectiveRequestMaxWidth,
+    effectivePreferFullRes,
+  );
+
+  useEffect(() => {
+    setRequestFailureLevel(0);
+  }, [resource?.id, thumbnail?.url, requestMaxHeight, requestMaxWidth, preferFullRes]);
   /**
    * Handles the intersection (visibility) of a given thumbnail, by requesting
    * the image and then updating the state.
@@ -70,18 +93,20 @@ const LazyLoadedImage = ({
 
     const { height: thumbHeight, width: thumbWidth } = image;
     if (thumbHeight && thumbWidth) {
-      if ((maxHeight && (thumbHeight > maxHeight)) || (maxWidth && (thumbWidth > maxWidth))) {
-        const aspectRatio = thumbWidth / thumbHeight;
+      const aspectRatio = thumbWidth / thumbHeight;
 
-        if (maxHeight && maxWidth) {
-          if ((maxWidth / maxHeight) < aspectRatio) {
-            styleProps.height = Math.round(maxWidth / aspectRatio);
-            styleProps.width = maxWidth;
-          } else {
-            styleProps.height = maxHeight;
-            styleProps.width = Math.round(maxHeight * aspectRatio);
-          }
-        } else if (maxHeight) {
+      if (maxHeight && maxWidth) {
+        // Always fit to the requested render box so capped request sizes
+        // still occupy the intended thumbnail tile dimensions.
+        if ((maxWidth / maxHeight) < aspectRatio) {
+          styleProps.height = Math.round(maxWidth / aspectRatio);
+          styleProps.width = maxWidth;
+        } else {
+          styleProps.height = maxHeight;
+          styleProps.width = Math.round(maxHeight * aspectRatio);
+        }
+      } else if ((maxHeight && (thumbHeight > maxHeight)) || (maxWidth && (thumbWidth > maxWidth))) {
+        if (maxHeight) {
           styleProps.height = maxHeight;
           styleProps.maxWidth = Math.round(maxHeight * aspectRatio);
         } else if (maxWidth) {
@@ -99,11 +124,13 @@ const LazyLoadedImage = ({
     } else {
       // The thumbnail wasn't retrieved via an Image API service,
       // and its dimensions are not specified in the JSON-LD
-      // (note that this may result in a blurry image)
+      // (note that this may result in a blurry image).
+      // Fit the available thumbnail box so tiny intrinsic images don't
+      // collapse to a small corner at large gallery sizes.
+      if (maxWidth) styleProps.width = maxWidth;
+      if (maxHeight) styleProps.height = maxHeight;
       styleProps.maxWidth = maxWidth;
       styleProps.maxHeight = maxHeight;
-      styleProps.width = undefined;
-      styleProps.height = undefined;
       styleProps.objectFit = 'contain';
       styleProps.objectPosition = 'left top';
     }
@@ -124,6 +151,10 @@ const LazyLoadedImage = ({
       role="presentation"
       src={src}
       style={imageStyles}
+      onError={() => {
+        if (!loaded || thumbnail || requestFailureLevel >= 2) return;
+        setRequestFailureLevel(prev => prev + 1);
+      }}
       {...props}
     />
   );
@@ -133,6 +164,9 @@ LazyLoadedImage.propTypes = {
   border: PropTypes.bool,
   maxHeight: PropTypes.number,
   maxWidth: PropTypes.number,
+  requestMaxHeight: PropTypes.number,
+  requestMaxWidth: PropTypes.number,
+  preferFullRes: PropTypes.bool,
   placeholder: PropTypes.string.isRequired,
   resource: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   style: PropTypes.object, // eslint-disable-line react/forbid-prop-types
@@ -156,6 +190,9 @@ export function IIIFThumbnail({
   labelled = false,
   maxHeight = null,
   maxWidth = null,
+  requestMaxHeight = null,
+  requestMaxWidth = null,
+  preferFullRes = false,
   resource,
   style = {},
   thumbnail = null,
@@ -170,6 +207,9 @@ export function IIIFThumbnail({
         resource={resource}
         maxHeight={maxHeight}
         maxWidth={maxWidth}
+        requestMaxHeight={requestMaxHeight}
+        requestMaxWidth={requestMaxWidth}
+        preferFullRes={preferFullRes}
         style={style}
         border={border}
       />
@@ -192,6 +232,9 @@ IIIFThumbnail.propTypes = {
   labelled: PropTypes.bool,
   maxHeight: PropTypes.number,
   maxWidth: PropTypes.number,
+  requestMaxHeight: PropTypes.number,
+  requestMaxWidth: PropTypes.number,
+  preferFullRes: PropTypes.bool,
   resource: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   style: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   thumbnail: PropTypes.shape({

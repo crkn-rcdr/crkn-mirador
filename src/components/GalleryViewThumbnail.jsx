@@ -9,6 +9,9 @@ import { useTranslation } from 'react-i18next';
 import { InView } from 'react-intersection-observer';
 import IIIFThumbnail from '../containers/IIIFThumbnail';
 
+const THUMBNAIL_REQUEST_MAX_DIMENSION = 500;
+const THUMBNAIL_REQUEST_DPR_CAP = 2;
+
 const Root = styled('div', { name: 'GalleryView', slot: 'thumbnail' })(
   ({ ownerState, theme }) => ({
     '&:focus': { outline: 'none' },
@@ -20,18 +23,35 @@ const Root = styled('div', { name: 'GalleryView', slot: 'thumbnail' })(
     cursor: 'pointer',
     // Margin here caused overflow beyond grid cells; spacing comes from Grid gap.
     margin: 0,
-    border: '2px solid transparent',
+    border: 0,
     borderRadius: theme.shape.borderRadius * 1.5,
-    padding: theme.spacing(1),
-    paddingTop: ownerState?.isMobileStrip ? theme.spacing(1.25) : theme.spacing(1),
+    padding: ownerState?.isMobileStrip
+      ? theme.spacing(0.5)
+      : (ownerState?.isVerticalStrip ? theme.spacing(0.75) : theme.spacing(1)),
+    paddingTop: ownerState?.isMobileStrip
+      ? theme.spacing(0.5)
+      : (ownerState?.isVerticalStrip ? theme.spacing(0.75) : theme.spacing(1)),
     position: 'relative',
-    width: '100%',
-    height: '100%',
+    width: ownerState?.isMobileStrip ? 'max-content' : '100%',
+    height: ownerState?.isMobileStrip ? 'auto' : '100%',
     boxSizing: 'border-box',
     overflow: 'visible',
     transition: 'background-color 120ms ease',
-    ...(ownerState?.selected && {
-      borderColor: theme.palette.primary.main,
+    '& img': {
+      alignSelf: 'flex-start',
+      marginLeft: 0,
+      marginRight: 'auto',
+      objectPosition: 'left top',
+    },
+    ...(ownerState?.selected && ownerState?.isMobileStrip && {
+      border: `2px solid ${theme.palette.primary.main}`,
+    }),
+    ...(ownerState?.selected && !ownerState?.isMobileStrip && {
+      '& img': {
+        outline: `2px solid ${theme.palette.primary.main}`,
+        outlineOffset: 2,
+        borderRadius: theme.shape.borderRadius,
+      },
     }),
   }),
 );
@@ -65,26 +85,71 @@ export function GalleryViewThumbnail({
   searchAnnotationsCount = 0,
   matchingTerms = [],
   config = { height: 100, width: null },
-  thumbSize = 'm',      // 's' | 'm' | 'l'
+  thumbSize = 'm',      // 's' | 'm' | 'l' | 'fit'
   tileW,                // new: inner cell width from Grid (already minus gap)
   tileH,                // new: inner cell height from Grid (already minus gap)
   isMobileStrip = false,
+  isVerticalStrip = false,
 }) {
   const myRef = useRef();
   const [requestedAnnotations, setRequestedAnnotations] = useState(false);
   const { t } = useTranslation();
 
   // Prefer tile-based sizing from Grid to avoid mismatch/overlap.
-  const pad = isMobileStrip ? 20 : 16; // add top breathing room in strip to avoid visual clipping
+  const pad = isMobileStrip ? 6 : 16;
   const baseLabelReserve = thumbSize === 's' ? 40 : 44;
-  const labelReserve = isMobileStrip ? (baseLabelReserve + 8) : baseLabelReserve;
+  const labelReserve = isMobileStrip ? 32 : baseLabelReserve;
+  const outlineReserve = isMobileStrip ? 4 : 0;
   const maxHeight = (typeof tileH === 'number' && tileH > 0)
-    ? Math.max(1, tileH - pad - labelReserve)
+    ? Math.max(1, tileH - pad - labelReserve - outlineReserve)
     : Math.max(1, Math.round(((typeof config.height === 'number' ? config.height : 100) * ((thumbSize === 'l') ? 4.0 : 2.0))) - labelReserve);
 
-  const maxWidth = (typeof tileW === 'number' && tileW > 0)
-    ? Math.max(1, tileW - pad)
+  const maxWidth = isMobileStrip
+    ? null
+    : (typeof tileW === 'number' && tileW > 0)
+      ? Math.max(1, tileW - pad - outlineReserve)
     : (config.width == null ? null : Math.max(1, Math.round(config.width * ((thumbSize === 'l') ? 4.0 : 2.0))));
+  const stretchToTileWidth = !isMobileStrip && typeof tileW === 'number' && tileW > 0;
+  const thumbnailStyle = stretchToTileWidth
+    ? {
+      width: '100%',
+      maxWidth: '100%',
+      height: 'auto',
+      objectFit: 'contain',
+      objectPosition: 'left top',
+    }
+    : undefined;
+  const wantsFullResRequest = thumbSize === 'l'
+    || thumbSize === 'fit'
+    || (typeof maxWidth === 'number' && maxWidth > THUMBNAIL_REQUEST_MAX_DIMENSION);
+
+  // Request denser source pixels on HiDPI screens so small thumbnails
+  // stay crisp while keeping the rendered CSS size unchanged.
+  const requestScale = wantsFullResRequest
+    ? 1
+    : Math.max(
+      1,
+      Math.min(
+        THUMBNAIL_REQUEST_DPR_CAP,
+        (typeof window !== 'undefined' && Number(window.devicePixelRatio)) || 1,
+      ),
+    );
+  const scaledRequestMaxHeight = (typeof maxHeight === 'number' && maxHeight > 0)
+    ? Math.round(maxHeight * requestScale)
+    : null;
+  const scaledRequestMaxWidth = (typeof maxWidth === 'number' && maxWidth > 0)
+    ? Math.round(maxWidth * requestScale)
+    : maxWidth;
+
+  // Keep constrained thumbnail requests for fast/default rendering.
+  // For large modes, IIIFThumbnail will request full-res first and then
+  // gracefully fall back to constrained sizes if it errors.
+  const requestMaxHeight = isMobileStrip && typeof maxHeight === 'number'
+    ? Math.min(scaledRequestMaxHeight || maxHeight, THUMBNAIL_REQUEST_MAX_DIMENSION)
+    : null;
+  const requestMaxWidth = (typeof scaledRequestMaxWidth === 'number' && scaledRequestMaxWidth > 0)
+    ? Math.min(scaledRequestMaxWidth, THUMBNAIL_REQUEST_MAX_DIMENSION)
+    : scaledRequestMaxWidth;
 
   const handleIntersection = (inView) => {
     if (!inView) return;
@@ -98,7 +163,7 @@ export function GalleryViewThumbnail({
     else setCanvas(canvas.id);
   };
 
-  const ownerState = { selected, highlighted, isMobileStrip };
+  const ownerState = { selected, highlighted, isMobileStrip, isVerticalStrip };
 
   return (
     <InView onChange={handleIntersection}>
@@ -115,6 +180,10 @@ export function GalleryViewThumbnail({
           variant="outside"
           maxHeight={maxHeight}
           maxWidth={maxWidth}
+          requestMaxHeight={requestMaxHeight}
+          requestMaxWidth={requestMaxWidth}
+          preferFullRes={wantsFullResRequest}
+          style={thumbnailStyle}
         >
           {/* Search results count (top-left, high contrast) */}
           {searchAnnotationsCount > 0 && (
@@ -223,7 +292,8 @@ GalleryViewThumbnail.propTypes = {
   setCanvas: PropTypes.func.isRequired,
   matchingTerms: PropTypes.arrayOf(PropTypes.string),
   isMobileStrip: PropTypes.bool,
-  thumbSize: PropTypes.oneOf(['s','m','l']),
+  isVerticalStrip: PropTypes.bool,
+  thumbSize: PropTypes.oneOf(['s', 'm', 'l', 'fit']),
   tileW: PropTypes.number,
   tileH: PropTypes.number,
 };

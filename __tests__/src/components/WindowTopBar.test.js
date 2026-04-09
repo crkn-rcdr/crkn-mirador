@@ -32,8 +32,7 @@ describe('WindowTopBar', () => {
     render(<Subject />);
     expect(screen.getByRole('navigation', { name: 'Window navigation' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Toggle sidebar' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Window views & thumbnail display' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Maximize window' })).toBeInTheDocument();
+    expect(screen.queryByText('Deep zoom layout')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Close window' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Full screen' })).not.toBeInTheDocument();
   });
@@ -42,13 +41,11 @@ describe('WindowTopBar', () => {
     render(<Subject
       allowWindowSideBar={false}
       allowClose={false}
-      allowMaximize={false}
       allowTopMenuButton={false}
       allowFullscreen
     />);
     expect(screen.queryByRole('button', { name: 'Toggle sidebar' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Window views & thumbnail display' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Maximize window' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Deep zoom layout')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Close window' })).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Full screen' })).toBeInTheDocument();
   });
@@ -84,13 +81,14 @@ describe('WindowTopBar', () => {
     expect(removeWindow).toHaveBeenCalledTimes(1);
   });
 
-  it('passes correct callback to maximizeWindow button', async () => {
-    const maximizeWindow = vi.fn();
-    render(<Subject allowMaximize maximizeWindow={maximizeWindow} />);
-    const button = screen.getByRole('button', { name: 'Maximize window' });
+  it('passes correct callback to view mode toggle buttons', async () => {
+    const onChangeViewMode = vi.fn();
+    render(<Subject viewMode="both" onChangeViewMode={onChangeViewMode} />);
+
+    const button = screen.getByRole('button', { name: 'Gallery only' });
     expect(button).toBeInTheDocument();
     await user.click(button);
-    expect(maximizeWindow).toHaveBeenCalledTimes(1);
+    expect(onChangeViewMode).toHaveBeenCalledWith('gallery');
   });
 
   it('close button is configurable', () => {
@@ -113,7 +111,7 @@ describe('WindowTopBar', () => {
   it('shows a localized unavailable search message when content search is missing', () => {
     render(<Subject showSearchUnavailable />);
 
-    expect(screen.getByRole('textbox', { name: 'search terms' })).toHaveValue('Search is not available');
+    expect(screen.getByText('Search is not available')).toBeInTheDocument();
   });
 
   it('renders only split and gallery view toggles with labels below icons', async () => {
@@ -122,5 +120,12 @@ describe('WindowTopBar', () => {
     expect(screen.getByRole('button', { name: 'Split view' })).toHaveTextContent('Split view');
     expect(screen.getByRole('button', { name: 'Gallery only' })).toHaveTextContent('Gallery only');
     expect(screen.queryByRole('button', { name: 'Primary only' })).not.toBeInTheDocument();
+  });
+
+  it('does not render deep zoom layout controls in the top bar', () => {
+    render(<Subject viewMode="gallery" />);
+
+    expect(screen.queryByText('Deep zoom layout')).not.toBeInTheDocument();
+    expect(screen.queryByText('Available in Split mode')).not.toBeInTheDocument();
   });
 });

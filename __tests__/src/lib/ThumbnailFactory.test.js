@@ -129,12 +129,39 @@ describe('getThumbnail', () => {
           type: 'Image',
         })).toMatchObject({ url: `${url}/full/,120/0/default.jpg` });
       });
+      it('can request full-resolution images', () => {
+        expect(createImageSubject({
+          ...iiifLevel1Service,
+          id: 'xyz',
+          type: 'Image',
+        }, { preferFullRes: true })).toMatchObject({
+          height: 2000,
+          url: `${url}/full/max/0/default.jpg`,
+          width: 1000,
+        });
+      });
     });
   });
 
   describe('with a canvas', () => {
     it('uses the thumbnail', () => {
       expect(createSubject({ ...canvas.__jsonld, thumbnail: { ...iiifLevel1Service } }, 'Canvas')).toMatchObject({ url: `${url}/full/,120/0/default.jpg` });
+    });
+
+    it('prefers the image service over a non-IIIF thumbnail without dimensions', () => {
+      const firstCanvasId = canvas.id;
+      const myManifest = Utils.parseManifest({
+        ...manifest.__jsonld,
+        sequences: manifest.__jsonld.sequences.map((sequence) => ({
+          ...sequence,
+          canvases: sequence.canvases.map((c) => (
+            c['@id'] === firstCanvasId ? { ...c, thumbnail: { '@id': 'arbitrary-url' } } : c
+          )),
+        })),
+      });
+
+      const myCanvas = myManifest.getSequences()[0].getCanvases()[0];
+      expect(getThumbnail(myCanvas)).toMatchObject({ url: 'https://stacks.stanford.edu/image/iiif/hg676jb4964%2F0380_796-44/full/,120/0/default.jpg' });
     });
 
     it('uses the first image resource', () => {
