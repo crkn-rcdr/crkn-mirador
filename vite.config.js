@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'url';
 import { globSync } from 'glob';
 import * as packageJson from './package.json';
+import { reactDndReact19RefCompat } from './vite.react-dnd-compat.js'; // eslint-disable-line import/extensions
 
 /**
 * Vite configuration
@@ -61,7 +62,7 @@ export default defineConfig({
   define: {
     'process.env': {},
   },
-  plugins: [react()],
+  plugins: [reactDndReact19RefCompat(), react()],
   resolve: {
     alias: {
       '@tests/': fileURLToPath(new URL('./__tests__', import.meta.url)),

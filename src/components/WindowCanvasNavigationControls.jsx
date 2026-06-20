@@ -28,10 +28,10 @@ const Root = styled(Paper, { name: 'WindowCanvasNavigationControls', slot: 'root
   textAlign: 'left',
   touchAction: 'manipulation',
   width: '100%',
-  height: '54px',
-  paddingLeft: '1rem',
+  height: '52px',
+  padding: '6px',
   border: `none`,
-  borderRadius: "7px",
+  borderRadius: "3px",
   boxShadow: "none",
   zIndex: 100000002,
 }));

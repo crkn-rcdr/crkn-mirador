@@ -1,4 +1,6 @@
-import { useRef, useEffect, useState } from 'react';
+import {
+  Children, cloneElement, isValidElement, useCallback, useRef, useEffect, useState,
+} from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import OpenSeadragon from 'openseadragon';
@@ -11,6 +13,107 @@ import CanvasWorld from '../lib/CanvasWorld';
 import { PluginHook } from './PluginHook';
 import { OSDReferences } from '../plugins/OSDReferences';
 import { getCanvasIndex } from '../state/selectors';
+
+const DEFAULT_OSD_CONFIG = {};
+const TRANSPARENT_NAV_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+const TRANSPARENT_NAV_IMAGES = Object.fromEntries(
+  ['zoomIn', 'zoomOut', 'home', 'fullpage', 'rotateleft', 'rotateright', 'flip', 'previous', 'next']
+    .map(name => [name, {
+      DOWN: TRANSPARENT_NAV_IMAGE,
+      GROUP: TRANSPARENT_NAV_IMAGE,
+      HOVER: TRANSPARENT_NAV_IMAGE,
+      REST: TRANSPARENT_NAV_IMAGE,
+    }]),
+);
+
+function isTouchLikeControlEvent(event) {
+  return event.type.startsWith('touch') || event.pointerType === 'touch' || event.pointerType === 'pen';
+}
+
+function getTouchControlAction(viewer, title) {
+  const zoomPerClick = viewer.zoomPerClick || 1.3;
+  const rotationIncrement = viewer.rotationIncrement || 90;
+
+  const actions = {
+    'Flip horizontal': () => {
+      if (viewer.viewport?.toggleFlip) viewer.viewport.toggleFlip();
+      else if (viewer.viewport?.setFlip && viewer.viewport?.getFlip) viewer.viewport.setFlip(!viewer.viewport.getFlip());
+    },
+    'Flip Horizontally': () => {
+      if (viewer.viewport?.toggleFlip) viewer.viewport.toggleFlip();
+      else if (viewer.viewport?.setFlip && viewer.viewport?.getFlip) viewer.viewport.setFlip(!viewer.viewport.getFlip());
+    },
+    'Go home': () => {
+      viewer.viewport?.goHome();
+      viewer.viewport?.applyConstraints?.();
+    },
+    'Rotate left': () => {
+      if (!viewer.viewport) return;
+      const direction = viewer.viewport.flipped ? 1 : -1;
+      viewer.viewport.setRotation(viewer.viewport.getRotation() + (direction * rotationIncrement));
+      viewer.viewport.applyConstraints?.();
+    },
+    'Rotate right': () => {
+      if (!viewer.viewport) return;
+      const direction = viewer.viewport.flipped ? -1 : 1;
+      viewer.viewport.setRotation(viewer.viewport.getRotation() + (direction * rotationIncrement));
+      viewer.viewport.applyConstraints?.();
+    },
+    'Zoom in': () => {
+      viewer.viewport?.zoomBy(zoomPerClick);
+      viewer.viewport?.applyConstraints?.();
+    },
+    'Zoom out': () => {
+      viewer.viewport?.zoomBy(1 / zoomPerClick);
+      viewer.viewport?.applyConstraints?.();
+    },
+  };
+
+  return actions[title];
+}
+
+function installTouchControlFallback(viewer) {
+  const controlElements = Array.from(viewer.container?.querySelectorAll('div[title]') || []);
+  const cleanup = [];
+
+  controlElements.forEach(element => {
+    const action = getTouchControlAction(viewer, element.getAttribute('title'));
+    if (!action) return;
+
+    let lastRun = 0;
+
+    const stopNativeTouch = event => {
+      if (!isTouchLikeControlEvent(event)) return;
+      if (event.cancelable) event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation?.();
+    };
+
+    const runAction = event => {
+      if (!isTouchLikeControlEvent(event)) return;
+      stopNativeTouch(event);
+
+      const now = Date.now();
+      if (now - lastRun < 250) return;
+      lastRun = now;
+      action();
+    };
+
+    element.addEventListener('pointerdown', stopNativeTouch, true);
+    element.addEventListener('pointerup', runAction, true);
+    element.addEventListener('touchstart', stopNativeTouch, { capture: true, passive: false });
+    element.addEventListener('touchend', runAction, { capture: true, passive: false });
+
+    cleanup.push(() => {
+      element.removeEventListener('pointerdown', stopNativeTouch, true);
+      element.removeEventListener('pointerup', runAction, true);
+      element.removeEventListener('touchstart', stopNativeTouch, true);
+      element.removeEventListener('touchend', runAction, true);
+    });
+  });
+
+  return () => cleanup.forEach(remove => remove());
+}
 
 const StyledSection = styled('section')({
   cursor: 'grab',
@@ -52,7 +155,7 @@ export function OpenSeadragonViewer({
   children = null,
   label = null,
   windowId,
-  osdConfig = {},
+  osdConfig = DEFAULT_OSD_CONFIG,
   drawAnnotations = false,
   canvases = [],
   visibleCanvases = [],
@@ -75,6 +178,7 @@ export function OpenSeadragonViewer({
   const { t } = useTranslation();
   const viewerRef = useRef(null);
   const containerRef = useRef(null);
+  const [viewer, setViewer] = useState(null);
   const [tileSources, setTileSources] = useState([]);
   const [addedCount, setAddedCount] = useState(0);
   const lastZoomedAnnoRef = useRef(null);
@@ -84,6 +188,22 @@ export function OpenSeadragonViewer({
   const canvasKeys = canvases.map(c => c.id).join('|');
   const nonTiledKeys = nonTiledImages.map(c => c.id).join('|');
   const visibleKeys = (visibleCanvases || []).map(c => c.id).join('|');
+  const ariaLabel = t('item', { label: label || '' }).trim();
+
+  const zoomToWorld = useCallback((immediately = false) => {
+    const currentViewer = viewerRef.current;
+    if (!currentViewer?.viewport) return;
+
+    if (currentViewer.world?.getItemCount?.() > 0 && currentViewer.world?.getHomeBounds) {
+      currentViewer.viewport.fitBounds(currentViewer.world.getHomeBounds(), immediately);
+    } else if (canvasWorld?.worldBounds) {
+      currentViewer.viewport.fitBounds(new OpenSeadragon.Rect(...canvasWorld.worldBounds()), immediately);
+    } else {
+      currentViewer.viewport.goHome(immediately);
+    }
+
+    currentViewer.viewport.applyConstraints?.();
+  }, [canvasWorld]);
 
   /** Fetch tile sources for 'single' view (sequence of all canvases) */
   useEffect(() => {
@@ -185,9 +305,18 @@ export function OpenSeadragonViewer({
   useEffect(() => {
     if (!containerRef.current) return;
 
+    const navImageConfig = osdConfig.navImages
+      ? {
+        navImages: osdConfig.navImages,
+        prefixUrl: osdConfig.prefixUrl || '/openseadragon/images/',
+      }
+      : (osdConfig.prefixUrl ? {} : {
+        navImages: TRANSPARENT_NAV_IMAGES,
+        prefixUrl: '',
+      });
+
     const viewer = OpenSeadragon({
       element: containerRef.current,
-      prefixUrl: '/openseadragon/images/',
       crossOriginPolicy: 'Anonymous',
       renderer: 'canvas',
       preserveViewport: true,
@@ -197,6 +326,7 @@ export function OpenSeadragonViewer({
       showRotationControl: true,
       showFlipControl: true,
       showNavigator: false,
+      autoHideControls: false,
       showSequenceControl: viewType === 'single',
       sequenceMode: viewType === 'single',
       blendTime: 0,
@@ -206,10 +336,13 @@ export function OpenSeadragonViewer({
       zoomPerClick: osdConfig.zoomPerClick || 1.3,
       zoomPerScroll: osdConfig.zoomPerScroll || 1.2,
       ...osdConfig,
+      ...navImageConfig,
     });
 
     viewerRef.current = viewer;
+    setViewer(viewer);
     OSDReferences.set(windowId, viewer);
+    const cleanupTouchControls = installTouchControlFallback(viewer);
 
     viewer.addHandler('viewport-change', () => {
       const vp = viewer.viewport;
@@ -224,8 +357,11 @@ export function OpenSeadragonViewer({
     });
 
     return () => {
+      cleanupTouchControls();
       viewer.destroy();
       viewerRef.current = null;
+      setViewer(null);
+      OSDReferences.set(windowId, null);
     };
   }, [windowId, osdConfig, updateViewport, viewType]);
 
@@ -415,21 +551,33 @@ export function OpenSeadragonViewer({
     selectedAnnotationId,
     palette,
     highlightAllAnnotations,
+    viewer,
+    zoomToWorld,
     ...rest,
   };
 
+  const enhancedChildren = Children.map(children, child => (
+    isValidElement(child)
+      ? cloneElement(child, { viewer, windowId, zoomToWorld })
+      : child
+  ));
+
   return (
-    <StyledSection ref={containerRef} className={classNames(ns('osd-container'))}>
+    <StyledSection
+      ref={containerRef}
+      aria-label={ariaLabel}
+      className={classNames(ns('osd-container'))}
+    >
       {/* Mount overlay only when viewer exists */}
-      {drawAnnotations && viewerRef.current && (
+      {drawAnnotations && viewer && (
         <AnnotationsOverlay
-          viewer={viewerRef.current}
+          viewer={viewer}
           windowId={windowId}
           {...pluginProps}
         />
       )}
-      <PluginHook viewer={viewerRef.current} {...pluginProps} />
-      {children}
+      <PluginHook viewer={viewer} {...pluginProps} />
+      {enhancedChildren}
     </StyledSection>
   );
 }

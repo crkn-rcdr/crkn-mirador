@@ -145,6 +145,9 @@ const PairItem = styled('div')({
 
 const normalizeCanvasId = (id) => (id || '').toString().split('#')[0];
 const getCanvasKey = (canvas) => normalizeCanvasId(canvas?.id) || `index-${canvas?.index}`;
+const arrayEquals = (a = [], b = []) => (
+  a.length === b.length && a.every((value, index) => value === b[index])
+);
 
 const getCanvasAspectRatio = (canvas) => {
   try {
@@ -292,6 +295,7 @@ export function GalleryView({
   // store latest computed layout values without re-render churn
   const layoutRef = useRef({ columnCount: 1 });
   const lastIdxRef = useRef(-1);
+  const pendingGridResetRef = useRef(false);
   const sizeCacheRef = useRef({
     width: 0,
     columnCount: 1,
@@ -312,6 +316,14 @@ export function GalleryView({
   useEffect(() => {
     persistWindowThumbnailSize(thumbSize);
   }, [thumbSize]);
+
+  useEffect(() => {
+    if (!pendingGridResetRef.current) return;
+    pendingGridResetRef.current = false;
+    if (gridRef.current && typeof gridRef.current.resetAfterIndices === 'function') {
+      gridRef.current.resetAfterIndices({ columnIndex: 0, rowIndex: 0, shouldForceUpdate: true });
+    }
+  });
 
   // When the current canvas changes (e.g., from a SearchHit),
   // scroll the virtualized grid to bring its thumbnail into view.
@@ -520,13 +532,15 @@ export function GalleryView({
 
             // If layout-affecting values changed, reset measured cache
             const cache = sizeCacheRef.current;
+            const layoutChanged = cache.width !== width
+              || cache.columnCount !== columnCount
+              || cache.columnWidth !== columnWidth
+              || !arrayEquals(cache.rowHeights, rowHeights);
             cache.width = width;
             cache.columnCount = columnCount;
             cache.columnWidth = columnWidth;
             cache.rowHeights = rowHeights;
-            if (gridRef.current && typeof gridRef.current.resetAfterIndices === 'function') {
-              gridRef.current.resetAfterIndices({ columnIndex: 0, rowIndex: 0, shouldForceUpdate: true });
-            }
+            pendingGridResetRef.current = pendingGridResetRef.current || layoutChanged;
 
             const getTileW = (idx = 0) => {
               if (isMobileStrip) {
