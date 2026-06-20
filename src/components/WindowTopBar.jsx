@@ -264,6 +264,10 @@ const SearchSlot = styled('div')(({ theme, ownerState }) => ({
     height: '100%',
     width: '100%',
   },
+  '& .MuiAutocomplete-root, & .MuiAutocomplete-root:focus-within, & .MuiFormControl-root, & .MuiInputBase-root, & .MuiInputBase-root.Mui-focused, & .MuiInputBase-input, & .MuiInputBase-input:focus, & .MuiInputBase-input:focus-visible': {
+    boxShadow: 'none !important',
+    outline: 'none !important',
+  },
   '& .MuiInputLabel-root': {
     color: theme.palette.text.secondary,
     fontSize: '0.875rem !important',

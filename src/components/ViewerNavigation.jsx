@@ -6,7 +6,81 @@ import MiradorMenuButton from '../containers/MiradorMenuButton';
 import ns from '../config/css-ns';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import { useState } from 'react';
+
+const navButtonSx = {
+  borderRadius: '3px',
+  flex: '0 0 40px',
+  height: 40,
+  minHeight: 40,
+  minWidth: 40,
+  padding: 0,
+  width: 40,
+  '@media (pointer: coarse)': {
+    flexBasis: 44,
+    height: 44,
+    minHeight: 44,
+    minWidth: 44,
+    width: 44,
+  },
+};
+
+const canvasIndexSelectSx = {
+  display: 'inline-block',
+  flex: '0 0 100px',
+  height: 40,
+  marginRight: '1rem',
+  width: 100,
+  '& .MuiAutocomplete-endAdornment': {
+    top: '50%',
+    transform: 'translateY(-50%)',
+  },
+  '& .MuiFormControl-root': {
+    height: 40,
+  },
+  '& .MuiInputBase-input': {
+    boxSizing: 'border-box',
+    height: 40,
+    paddingBottom: '0 !important',
+    paddingTop: '0 !important',
+  },
+  '& .MuiInputBase-root': {
+    alignItems: 'center',
+    boxSizing: 'border-box',
+    height: 40,
+    minHeight: 40,
+    paddingBottom: '0 !important',
+    paddingTop: '0 !important',
+  },
+  '& .MuiInputLabel-root': {
+    lineHeight: 1,
+    transform: 'translate(14px, -4px) scale(0.75)',
+  },
+  '& .MuiInputLabel-root.MuiInputLabel-shrink': {
+    transform: 'translate(14px, -4px) scale(0.75)',
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    top: 0,
+  },
+  '& .MuiTextField-root': {
+    height: 40,
+  },
+  '@media (pointer: coarse)': {
+    height: 44,
+    '& .MuiFormControl-root': {
+      height: 44,
+    },
+    '& .MuiInputBase-input': {
+      height: 44,
+    },
+    '& .MuiInputBase-root': {
+      height: 44,
+      minHeight: 44,
+    },
+    '& .MuiTextField-root': {
+      height: 44,
+    },
+  },
+};
 /**
  */
 export function ViewerNavigation({
@@ -44,7 +118,7 @@ export function ViewerNavigation({
   return (
     <div
       className={classNames(ns('osd-navigation'))}
-      style={{ display: "inline-flex", alignItems: "center" }}
+      style={{ display: 'inline-flex', alignItems: 'center' }}
       dir={htmlDir}
     >
       
@@ -53,6 +127,7 @@ export function ViewerNavigation({
         className={ns('previous-canvas-button')}
         disabled={!hasPreviousCanvas}
         onClick={() => { hasPreviousCanvas && setPreviousCanvas(); }}
+        sx={navButtonSx}
         TooltipProps={{ disableTouchListener: true }}
       >
         <i className="bi bi-arrow-left"></i>
@@ -62,6 +137,7 @@ export function ViewerNavigation({
         className={ns('next-canvas-button')}
         disabled={!hasNextCanvas}
         onClick={() => { hasNextCanvas && setNextCanvas(); }}
+        sx={navButtonSx}
         TooltipProps={{ disableTouchListener: true }}
       >
         <i className="bi bi-arrow-right"></i>
@@ -81,7 +157,7 @@ export function ViewerNavigation({
             style: { zIndex: 100000003 },
           },
         }}
-        sx={{ width: 100, display: "inline-block", marginRight: "1rem"}}
+        sx={canvasIndexSelectSx}
         renderInput={(params) => <TextField {...params} label={t('canvasIndex')} />}
       />
     </div>
