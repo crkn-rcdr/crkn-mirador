@@ -6,6 +6,29 @@ import { getConfig } from './config';
 import { getWindows, getWindow, getWindowIds } from './getters';
 import { getWorkspaceType } from './workspace';
 import { getSequenceViewingHint, getSequenceBehaviors } from './sequences';
+import { readPersistedWindowViewType } from '../../lib/windowViewPreferences';
+
+/**
+ * Resolve the allowed view types for a window.
+ */
+function resolveAllowedWindowViewTypes(manifestViewingHint, manifestBehaviors = [], { views = [], defaultView }) {
+  return (views || []).reduce((allowedViews, view) => {
+    if (
+      view.key === defaultView
+      || !view.behaviors
+      || view.behaviors.some(b => (
+        manifestViewingHint === b || manifestBehaviors.includes(b)
+      ))
+    ) allowedViews.push(view.key);
+
+    return allowedViews;
+  }, []);
+}
+
+/** Return true when a window view type controls deep zoom layout (not gallery-only mode). */
+function isDeepZoomLayoutViewType(viewType) {
+  return !!(viewType && viewType !== 'gallery');
+}
 
 /**
  * Returns the window configuration based.
@@ -60,15 +83,33 @@ export const getWindowViewType = createSelector(
     getSequenceViewingHint,
     getSequenceBehaviors,
   ],
-  (window, { views = [], defaultView }, manifestViewingHint, manifestBehaviors) => {
-    if (window && window.view) return window.view;
+  (window, windowConfig, manifestViewingHint, manifestBehaviors = []) => {
+    const { defaultView, views = [] } = windowConfig || {};
+    const allowedWindowViews = resolveAllowedWindowViewTypes(
+      manifestViewingHint,
+      manifestBehaviors,
+      windowConfig || {},
+    );
+    const defaultDeepZoomView = isDeepZoomLayoutViewType(defaultView)
+      ? defaultView
+      : allowedWindowViews.find(isDeepZoomLayoutViewType);
+
+    if (window && isDeepZoomLayoutViewType(window.view)) return window.view;
+
+    const persistedWindowView = readPersistedWindowViewType();
+    if (
+      persistedWindowView
+      && isDeepZoomLayoutViewType(persistedWindowView)
+      && allowedWindowViews.includes(persistedWindowView)
+    ) return persistedWindowView;
 
     const config = (views || []).find(view => (
-      view.behaviors
+      isDeepZoomLayoutViewType(view.key)
+      && view.behaviors
       && view.behaviors.some(b => manifestViewingHint === b || manifestBehaviors.includes(b))
     ));
 
-    return (config && config.key) || defaultView;
+    return (config && config.key) || defaultDeepZoomView || defaultView;
   },
 );
 
@@ -84,17 +125,11 @@ export const getAllowedWindowViewTypes = createSelector(
     getSequenceBehaviors,
     getWindowConfig,
   ],
-  (manifestViewingHint, manifestBehaviors, { views = [], defaultView }) => (
-    (views || []).reduce((allowedViews, view) => {
-      if (
-        view.key === defaultView
-        || !view.behaviors
-        || view.behaviors.some(b => (
-          manifestViewingHint === b || manifestBehaviors.includes(b)
-        ))) allowedViews.push(view.key);
-      return allowedViews;
-    }, [])
-  ),
+  (manifestViewingHint, manifestBehaviors, windowConfig) => resolveAllowedWindowViewTypes(
+    manifestViewingHint,
+    manifestBehaviors,
+    windowConfig || {},
+  ).filter(isDeepZoomLayoutViewType),
 );
 
 /**

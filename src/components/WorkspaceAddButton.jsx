@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import Fab from '@mui/material/Fab';
 import Tooltip from '@mui/material/Tooltip';
-import AddIcon from '@mui/icons-material/AddSharp';
-import CloseIcon from '@mui/icons-material/CloseSharp';
+import BiIcon from './BiIcon';
 import { styled, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTranslation } from 'react-i18next';
@@ -50,11 +49,9 @@ export function WorkspaceAddButton({
         variant={(useExtendedFab && width !== 'xs') ? 'extended' : 'circular'}
         onClick={() => { setWorkspaceAddVisibility(!isWorkspaceAddVisible); }}
       >
-        {
-          isWorkspaceAddVisible
-            ? <CloseIcon />
-            : <AddIcon />
-        }
+        {isWorkspaceAddVisible
+          ? <BiIcon name="x-lg" size={18} />
+          : <BiIcon name="plus-lg" size={18} />}
         { (useExtendedFab && width !== 'xs') && t('startHere') }
       </Root>
     </Tooltip>

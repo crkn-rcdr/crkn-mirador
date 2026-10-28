@@ -6,7 +6,7 @@ import Paper from '@mui/material/Paper';
 import Collapse from '@mui/material/Collapse';
 import DialogActions from '@mui/material/DialogActions';
 import Typography from '@mui/material/Typography';
-import LockIcon from '@mui/icons-material/LockSharp';
+import BiIcon from './BiIcon';
 import { useTranslation } from 'react-i18next';
 import SanitizedHtml from '../containers/SanitizedHtml';
 import { PluginHook } from './PluginHook';
@@ -66,7 +66,7 @@ export function WindowAuthenticationBar({
       >
         <StyledTopBar>
           { icon || (
-            <LockIcon sx={{ marginInlineEnd: 1.5 }} />
+            <BiIcon name="lock" size={16} style={{ marginInlineEnd: '12px' }} />
           ) }
           <Typography component="h3" variant="body1" color="inherit">
             { ruleSet ? <SanitizedHtml htmlString={label} ruleSet={ruleSet} /> : label }
@@ -101,7 +101,7 @@ export function WindowAuthenticationBar({
         })}
       >
         { icon || (
-        <LockIcon sx={{ marginInlineEnd: 1.5 }} />
+          <BiIcon name="lock" size={16} style={{ marginInlineEnd: '12px' }} />
         ) }
         <Typography sx={{ paddingBlockEnd: 1, paddingBlockStart: 1 }} component="h3" variant="body1" color="inherit">
           { ruleSet ? <SanitizedHtml htmlString={label} ruleSet={ruleSet} /> : label }

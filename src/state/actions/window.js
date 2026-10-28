@@ -1,6 +1,11 @@
 import { v4 as uuid } from 'uuid';
 import ActionTypes from './action-types';
 import { miradorSlice } from '../selectors/utils';
+import {
+  persistWindowViewType,
+  persistWindowSideBarOpen,
+  readPersistedWindowSideBarOpen,
+} from '../../lib/windowViewPreferences';
 
 /**
  * focusWindow - action creator
@@ -26,9 +31,14 @@ export function addWindow({ companionWindows, manifest, ...options }) {
   return (dispatch, getState) => {
     const { config, workspace: { windowIds = [] } } = miradorSlice(getState());
     const numWindows = windowIds.length;
+    const persistedSideBarOpen = readPersistedWindowSideBarOpen();
 
     const windowId = options.id || `window-${uuid()}`;
     const cwThumbs = `cw-${uuid()}`;
+
+    const allowSideBar = (config.window && typeof config.window.allowWindowSideBar !== 'undefined')
+      ? !!config.window.allowWindowSideBar
+      : true;
 
     const defaultCompanionWindows = [
       {
@@ -44,7 +54,7 @@ export function addWindow({ companionWindows, manifest, ...options }) {
       ),
     ];
 
-    if (options.sideBarPanel || config.window.defaultSideBarPanel || config.window.sideBarPanel) {
+    if (allowSideBar && (options.sideBarPanel || config.window.defaultSideBarPanel || config.window.sideBarPanel)) {
       defaultCompanionWindows.unshift(
         {
           content: options.sideBarPanel
@@ -73,9 +83,17 @@ export function addWindow({ companionWindows, manifest, ...options }) {
       rangeId: null,
       rotation: null,
       selectedAnnotations: {},
-      sideBarOpen: config.window.sideBarOpenByDefault !== undefined
-        ? config.window.sideBarOpenByDefault || !!options.defaultSearchQuery
-        : config.window.sideBarOpen || !!options.defaultSearchQuery,
+      // Only auto-open the sidebar (e.g., for a defaultSearchQuery) when the
+      // window configuration allows the sidebar at all.
+      sideBarOpen: (() => {
+        const sideBarOpenDefault = (typeof config.window.sideBarOpenByDefault !== 'undefined')
+          ? !!config.window.sideBarOpenByDefault
+          : !!config.window.sideBarOpen;
+        const preferredSideBarOpen = (typeof persistedSideBarOpen === 'boolean')
+          ? persistedSideBarOpen
+          : sideBarOpenDefault;
+        return allowSideBar && (preferredSideBarOpen || !!options.defaultSearchQuery);
+      })(),
       sideBarPanel: options.sideBarPanel
         || config.window.defaultSideBarPanel
         || config.window.sideBarPanel,
@@ -154,7 +172,14 @@ export function removeWindow(windowId) {
  * @memberof ActionCreators
  */
 export function toggleWindowSideBar(windowId) {
-  return { type: ActionTypes.TOGGLE_WINDOW_SIDE_BAR, windowId };
+  return (dispatch, getState) => {
+    const state = getState();
+    const current = !!(state?.windows?.[windowId]?.sideBarOpen);
+    const next = !current;
+
+    dispatch({ type: ActionTypes.TOGGLE_WINDOW_SIDE_BAR, windowId });
+    persistWindowSideBarOpen(next);
+  };
 }
 
 /**
@@ -185,10 +210,14 @@ export function setWindowThumbnailPosition(windowId, position) {
  * @memberof ActionCreators
  */
 export function setWindowViewType(windowId, viewType) {
-  return {
-    type: ActionTypes.SET_WINDOW_VIEW_TYPE,
-    viewType,
-    windowId,
+  return (dispatch) => {
+    dispatch({
+      type: ActionTypes.SET_WINDOW_VIEW_TYPE,
+      viewType,
+      windowId,
+    });
+
+    persistWindowViewType(viewType);
   };
 }
 

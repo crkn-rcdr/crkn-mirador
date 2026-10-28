@@ -7,12 +7,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Slider from '@mui/material/Slider';
 import Tooltip from '@mui/material/Tooltip';
-import DragHandleIcon from '@mui/icons-material/DragHandleSharp';
-import VerticalAlignTopSharp from '@mui/icons-material/VerticalAlignTopSharp';
-import VerticalAlignBottomSharp from '@mui/icons-material/VerticalAlignBottomSharp';
-import VisibilityIcon from '@mui/icons-material/VisibilitySharp';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOffSharp';
-import OpacityIcon from '@mui/icons-material/OpacitySharp';
+import BiIcon from './BiIcon';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
@@ -74,16 +69,16 @@ function Layer({
           <IIIFResourceLabel resource={resource} fallback={index + 1} />
           <div>
             <MiradorMenuButton aria-label={t(layer.visibility ? 'layer_hide' : 'layer_show')} edge="start" size="small" onClick={() => { setLayerVisibility(resource.id, !layer.visibility); }}>
-              { layer.visibility ? <VisibilityIcon /> : <VisibilityOffIcon /> }
+              { layer.visibility ? <BiIcon name="eye" size={16} /> : <BiIcon name="eye-slash" size={16} /> }
             </MiradorMenuButton>
             { layer.index !== 0 && (
               <MiradorMenuButton aria-label={t('layer_moveToBackground')} size="small" onClick={() => { moveToBackground(resource.id); }}>
-                <VerticalAlignTopSharp />
+                <BiIcon name="arrow-up" size={16} />
               </MiradorMenuButton>
             )}
             { layer.index !== layerMetadata && (
               <MiradorMenuButton aria-label={t('layer_moveToFront')} size="small" onClick={() => { moveToFront(resource.id); }}>
-                <VerticalAlignBottomSharp />
+                <BiIcon name="arrow-down" size={16} />
               </MiradorMenuButton>
             )}
           </div>
@@ -91,7 +86,7 @@ function Layer({
       </div>
       <div style={{ alignItems: 'center', display: 'flex' }}>
         <Tooltip title={t('layer_opacity')}>
-          <OpacityIcon sx={{ marginRight: 0.5 }} color={layer.visibility ? 'inherit' : 'disabled'} fontSize="small" />
+          <span style={{ marginRight: 8, opacity: layer.visibility ? 1 : 0.38 }}><BiIcon name="droplet" size={14} /></span>
         </Tooltip>
         <Input
           sx={{
@@ -181,7 +176,7 @@ function DraggableLayer({
             }}
           >
             <Tooltip title={t('layer_move')}>
-              <DragHandleIcon />
+              <BiIcon name="grip-vertical" size={16} />
             </Tooltip>
           </StyledDragHandle>
           { children }

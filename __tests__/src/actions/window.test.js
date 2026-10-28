@@ -2,6 +2,14 @@ import * as actions from '../../../src/state/actions';
 import ActionTypes from '../../../src/state/actions/action-types';
 
 describe('window actions', () => {
+  const windowViewPreferenceKey = 'mirador.windowViewTypePreference';
+  const windowSideBarOpenPreferenceKey = 'mirador.windowSideBarOpenPreference';
+
+  beforeEach(() => {
+    window.localStorage.removeItem(windowViewPreferenceKey);
+    window.localStorage.removeItem(windowSideBarOpenPreferenceKey);
+  });
+
   describe('focusWindow', () => {
     it('should return correct action object', () => {
       const expectedAction = {
@@ -205,6 +213,30 @@ describe('window actions', () => {
 
       expect(action.manifest).toEqual({ data: '123' });
     });
+
+    it('uses the persisted sidebar-open preference when present', () => {
+      window.localStorage.setItem(windowSideBarOpenPreferenceKey, 'true');
+      const options = { id: 'helloworld' };
+      const mockState = {
+        config: {
+          thumbnailNavigation: {},
+          window: {
+            defaultSideBarPanel: 'info',
+            sideBarOpenByDefault: false,
+          },
+        },
+        workspace: {},
+      };
+
+      const mockDispatch = vi.fn(() => ({}));
+      const mockGetState = vi.fn(() => mockState);
+      const thunk = actions.addWindow(options);
+
+      thunk(mockDispatch, mockGetState);
+
+      const action = mockDispatch.mock.calls[0][0];
+      expect(action.window.sideBarOpen).toBe(true);
+    });
   });
 
   describe('updateWindow', () => {
@@ -251,13 +283,31 @@ describe('window actions', () => {
   });
 
   describe('toggleWindowSideBar', () => {
-    it('returns the appropriate action type', () => {
+    it('dispatches the appropriate action and persists open state', () => {
       const id = 'abc123';
       const expectedAction = {
         type: ActionTypes.TOGGLE_WINDOW_SIDE_BAR,
         windowId: id,
       };
-      expect(actions.toggleWindowSideBar(id)).toEqual(expectedAction);
+      const mockDispatch = vi.fn();
+      const mockGetState = vi.fn(() => ({ windows: { [id]: { sideBarOpen: false } } }));
+      const thunk = actions.toggleWindowSideBar(id);
+
+      thunk(mockDispatch, mockGetState);
+
+      expect(mockDispatch).toHaveBeenCalledWith(expectedAction);
+      expect(window.localStorage.getItem(windowSideBarOpenPreferenceKey)).toEqual('true');
+    });
+
+    it('persists closed state when toggled from open', () => {
+      const id = 'abc123';
+      const mockDispatch = vi.fn();
+      const mockGetState = vi.fn(() => ({ windows: { [id]: { sideBarOpen: true } } }));
+      const thunk = actions.toggleWindowSideBar(id);
+
+      thunk(mockDispatch, mockGetState);
+
+      expect(window.localStorage.getItem(windowSideBarOpenPreferenceKey)).toEqual('false');
     });
   });
 
@@ -301,14 +351,21 @@ describe('window actions', () => {
   });
 
   describe('setWindowViewType', () => {
-    it('returns the appropriate action type', () => {
+    it('dispatches the view type action and persists the preference', () => {
       const id = 'abc123';
       const expectedAction = {
         type: ActionTypes.SET_WINDOW_VIEW_TYPE,
         viewType: 'book',
         windowId: id,
       };
-      expect(actions.setWindowViewType(id, 'book')).toEqual(expectedAction);
+
+      const mockDispatch = vi.fn();
+      const thunk = actions.setWindowViewType(id, 'book');
+
+      thunk(mockDispatch);
+
+      expect(mockDispatch).toHaveBeenCalledWith(expectedAction);
+      expect(window.localStorage.getItem(windowViewPreferenceKey)).toEqual('book');
     });
   });
 });

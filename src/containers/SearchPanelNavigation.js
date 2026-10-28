@@ -7,36 +7,84 @@ import {
   getSelectedContentSearchAnnotationIds,
   getSearchNumTotal,
   getSortedSearchHitsForCompanionWindow,
+  getNextSearchId,
+  getSearchQuery,
+  getSortedSearchAnnotationsForCompanionWindow,
   getThemeDirection,
+  getWindowViewType,
+  getManifestSearchService,
+  getWindow,
+  getCanvases,
+  getCurrentCanvas,
 } from '../state/selectors';
+import { OSDReferences } from '../plugins/OSDReferences';
 
 /**
  * mapStateToProps - used to hook up connect to state
  * @memberof SearchPanelControls
  * @private
  */
-const mapStateToProps = (state, { companionWindowId, windowId }) => ({
-  direction: getThemeDirection(state),
-  numTotal: getSearchNumTotal(state, { companionWindowId, windowId }),
-  searchHits: getSortedSearchHitsForCompanionWindow(state, { companionWindowId, windowId }),
-  selectedContentSearchAnnotation: getSelectedContentSearchAnnotationIds(state, {
-    companionWindowId,
-    windowId,
-  }),
-});
+const mapStateToProps = (state, { companionWindowId, windowId }) => {
+  const svc = getManifestSearchService(state, { windowId });
+  const profile = (svc && (
+    (typeof svc.getProfile === 'function' && svc.getProfile())
+    || (typeof svc.getProperty === 'function' && svc.getProperty('profile'))
+    || svc.profile
+  )) || '';
+  const type = (svc && (
+    (typeof svc.getProperty === 'function' && svc.getProperty('type'))
+    || svc.type
+  )) || '';
+  const isV2 = /\/api\/search\/2\//.test(String(profile)) || String(type) === 'ContentSearchService2';
+
+  return {
+    direction: getThemeDirection(state),
+    numTotal: getSearchNumTotal(state, { companionWindowId, windowId }),
+    searchHits: getSortedSearchHitsForCompanionWindow(state, { companionWindowId, windowId }),
+    searchAnnotations: getSortedSearchAnnotationsForCompanionWindow(state, { companionWindowId, windowId }),
+    nextSearch: getNextSearchId(state, { companionWindowId, windowId }),
+    query: getSearchQuery(state, { companionWindowId, windowId }) || '',
+    viewType: getWindowViewType(state, { windowId }),
+    canvases: getCanvases(state, { windowId }),
+    currentCanvas: getCurrentCanvas(state, { windowId }),
+    viewer: OSDReferences.get(windowId),
+    isV2,
+    // If this is the topbar search and its current query matches
+    // the configured topBarSearchQuery from settings, skip auto-selecting
+    // the first result on initial load.
+    skipInitialSelect: (() => {
+      const win = getWindow(state, { windowId }) || {};
+      const q = getSearchQuery(state, { companionWindowId, windowId }) || '';
+      return (companionWindowId === `${windowId}-topbar`) && !!win.topBarSearchQuery && String(q) === String(win.topBarSearchQuery);
+    })(),
+    selectedContentSearchAnnotation: getSelectedContentSearchAnnotationIds(state, {
+      companionWindowId,
+      windowId,
+    }),
+  };
+};
 
 /**
  * mapDispatchToProps - to hook up connect
  * @memberof SearchPanelNavigation
  * @private
  */
-const mapDispatchToProps = (dispatch, { windowId }) => ({
+const mapDispatchToProps = (dispatch, { companionWindowId, windowId }) => ({
   selectAnnotation: (...args) => dispatch(
     actions.selectAnnotation(windowId, ...args),
   ),
-  setCurrentCanvas: (windowId, canvasId) => dispatch(
-    actions.setCurrentCanvas(windowId, canvasId),
-  ), 
+  setContentSearchCurrentAnnotation: (annotationIds) => dispatch(
+    actions.setContentSearchCurrentAnnotation(windowId, companionWindowId, annotationIds),
+  ),
+  // Map to setCanvas (setCurrentCanvas is not defined in actions)
+  setCurrentCanvas: (windowId2, canvasId) => dispatch(
+    actions.setCanvas(windowId2, canvasId),
+  ),
+  focusOnCanvas: (canvasId) => {
+    dispatch(actions.setWindowViewType(windowId, 'single'));
+    dispatch(actions.setCanvas(windowId, canvasId));
+  },
+  fetchSearch: (...args) => dispatch(actions.fetchSearch(...args)),
 });
 
 const enhance = compose(

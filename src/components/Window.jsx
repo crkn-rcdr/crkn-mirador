@@ -1,7 +1,9 @@
+// components/Window.jsx
 import { lazy, useContext, useCallback, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { MosaicWindowContext, Mosaic } from 'react-mosaic-component2';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
@@ -12,41 +14,28 @@ import CompanionArea from '../containers/CompanionArea';
 import MinimalWindow from '../containers/MinimalWindow';
 import ErrorContent from '../containers/ErrorContent';
 import IIIFAuthentication from '../containers/IIIFAuthentication';
+import { readPersistedWindowDisplayMode, persistWindowDisplayMode } from '../lib/windowViewPreferences';
 import { PluginHook } from './PluginHook';
+
+// Floating view selector (kept out of the top bar)
+//
 
 const GalleryView = lazy(() => import('../containers/GalleryView'));
 
 const StyledMosaic = styled(Mosaic)({
   height: '100%',
-
-  '& .mosaic-preview': {
-    boxShadow: 'none',
-  },
-  '& .mosaic-tile': {
-    boxShadow: 'none',
-  },
-  '& .mosaic-window': {
-    boxShadow: 'none',
-    borderRadius: '4px'
-  },
-  '& .mosaic-window-toolbar': {
-    display: 'none !important',
-  }
+  '& .mosaic-preview': { boxShadow: 'none' },
+  '& .mosaic-tile': { boxShadow: 'none' },
+  '& .mosaic-window': { boxShadow: 'none', borderRadius: '4px', overflow: 'hidden' },
+  '& .mosaic-window-toolbar': { display: 'none !important' },
 });
 
-const rowMixin = {
-  display: 'flex',
-  flex: '1',
-  flexDirection: 'row',
-  minHeight: 0,
-};
-
-const columnMixin = {
-  display: 'flex',
-  flex: '1',
-  flexDirection: 'column',
-  minHeight: 0,
-};
+const rowMixin = { display: 'flex', flex: '1', flexDirection: 'row', minHeight: 0 };
+const columnMixin = { display: 'flex', flex: '1', flexDirection: 'column', minHeight: 0 };
+const MOBILE_SPLIT_BREAKPOINT = 700;
+const TABLET_SPLIT_MIN_WIDTH = 768;
+const MOBILE_PRIMARY_PANE_PERCENTAGE = 74;
+const TABLET_PRIMARY_PANE_PERCENTAGE = 65;
 
 const Root = styled(Paper, { name: 'Window', slot: 'root' })(({ ownerState, theme }) => ({
   ...columnMixin,
@@ -63,42 +52,35 @@ const Root = styled(Paper, { name: 'Window', slot: 'root' })(({ ownerState, them
   }),
 }));
 
-const ContentRow = styled('div', { name: 'Window', slot: 'row' })(() => ({
-  ...rowMixin,
-}));
+const ContentRow = styled('div', { name: 'Window', slot: 'row' })(() => ({ ...rowMixin }));
 
 const ContentColumn = styled('div', { name: 'Window', slot: 'column' })(() => ({
   ...columnMixin,
+  position: 'relative', // anchor for floating menu
 }));
 
 const StyledPrimaryWindow = styled(PrimaryWindow, { name: 'Window', slot: 'primary' })(() => ({
-  ...rowMixin,
-  height: '100%',
-  position: 'relative',
+  ...rowMixin, height: '100%', position: 'relative',
 }));
 
 const StyledCompanionAreaBottom = styled(CompanionArea, { name: 'Window', slot: 'bottom' })(() => ({
-  ...rowMixin,
-  flex: '0',
-  flexBasis: 'auto',
+  ...rowMixin, flex: '0', flexBasis: 'auto',
 }));
 
 const StyledCompanionAreaRight = styled('div', { name: 'Window', slot: 'right' })(() => ({
-  ...rowMixin,
-  flex: '0 1 auto',
+  ...rowMixin, flex: '0 1 auto',
 }));
+
+// (View toggle moved to WindowTopBar)
 
 /** Window title bar wrapper for drag controls in the mosaic view */
 const DraggableNavBar = ({ children, ...props }) => {
   const { mosaicWindowActions } = useContext(MosaicWindowContext);
-  return mosaicWindowActions.connectDragSource(
-    <nav {...props}>{children}</nav>,
-  );
+  return mosaicWindowActions.connectDragSource(<nav {...props}>{children}</nav>);
 };
 
 /**
  * Represents a Window in the mirador workspace
- * @param {object} window
  */
 export function Window({
   focusWindow = () => {}, label = null, isFetching = false, sideBarOpen = false,
@@ -106,59 +88,187 @@ export function Window({
   manifestError = null,
 }) {
   const { t } = useTranslation();
+  const isTabletViewport = useMediaQuery(`(min-width:${TABLET_SPLIT_MIN_WIDTH}px)`);
   const ownerState = arguments[0]; // eslint-disable-line prefer-rest-params
+
   const ErrorWindow = useCallback(({ error }) => (
     <MinimalWindow windowId={windowId}>
       <ErrorContent error={error} windowId={windowId} />
     </MinimalWindow>
   ), [windowId]);
 
-  
+  // (ELEMENT_MAP moved below state so it can use computed widths)
+
+  const componentRef = useRef(null);
+
+  // Split percentage
+  const [splitPercentage, setSplitPercentage] = useState(() => {
+    const stored = localStorage.getItem('splitPercentage');
+    return stored ? Number(JSON.parse(stored)) : 0;
+  });
+  const [minimumPaneSizePercentage, setMinimumPaneSizePercentage] = useState(0);
+  const [componentWidth, setComponentWidth] = useState(0);
+
+  // View mode: 'both' | 'gallery'
+  const [viewMode, setViewMode] = useState(() => {
+    const persisted = readPersistedWindowDisplayMode();
+    if (persisted) return persisted;
+    const stored = localStorage.getItem('windowViewMode');
+    return stored === 'gallery' ? 'gallery' : 'both';
+  });
+
+  // Remember last "both" split to restore
+  const [lastOpenSplit, setLastOpenSplit] = useState(() => {
+    const persisted = localStorage.getItem('galleryLastSplit');
+    return persisted ? Number(JSON.parse(persisted)) : 70;
+  });
+
+  useEffect(() => {
+    const node = componentRef.current;
+    if (!node) return undefined;
+
+    const updateDimensions = () => {
+      const nextWidth = node.getBoundingClientRect().width;
+      if (!nextWidth) return;
+
+      setComponentWidth((prev) => (Math.abs(prev - nextWidth) > 0.5 ? nextWidth : prev));
+
+      const nextMinimum = (200 / nextWidth) * 100;
+      setMinimumPaneSizePercentage((prev) => (Math.abs(prev - nextMinimum) > 0.05 ? nextMinimum : prev));
+
+      setSplitPercentage((prev) => {
+        const minSplit = Math.max(0, nextMinimum);
+        const maxSplit = Math.max(minSplit, 100 - minSplit);
+        const fallbackSplit = 100 - nextMinimum;
+        const baseSplit = prev <= 0 ? fallbackSplit : prev;
+        return Math.min(maxSplit, Math.max(minSplit, baseSplit));
+      });
+    };
+
+    updateDimensions();
+
+    if (typeof ResizeObserver !== 'undefined') {
+      const observer = new ResizeObserver(updateDimensions);
+      observer.observe(node);
+      return () => observer.disconnect();
+    }
+
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('splitPercentage', JSON.stringify(splitPercentage));
+    localStorage.setItem('windowViewMode', viewMode);
+    persistWindowDisplayMode(viewMode);
+    if (viewMode === 'both' && splitPercentage > 0) {
+      localStorage.setItem('galleryLastSplit', JSON.stringify(splitPercentage));
+      setLastOpenSplit(splitPercentage);
+    }
+  }, [splitPercentage, viewMode]);
+
+  const handleChangeSplit = (newSplit) => {
+    if (viewMode !== 'both') return;
+    if (typeof newSplit?.splitPercentage === 'number') {
+      setSplitPercentage(newSplit.splitPercentage);
+    }
+  };
+
+  const switchViewMode = (nextMode) => {
+    if (!nextMode || nextMode === viewMode) return;
+    if (nextMode === 'both') {
+      // Restore the previous split and only clamp to valid min/max bounds.
+      const width = componentRef.current?.getBoundingClientRect().width;
+      const minPct = width ? (160 / width) * 100 : minimumPaneSizePercentage;
+      const minSplit = Number.isFinite(minPct) ? Math.max(0, minPct) : 0;
+      const maxSplit = Math.max(minSplit, 100 - minSplit);
+      const preferredSplit = Number.isFinite(lastOpenSplit) && lastOpenSplit > 0
+        ? lastOpenSplit
+        : splitPercentage;
+      const fallbackSplit = Number.isFinite(preferredSplit) && preferredSplit > 0
+        ? preferredSplit
+        : maxSplit;
+      const restored = Math.min(maxSplit, Math.max(minSplit, fallbackSplit));
+      setSplitPercentage(restored);
+    } else if (viewMode === 'both') {
+      // leaving "both": remember split
+      if (splitPercentage > 0) {
+        localStorage.setItem('galleryLastSplit', JSON.stringify(splitPercentage));
+        setLastOpenSplit(splitPercentage);
+      }
+    }
+    setViewMode(nextMode);
+  };
+
+  // Build the element map after state has been initialized so GalleryView can
+  // receive a slider width that matches the minimum pane size (minus padding)
+  const galleryControlWidth = Math.max(120, Math.round(((componentWidth * minimumPaneSizePercentage) / 100) - 24));
+  const useMobileSplitLayout = componentWidth > 0 && componentWidth <= MOBILE_SPLIT_BREAKPOINT;
+  const effectiveViewMode = useMobileSplitLayout ? 'both' : viewMode;
+  const effectiveSplitDirection = useMobileSplitLayout ? 'column' : 'row';
+  const effectiveMinimumPaneSizePercentage = useMobileSplitLayout
+    ? Math.min(45, Math.max(20, minimumPaneSizePercentage))
+    : minimumPaneSizePercentage;
+  const effectiveSplitPercentage = useMobileSplitLayout
+    ? (isTabletViewport ? TABLET_PRIMARY_PANE_PERCENTAGE : MOBILE_PRIMARY_PANE_PERCENTAGE)
+    : splitPercentage;
+  const effectiveResize = useMobileSplitLayout
+    ? 'DISABLED'
+    : { minimumPaneSizePercentage: effectiveMinimumPaneSizePercentage };
   const ELEMENT_MAP = {
-    a: <StyledPrimaryWindow
+    a: (
+      <StyledPrimaryWindow
         view={view}
         windowId={windowId}
         isFetching={isFetching}
         sideBarOpen={sideBarOpen}
-      />,
-    b: <GalleryView windowId={windowId}/>
+      />
+    ),
+    b: (
+      <GalleryView
+        windowId={windowId}
+        controlWidth={galleryControlWidth}
+        isBottomStrip={effectiveSplitDirection === 'column'}
+        showDeepZoomLayoutControls={effectiveViewMode === 'both'}
+      />
+    ),
   };
 
+  // Ignore shortcuts while typing
+  const isTypingTarget = (el) => {
+    if (!el) return false;
+    const tag = el.tagName?.toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || el.isContentEditable) return true;
+    const role = el.getAttribute?.('role');
+    return role === 'textbox' || role === 'combobox' || role === 'searchbox' || role === 'spinbutton';
+  };
 
-  const componentRef = useRef(null); // Create a ref for the component
-
-  // Initialize splitPercentage based on minimumPaneSizePercentage
-  const [splitPercentage, setSplitPercentage] = useState(() => {
-    const storedPercentage = localStorage.getItem('splitPercentage');
-    return storedPercentage ? Number(JSON.parse(storedPercentage)) : 0; // Start with 0 if no stored value
-  });
-
-  const [minimumPaneSizePercentage, setMinimumPaneSizePercentage] = useState(0);
-
+  // Keyboard: "g" or Ctrl/⌘+g cycles: both ↔ gallery
   useEffect(() => {
-    const width = componentRef.current?.getBoundingClientRect().width;
-    if (width) {
-      const minimum = (160 / width) * 100; // Calculate minimum size percentage  - 160px minimum
-      setMinimumPaneSizePercentage(minimum); // Set the calculated minimum percentage
-      if (splitPercentage <= 0) {
-        setSplitPercentage(100-minimum); // Use minimum if splitPercentage is not set
+    const order = ['both', 'gallery'];
+    const onKeyDown = (e) => {
+      if (isTypingTarget(e.target)) return;
+      const key = (e.key || '').toLowerCase();
+      const ctrlLike = e.ctrlKey || e.metaKey;
+      if ((key === 'g' && !e.shiftKey && !e.altKey) || (ctrlLike && key === 'g')) {
+        if (useMobileSplitLayout) return;
+        e.preventDefault();
+        const idx = order.indexOf(viewMode);
+        const next = order[(idx + 1) % order.length];
+        switchViewMode(next);
       }
-    }
-    localStorage.setItem('splitPercentage', JSON.stringify(splitPercentage));
-  }, [splitPercentage]);
+    };
+    window.addEventListener('keydown', onKeyDown, { passive: false });
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [viewMode, useMobileSplitLayout]); // switchViewMode closes over latest state
 
-
- const handleChangeSplit = (newSplit) => {
-    setSplitPercentage(newSplit?.splitPercentage);
-  };
-    
   return (
     <ErrorBoundary FallbackComponent={ErrorWindow}>
       <Root
         ref={componentRef}
         onFocus={focusWindow}
         ownerState={ownerState}
-        component='section'
+        component="section"
         elevation={1}
         id={windowId}
         className={ns('window')}
@@ -168,32 +278,51 @@ export function Window({
           component={workspaceType === 'mosaic' && windowDraggable ? DraggableNavBar : undefined}
           windowId={windowId}
           windowDraggable={windowDraggable}
+          viewMode={effectiveViewMode}
+          onChangeViewMode={useMobileSplitLayout ? undefined : ((mode) => switchViewMode(mode))}
         />
         <IIIFAuthentication windowId={windowId} />
-        { manifestError && <ErrorContent error={{ stack: manifestError }} windowId={windowId} /> }
+        {manifestError && <ErrorContent error={{ stack: manifestError }} windowId={windowId} />}
+
         <ContentRow>
           <ContentColumn>
-            <StyledMosaic
-              renderTile={(id) => ELEMENT_MAP[id]}
-              initialValue={{
-                direction: 'row',
-                first: 'a',
-                second: 'b',
-                splitPercentage: splitPercentage
-              }}
-              onChange={handleChangeSplit}
-              resize={{
-                minimumPaneSizePercentage: minimumPaneSizePercentage,
-              }}
-            />
-            <StyledCompanionAreaBottom windowId={windowId} position='bottom' />
+            {/* View toggle now lives in WindowTopBar */}
+
+            {effectiveViewMode === 'both' && (
+              <StyledMosaic
+                key={useMobileSplitLayout ? 'both-mobile' : 'both'}
+                renderTile={(id) => ELEMENT_MAP[id]}
+                initialValue={{
+                  direction: effectiveSplitDirection,
+                  first: 'a',
+                  second: 'b',
+                  splitPercentage: effectiveSplitPercentage,
+                }}
+                onChange={useMobileSplitLayout ? undefined : handleChangeSplit}
+                resize={effectiveResize}
+              />
+            )}
+
+            {effectiveViewMode === 'gallery' && (
+              <StyledPrimaryWindow
+                key="gallery"
+                view="gallery"
+                windowId={windowId}
+                isFetching={isFetching}
+                sideBarOpen={sideBarOpen}
+              />
+            )}
+
+            <StyledCompanionAreaBottom windowId={windowId} position="bottom" />
           </ContentColumn>
+
           <StyledCompanionAreaRight>
-            <CompanionArea windowId={windowId} position='right' />
-            <CompanionArea windowId={windowId} position='far-right' />
+            <CompanionArea windowId={windowId} position="right" />
+            <CompanionArea windowId={windowId} position="far-right" />
           </StyledCompanionAreaRight>
         </ContentRow>
-        <CompanionArea windowId={windowId} position='far-bottom' />
+
+        <CompanionArea windowId={windowId} position="far-bottom" />
         <PluginHook {...ownerState} />
       </Root>
     </ErrorBoundary>

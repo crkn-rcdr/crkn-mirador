@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import fs from 'fs/promises';
+import { reactDndReact19RefCompat } from './vite.react-dnd-compat.js'; // eslint-disable-line import/extensions
 
 /**
 * Vite configuration
@@ -29,5 +30,5 @@ export default defineConfig({
   define: {
     'process.env': {},
   },
-  plugins: [react()],
+  plugins: [reactDndReact19RefCompat(), react()],
 });

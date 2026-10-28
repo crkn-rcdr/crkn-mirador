@@ -2,8 +2,7 @@ import PropTypes from 'prop-types';
 import { alpha, styled } from '@mui/material/styles';
 import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import BiIcon from './BiIcon';
 import { ScrollTo } from './ScrollTo';
 import Alert from '@mui/material/Alert';
 import { useTranslation } from 'react-i18next';
@@ -58,9 +57,9 @@ ScrollToForTreeItem.propTypes = {
 };
 
 /** */
-const CollapseIcon = (props) => <ExpandMoreIcon {...props} color="action" />;
+const CollapseIcon = (props) => <BiIcon name="chevron-down" size={16} {...props} />;
 /** */
-const ExpandIcon = (props) => <ChevronRightIcon {...props} color="action" />;
+const ExpandIcon = (props) => <BiIcon name="chevron-right" size={16} {...props} />;
 /** */
 export function SidebarIndexTableOfContents({
   toggleNode, expandNodes, setCanvas, windowId,

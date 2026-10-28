@@ -1,6 +1,7 @@
 import { useCallback, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Paper from '@mui/material/Paper';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { VariableSizeList as List } from 'react-window';
 import classNames from 'classnames';
@@ -15,8 +16,10 @@ export function ThumbnailNavigation({
   setNextCanvas = () => {}, setPreviousCanvas = () => {}, thumbnailNavigation, view = undefined, viewingDirection = '', windowId,
 }) {
   const { t } = useTranslation();
-  const scrollbarSize = 15;
-  const spacing = 8; // 2 * (2px margin + 2px border + 2px padding + 2px padding)
+  const isCompactWidth = useMediaQuery('(max-width:1100px)');
+  const isCompactBottom = position === 'far-bottom' && isCompactWidth;
+  const scrollbarSize = isCompactBottom ? 0 : 15;
+  const spacing = isCompactBottom ? 4 : 8; // compact bottom: reduce reserved chrome
   const gridRef = useRef();
   const previousView = useRef(view);
   const canvasWorlds = useCanvasWorldService();
@@ -58,7 +61,7 @@ export function ThumbnailNavigation({
    * When on right, row height
    * When on bottom, column width
    */
-  const calculateScaledSize = (index) => {
+  const calculateScaledSize = (index, availableHeight) => {
     const canvases = canvasGroupings[index];
     if (!canvases) return thumbnailNavigation.width + spacing;
 
@@ -75,9 +78,11 @@ export function ThumbnailNavigation({
       // Default case bottom
       default: {
         if (bounds[3] === 0) return thumbnailNavigation.width + spacing;
+        const referenceHeight = Number.isFinite(availableHeight)
+          ? availableHeight
+          : (thumbnailNavigation.height - scrollbarSize - spacing);
         const calc = Math.ceil(
-          (thumbnailNavigation.height - scrollbarSize - spacing - 4)
-           * bounds[2] / bounds[3],
+          Math.max(1, referenceHeight - 4) * bounds[2] / bounds[3],
         );
         return calc;
       }
@@ -105,12 +110,18 @@ export function ThumbnailNavigation({
         };
       // Default case bottom
       default:
+        if (isCompactBottom) {
+          return {
+            height: '100%',
+            width: '100%',
+          };
+        }
         return {
           height: `${thumbnailNavigation.height}px`,
           width: '100%',
         };
     }
-  }, [position, thumbnailNavigation, view]);
+  }, [isCompactBottom, position, thumbnailNavigation, view]);
 
   /** */
   const areaHeight = (height) => {
@@ -119,6 +130,7 @@ export function ThumbnailNavigation({
         return height;
       // Default case bottom
       default:
+        if (isCompactBottom) return height;
         return thumbnailNavigation.height;
     }
   };
@@ -142,12 +154,6 @@ export function ThumbnailNavigation({
     return null;
   }
   const htmlDir = viewingDirection === 'right-to-left' ? 'rtl' : 'ltr';
-  const itemData = {
-    canvasGroupings,
-    height: thumbnailNavigation.height - spacing - scrollbarSize,
-    position,
-    windowId,
-  };
   return (
     <Paper
       className={classNames(
@@ -173,20 +179,31 @@ export function ThumbnailNavigation({
           defaultHeight={100}
           defaultWidth={400}
         >
-          {({ height, width }) => (
-            <List
-              direction={htmlDir}
-              height={areaHeight(height)}
-              itemCount={itemCount()}
-              itemSize={calculateScaledSize}
-              width={width}
-              layout={(position === 'far-bottom') ? 'horizontal' : 'vertical'}
-              itemData={itemData}
-              ref={gridRef}
-            >
-              {ThumbnailCanvasGrouping}
-            </List>
-          )}
+          {({ height, width }) => {
+            const listHeight = areaHeight(height);
+            const contentHeight = Math.max(1, listHeight - spacing - scrollbarSize);
+            const itemData = {
+              canvasGroupings,
+              height: contentHeight,
+              spacing,
+              position,
+              windowId,
+            };
+            return (
+              <List
+                direction={htmlDir}
+                height={listHeight}
+                itemCount={itemCount()}
+                itemSize={(index) => calculateScaledSize(index, contentHeight)}
+                width={width}
+                layout={(position === 'far-bottom') ? 'horizontal' : 'vertical'}
+                itemData={itemData}
+                ref={gridRef}
+              >
+                {ThumbnailCanvasGrouping}
+              </List>
+            );
+          }}
         </AutoSizer>
         )}
       </div>

@@ -1,16 +1,31 @@
 import React, { useEffect, useRef } from "react";
 import OpenSeadragon from "openseadragon";
+import { normalizeCanvasId } from "../state/selectors/utils";
 
 /** Parse annotation target into canvasId + xywh */
 function parseTarget(annotation) {
-  const targetId = annotation?.targetId;
-  if (!targetId) return {};
-  const [canvasId, fragment] = targetId.split("#");
-  if (!fragment || !fragment.startsWith("xywh=")) return { canvasId };
-  const rect = fragment
-    .replace("xywh=", "")
-    .split(",")
-    .map((n) => parseInt(n, 10));
+  if (!annotation) return {};
+  let raw = '';
+  if (typeof annotation.target === 'string') raw = annotation.target;
+  else if (typeof annotation.targetId === 'string' && annotation.targetId.includes('#')) raw = annotation.targetId;
+  else if (Array.isArray(annotation.on) && typeof annotation.on[0] === 'string') raw = annotation.on[0];
+  else if (typeof annotation.on === 'string') raw = annotation.on;
+  else if (annotation.resource && typeof annotation.resource.on === 'string') raw = annotation.resource.on;
+  else if (typeof annotation.targetId === 'string') raw = annotation.targetId;
+
+  const [canvasIdRaw, fragment] = raw.split("#");
+  const canvasId = canvasIdRaw || annotation.targetId || '';
+
+  let rect = null;
+  if (fragment && fragment.startsWith("xywh=")) {
+    rect = fragment
+      .replace("xywh=", "")
+      .split(",")
+      .map((n) => parseInt(n, 10));
+  } else if (Array.isArray(annotation.fragmentSelector) && annotation.fragmentSelector.length === 4) {
+    rect = annotation.fragmentSelector;
+  }
+
   return { canvasId, rect };
 }
 
@@ -20,22 +35,24 @@ function parseTarget(annotation) {
 export function AnnotationsOverlay({
   viewer,
   searchAnnotations = [],
-  currentCanvasId, // ✅ current canvas from Redux
+  currentCanvasId,
+  canvasWorld,
 }) {
   const overlayRef = useRef(null);
 
   /** Initialize overlay canvas once */
   useEffect(() => {
-    if (!viewer) return;
+    if (!viewer || !viewer.container) return;
 
     const canvas = document.createElement("canvas");
     canvas.style.position = "absolute";
     canvas.style.top = 0;
     canvas.style.left = 0;
-    canvas.width = viewer.container.clientWidth;
-    canvas.height = viewer.container.clientHeight;
+    const containerEl = viewer.container;
+    canvas.width = containerEl?.clientWidth || 0;
+    canvas.height = containerEl?.clientHeight || 0;
     canvas.style.pointerEvents = "none";
-    viewer.container.appendChild(canvas);
+    containerEl?.appendChild(canvas);
     overlayRef.current = canvas;
 
     const ctx = canvas.getContext("2d");
@@ -44,14 +61,19 @@ export function AnnotationsOverlay({
       if (!overlayRef.current || !viewer.world.getItemCount()) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      const ids = (canvasWorld?.canvasIds || []).map(s => (s || '').toString());
       searchAnnotations.forEach((annoWrapper) => {
         (annoWrapper.resources || []).forEach((anno) => {
           const { canvasId, rect } = parseTarget(anno);
-          if (!rect || canvasId !== currentCanvasId) return;
+          if (!rect) return;
+
+          // draw only if this canvas is visible in current world
+          const idx = ids.findIndex(id => normalizeCanvasId(id) === normalizeCanvasId(canvasId));
+          if (idx < 0 || idx >= viewer.world.getItemCount()) return;
 
           const [x, y, w, h] = rect;
-          const item = viewer.world.getItemAt(0);
-          if (!item?.imageToViewportRectangle) return; // SAFETY
+          const item = viewer.world.getItemAt(idx);
+          if (!item?.imageToViewportRectangle) return;
 
           const rectImg = new OpenSeadragon.Rect(x, y, w, h);
           const vpRect = item.imageToViewportRectangle(rectImg);
@@ -64,9 +86,9 @@ export function AnnotationsOverlay({
     };
 
     const handleResize = () => {
-      if (!overlayRef.current) return;
-      canvas.width = viewer.container.clientWidth;
-      canvas.height = viewer.container.clientHeight;
+      if (!overlayRef.current || !viewer?.container) return;
+      canvas.width = viewer.container?.clientWidth || 0;
+      canvas.height = viewer.container?.clientHeight || 0;
       draw();
     };
 
@@ -81,7 +103,7 @@ export function AnnotationsOverlay({
       if (canvas.parentNode) canvas.parentNode.removeChild(canvas);
       overlayRef.current = null;
     };
-  }, [viewer, searchAnnotations, currentCanvasId]);
+  }, [viewer, searchAnnotations, currentCanvasId, canvasWorld]);
 
   /** Redraw whenever annotations or current canvas changes */
   useEffect(() => {
@@ -106,7 +128,7 @@ export function AnnotationsOverlay({
         ctx.fillRect(screenRect.x, screenRect.y, screenRect.width, screenRect.height);
       });
     });
-  }, [searchAnnotations, currentCanvasId, viewer]);
+  }, [searchAnnotations, currentCanvasId, viewer, canvasWorld]);
 
   return null;
 }

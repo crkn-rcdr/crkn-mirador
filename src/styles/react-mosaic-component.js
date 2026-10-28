@@ -279,6 +279,24 @@ const globalReactMosaicStyles = {
   '.mosaic:not(.mosaic-blueprint-theme) .mosaic-default-control.expand-button:before': {
     content: '\'Expand\'',
   },
+  'input::before': {
+    fontSize: "10px !important"
+  },
+  '.mirador-viewer h1, .mirador-viewer h2, .mirador-viewer h3, .mirador-viewer h4, .mirador-viewer h5, .mirador-viewer h6, .mirador-viewer p, .mirador-viewer span': {
+    fontSize: "14px !important"
+  },
+  '.mirador-viewer i': {
+    fontSize: "24px !important"
+  },
+  '.mirador-viewer i.bi-arrows-fullscreen, .mirador-viewer i.bi-fullscreen, .mirador-viewer i.bi-fullscreen-exit': {
+    fontSize: "20px !important"
+  },
+  '.mirador-osd-navigation i': {
+    fontSize: "24px !important"
+  },
+  '.MuiChip-icon::before': {
+    fontSize: "12px !important"
+  },
 };
 
 export default globalReactMosaicStyles;

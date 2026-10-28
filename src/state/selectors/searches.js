@@ -5,7 +5,7 @@ import AnnotationList from '../../lib/AnnotationList';
 import { getCanvas, getCanvases } from './canvases';
 import { getWindow } from './getters';
 import { getManifestLocale } from './manifests';
-import { miradorSlice, EMPTY_ARRAY, EMPTY_OBJECT } from './utils';
+import { miradorSlice, EMPTY_ARRAY, EMPTY_OBJECT, normalizeCanvasId, normalizeAnnotationId } from './utils';
 
 /**
  * Get searches from state.
@@ -96,7 +96,14 @@ export const getSearchNumTotal = createSelector(
     const resultWithWithin = Object.values(results.data).find(result => (
       !result.isFetching && result.json && result.json.within
     ));
-    return resultWithWithin?.json?.within?.total;
+    const total = resultWithWithin?.json?.within?.total;
+    if (typeof total === 'number') return total;
+    // Fallback: derive from items/resources length (first available page)
+    const firstPage = Object.values(results.data).find(result => !result.isFetching && result.json);
+    if (!firstPage) return undefined;
+    if (Array.isArray(firstPage.json.items)) return firstPage.json.items.length;
+    if (Array.isArray(firstPage.json.resources)) return firstPage.json.resources.length;
+    return undefined;
   },
 );
 
@@ -147,7 +154,9 @@ const searchResultsToAnnotation = (results) => {
     if (result.json.items) {
       const resources = result.json.items.map(item => ({
         id: item.id,
-        targetId: item.target,
+        targetId: (item.target || '').split('#')[0],
+        target: item.target,
+        on: item.target,
         resource: { label: [{ '@value': item.body?.value || '' }] },
       }));
       return { id: result.json.id || '', resources: resources || [] };
@@ -188,13 +197,20 @@ export const getSortedSearchHitsForCompanionWindow = createSelector(
     getSearchAnnotationsForCompanionWindow,
   ],
   (searchHits, canvases, annotation) => {
-    if (!canvases?.length || !searchHits?.length) return EMPTY_ARRAY;
-    const canvasIds = canvases.map(c => c.id);
+    if (!canvases?.length) return EMPTY_ARRAY;
+    // Fallback for Content Search API v2 responses that omit `hits` and only provide annotations
+    const baseHits = (searchHits && searchHits.length > 0)
+      ? searchHits
+      : (annotation?.resources || []).map(r => ({ annotations: [r.id] }));
+    if (!baseHits.length) return EMPTY_ARRAY;
+    const canvasIds = canvases.map(c => normalizeCanvasId(c.id || c['@id']));
 
-    return searchHits.concat().sort((a, b) => {
+    return baseHits.concat().sort((a, b) => {
       const hitA = annotation.resources.find(r => r.id === a.annotations?.[0]);
       const hitB = annotation.resources.find(r => r.id === b.annotations?.[0]);
-      return canvasIds.indexOf(hitA?.targetId || '') - canvasIds.indexOf(hitB?.targetId || '');
+      const aTarget = normalizeCanvasId(hitA?.targetId || hitA?.target || hitA?.on);
+      const bTarget = normalizeCanvasId(hitB?.targetId || hitB?.target || hitB?.on);
+      return canvasIds.indexOf(aTarget) - canvasIds.indexOf(bTarget);
     });
   },
 );
@@ -204,11 +220,13 @@ export const getSortedSearchHitsForCompanionWindow = createSelector(
  */
 export function sortSearchAnnotationsByCanvasOrder(searchAnnotations, canvases) {
   if (!searchAnnotations?.resources?.length || !canvases?.length) return EMPTY_ARRAY;
-  const canvasIds = canvases.map(c => c.id);
+  const canvasIds = canvases.map(c => normalizeCanvasId(c.id || c['@id']));
 
-  return searchAnnotations.resources.concat().sort(
-    (a, b) => canvasIds.indexOf(a.targetId || '') - canvasIds.indexOf(b.targetId || ''),
-  );
+  return searchAnnotations.resources.concat().sort((a, b) => {
+    const aTarget = normalizeCanvasId(a.targetId || a.target || a.on);
+    const bTarget = normalizeCanvasId(b.targetId || b.target || b.on);
+    return canvasIds.indexOf(aTarget) - canvasIds.indexOf(bTarget);
+  });
 }
 
 /**
@@ -273,8 +291,18 @@ export const getResourceAnnotationLabel = createSelector(
 const getAnnotationById = createSelector(
   [getSearchAnnotationsForWindow, (state, { annotationId }) => annotationId],
   (annotations, annotationId) => {
-    const resources = flatten(annotations.map(a => a.resources || []));
-    return resources.find(r => r.id === annotationId) || {};
+    if (!annotations || !annotationId) return {};
+    const list = Array.isArray(annotations)
+      ? (annotations[0]?.resources ? flatten(annotations.map(a => a.resources || [])) : annotations)
+      : (annotations?.resources || []);
+    const norm = (s) => normalizeAnnotationId(s);
+    const normBase = (s) => norm(s).split('#')[0];
+    return list.find(r => {
+      if (!r) return false;
+      const rId = r.id || r['@id'];
+      if (!rId) return false;
+      return norm(rId) === norm(annotationId) || normBase(rId) === normBase(annotationId);
+    }) || {};
   },
 );
 
@@ -284,7 +312,13 @@ const getAnnotationById = createSelector(
 export const getCanvasForAnnotation = createSelector(
   [getAnnotationById, (state, { windowId }) => canvasId => getCanvas(state, { canvasId, windowId })],
   (annotation, getCanvasById) => {
-    const canvasId = annotation?.targetId;
+    let raw = '';
+    if (typeof annotation?.target === 'string') raw = annotation.target;
+    else if (typeof annotation?.targetId === 'string') raw = annotation.targetId;
+    else if (Array.isArray(annotation?.on) && typeof annotation.on[0] === 'string') raw = annotation.on[0];
+    else if (typeof annotation?.on === 'string') raw = annotation.on;
+    else if (annotation?.resource && typeof annotation.resource.on === 'string') raw = annotation.resource.on;
+    const canvasId = raw.toString().split('#')[0];
     return canvasId ? getCanvasById(canvasId) : undefined;
   },
 );

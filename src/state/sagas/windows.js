@@ -22,6 +22,7 @@ import {
   getCanvasForAnnotation,
   getSelectedContentSearchAnnotationIds,
   getSortedSearchAnnotationsForCompanionWindow,
+  getSortedSearchHitsForCompanionWindow,
   getVisibleCanvasIds,
   getWorkspace,
   getElasticLayout,
@@ -30,7 +31,12 @@ import {
   getWindowConfig,
   getMiradorCanvasWrapper,
   getMiradorManifestWrapper,
+  getSelectedAnnotationId,
+  getSearchQuery,
+  getWindowIds,
+  normalizeCanvasId,
 } from '../selectors';
+import { getCanvasIndex } from '../selectors/sequences';
 import { fetchManifests } from './iiif';
 
 /** */
@@ -95,6 +101,44 @@ export function* setWindowStartingCanvas(action) {
 
   const windowId = action.id || action.window.id;
 
+  // If URL has ?pageNum=N, prefer that as the initial canvas (1-based)
+  let urlPageIndex;
+  try {
+    if (typeof window !== 'undefined' && window?.location) {
+      const url = new URL(window.location.href);
+      const p = url.searchParams.get('pageNum');
+      if (p != null) {
+        const n = parseInt(p, 10);
+        if (Number.isFinite(n) && n > 0) urlPageIndex = n - 1;
+      }
+    }
+  } catch (e) { /* ignore URL parsing errors */ }
+
+  // URL pageNum takes precedence when valid
+  if (typeof urlPageIndex === 'number') {
+    // Only apply on initial load (first window) to avoid overriding
+    // explicit canvas selections for subsequent windows created later
+    try {
+      const windowIds = yield select(getWindowIds);
+      if (Array.isArray(windowIds) && windowIds.length > 1) {
+        // Multiple windows already exist; do not override
+        // fall through to default logic
+      } else {
+        const getMiradorManifest = yield select(getMiradorManifestWrapper);
+        const manifestoInstance = yield select(getManifestoInstance, { manifestId });
+        if (manifestoInstance) {
+          const miradorManifest = getMiradorManifest(manifestoInstance);
+          const startByUrl = miradorManifest && miradorManifest.canvasAt(urlPageIndex);
+          if (startByUrl) {
+            const thunk = yield call(setCanvas, windowId, startByUrl.id, null, { preserveViewport: !!(action && action.payload) });
+            yield put(thunk);
+            return;
+          }
+        }
+      }
+    } catch (e) { /* ignore */ }
+  }
+
   if (canvasId) {
     const thunk = yield call(setCanvas, windowId, canvasId, null, { preserveViewport: !!action.payload });
     yield put(thunk);
@@ -118,16 +162,28 @@ export function* setWindowStartingCanvas(action) {
 /** @private */
 export function* setWindowDefaultSearchQuery(action) {
   // only for a brand new window
-  if (!action.window || !action.window.defaultSearchQuery) return;
+  if (!action.window) return;
 
-  const { id: windowId, defaultSearchQuery } = action.window;
+  const { id: windowId, defaultSearchQuery, topBarSearchQuery } = action.window;
   const searchService = yield select(getManifestSearchService, { windowId });
-  const companionWindowIds = yield select(getCompanionWindowIdsForPosition, { position: 'left', windowId });
-  const companionWindowId = companionWindowIds[0];
 
-  if (searchService && companionWindowId) {
-    const searchId = searchService && `${searchService.id}?q=${defaultSearchQuery}`;
-    yield put(fetchSearch(windowId, companionWindowId, searchId, defaultSearchQuery));
+  if (!searchService) return;
+
+  // Seed left sidebar search when `defaultSearchQuery` is provided (existing behavior)
+  if (defaultSearchQuery) {
+    const companionWindowIds = yield select(getCompanionWindowIdsForPosition, { position: 'left', windowId });
+    const companionWindowId = companionWindowIds[0];
+    if (companionWindowId) {
+      const searchId = `${searchService.id}?q=${defaultSearchQuery}`;
+      yield put(fetchSearch(windowId, companionWindowId, searchId, defaultSearchQuery));
+    }
+  }
+
+  // Seed WindowTopBar inline search when `topBarSearchQuery` is provided
+  if (topBarSearchQuery) {
+    const topBarCompanionWindowId = `${windowId}-topbar`;
+    const searchId = `${searchService.id}?q=${topBarSearchQuery}`;
+    yield put(fetchSearch(windowId, topBarCompanionWindowId, searchId, topBarSearchQuery));
   }
 }
 
@@ -154,8 +210,29 @@ export function* setCurrentAnnotationsOnCurrentCanvas({
   annotationId, windowId, visibleCanvases,
 }) {
   const searches = yield select(getSearchForWindow, { windowId });
-  const companionWindowIds = Object.keys(searches || {});
-  if (companionWindowIds.length === 0) return;
+  let companionWindowIds = Object.keys(searches || {});
+  // If the topbar search was seeded from settings, don't use it to
+  // implicitly select the first annotation on initial canvas load.
+  try {
+    const win = yield select(getWindow, { windowId });
+    const topBarId = `${windowId}-topbar`;
+    if (win?.topBarSearchQuery && searches[topBarId]?.query === win.topBarSearchQuery) {
+      companionWindowIds = companionWindowIds.filter(id => id !== topBarId);
+    }
+  } catch (e) { /* ignore */ }
+  // If an annotation is already selected, check if it belongs to one of the visible canvases.
+  // If so, do NOT clobber the user's active selection (e.g. during search hit navigation).
+  const currentlySelected = yield select(getSelectedAnnotationId, { windowId });
+  if (currentlySelected) {
+    const canvasForCurrent = yield select(getCanvasForAnnotation, { annotationId: currentlySelected, windowId });
+    if (canvasForCurrent) {
+      const normCurrentCanvas = normalizeCanvasId(canvasForCurrent.id || canvasForCurrent['@id']);
+      const isVisible = (visibleCanvases || []).some(cId => normalizeCanvasId(cId) === normCurrentCanvas);
+      if (isVisible) {
+        return;
+      }
+    }
+  }
 
   const annotationBySearch = yield select(
     getAnnotationsBySearch,
@@ -177,8 +254,11 @@ export function* setCurrentAnnotationsOnCurrentCanvas({
   );
 
   if (Object.values(annotationBySearch).length > 0) {
-    // if the currently selected annotation isn't on this canvas, do a thing.
-    yield put(selectAnnotation(windowId, Object.values(annotationBySearch)[0][0]));
+    // Only auto-select if nothing is currently selected, to avoid clobbering
+    // an explicit Next/Prev selection.
+    if (!currentlySelected) {
+      yield put(selectAnnotation(windowId, Object.values(annotationBySearch)[0][0]));
+    }
   }
 }
 
@@ -210,47 +290,102 @@ export function* updateVisibleCanvases({ windowId }) {
 /** @private */
 export function* setCanvasOfFirstSearchResult({ companionWindowId, windowId }) {
   const { switchCanvasOnSearch } = yield select(getWindowConfig, { windowId });
-  if (!switchCanvasOnSearch) {
-    return;
+  if (!switchCanvasOnSearch) return;
+
+  // Do not auto-jump when the query was seeded via settings (top bar)
+  try {
+    const win = yield select(getWindow, { windowId });
+    const q = yield select(getSearchQuery, { companionWindowId, windowId });
+    if (companionWindowId === `${windowId}-topbar` && win?.topBarSearchQuery && String(q) === String(win.topBarSearchQuery)) {
+      return;
+    }
+  } catch (e) { /* ignore */ }
+
+  let annotations = yield select(
+    getSortedSearchAnnotationsForCompanionWindow,
+    { companionWindowId, windowId },
+  );
+  // Fallback: some search services use only `hits` and omit resources
+  if (!annotations || annotations.length === 0) {
+    const hits = yield select(getSortedSearchHitsForCompanionWindow, { companionWindowId, windowId });
+    if (hits && hits.length > 0 && Array.isArray(hits[0].annotations) && hits[0].annotations[0]) {
+      annotations = [{ id: hits[0].annotations[0] }];
+    }
   }
-  const selectedIds = yield select(getSelectedContentSearchAnnotationIds, {
-    companionWindowId, windowId,
-  });
-
-  if (selectedIds.length !== 0) return;
-
-  const annotations = yield select(getSortedSearchAnnotationsForCompanionWindow, { companionWindowId, windowId });
   if (!annotations || annotations.length === 0) return;
 
-  yield put(selectAnnotation(windowId, annotations[0].id));
+  const first = annotations[0];
+  // Select the first annotation and sync selection state for this companion
+  yield put(selectAnnotation(windowId, first.id));
+  yield put(setContentSearchCurrentAnnotation(windowId, companionWindowId, [first.id]));
+
+  // And immediately ensure the canvas matches
+  const canvas = yield select(getCanvasForAnnotation, { annotationId: first.id, windowId });
+  if (canvas) {
+    const { canvasId: currentCanvasId } = yield select(getWindow, { windowId });
+    if (normalizeCanvasId(currentCanvasId) !== normalizeCanvasId(canvas.id)) {
+      const thunk = yield call(setCanvas, windowId, canvas.id);
+      yield put(thunk);
+    }
+  }
 }
 
 /** @private */
 export function* setCanvasforSelectedAnnotation({ annotationId, windowId }) {
-  const canvasIds = yield select(getVisibleCanvasIds, { windowId });
-  const canvas = yield select(getCanvasForAnnotation, {
-    annotationId, windowId,
-  });
+  const canvas = yield select(getCanvasForAnnotation, { annotationId, windowId });
+  if (!canvas) return;
 
-  if (!canvas || canvasIds.includes(canvas.id)) return;
+  // Only switch if it's not already the current canvas
+  const { canvasId: currentCanvasId } = yield select(getWindow, { windowId });
+  if (normalizeCanvasId(currentCanvasId) === normalizeCanvasId(canvas.id)) return;
 
   const thunk = yield call(setCanvas, windowId, canvas.id);
   yield put(thunk);
+}
+
+/**
+ * Sync the URL `pageNum` query param with the current canvas index (1-based)
+ * Triggers on any canvas change regardless of initiating component.
+ */
+export function* syncUrlWithCanvas({ windowId }) {
+  try {
+    // Determine the current (0-based) canvas index for the window
+    const index = yield select(getCanvasIndex, { windowId });
+    const pageNum = String((Number.isFinite(index) ? index : 0) + 1);
+
+    if (typeof window !== 'undefined' && window?.history && window?.location) {
+      const url = new URL(window.location.href);
+      const params = new URLSearchParams(url.search);
+      params.set('pageNum', pageNum);
+      url.search = params.toString();
+      // Do not create additional history entries; keep navigation smooth
+      window.history.replaceState(window.history.state, '', url.toString());
+    }
+  } catch (e) {
+    // Silently ignore URL sync failures to avoid impacting viewer behavior
+  }
 }
 
 /** Fetch info responses for the visible canvases */
 export function* fetchInfoResponses({ visibleCanvases: visibleCanvasIds, windowId }) {
   const canvases = yield select(getCanvases, { windowId });
   const infoResponses = yield select(selectInfoResponses);
-  const visibleCanvases = (canvases || []).filter(c => visibleCanvasIds.includes(c.id));
+  const normVisibleIds = (visibleCanvasIds || []).map(id => normalizeCanvasId(id));
+  const visibleCanvases = (canvases || []).filter(c => {
+    const cNorm = normalizeCanvasId(c.id || c['@id']);
+    return normVisibleIds.some(nid => nid === cNorm);
+  });
   const getMiradorCanvas = yield select(getMiradorCanvasWrapper);
 
   yield all(visibleCanvases.map((canvas) => {
     const miradorCanvas = getMiradorCanvas(canvas);
-    return all(miradorCanvas.iiifImageResources.map(imageResource => (
-      !infoResponses[imageResource.getServices()[0].id]
-        && put(fetchInfoResponse({ imageResource, windowId }))
-    )).filter(Boolean));
+    if (!miradorCanvas) return all([]);
+    return all((miradorCanvas.iiifImageResources || []).map(imageResource => {
+      const services = imageResource.getServices();
+      if (!services || !services[0] || !services[0].id) return false;
+      return !infoResponses[services[0].id]
+        && put(fetchInfoResponse({ imageResource, windowId }));
+    }).filter(Boolean));
   }));
 }
 
@@ -270,6 +405,7 @@ export default function* windowsSaga() {
     takeEvery(ActionTypes.UPDATE_WINDOW, setCanvasOnNewSequence),
     takeEvery(ActionTypes.SET_CANVAS, setCurrentAnnotationsOnCurrentCanvas),
     takeEvery(ActionTypes.SET_CANVAS, fetchInfoResponses),
+    takeEvery(ActionTypes.SET_CANVAS, syncUrlWithCanvas),
     takeEvery(ActionTypes.UPDATE_COMPANION_WINDOW, fetchCollectionManifests),
     takeEvery(ActionTypes.SET_WINDOW_VIEW_TYPE, updateVisibleCanvases),
     takeEvery(ActionTypes.RECEIVE_SEARCH, setCanvasOfFirstSearchResult),

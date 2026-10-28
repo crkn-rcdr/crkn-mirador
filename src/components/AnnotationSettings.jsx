@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
-import VisibilityIcon from '@mui/icons-material/VisibilitySharp';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOffSharp';
+import BiIcon from './BiIcon';
 import { useTranslation } from 'react-i18next';
 import MiradorMenuButton from '../containers/MiradorMenuButton';
 
@@ -19,7 +18,7 @@ export function AnnotationSettings({
       disabled={displayAllDisabled}
       size="small"
     >
-      { displayAll ? <VisibilityIcon /> : <VisibilityOffIcon /> }
+      { displayAll ? <BiIcon name="eye" size={16} /> : <BiIcon name="eye-slash" size={16} /> }
     </MiradorMenuButton>
   );
 }

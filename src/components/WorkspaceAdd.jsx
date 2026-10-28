@@ -2,8 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import classNames from 'classnames';
-import AddIcon from '@mui/icons-material/AddSharp';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
+import BiIcon from './BiIcon';
 import AppBar from '@mui/material/AppBar';
 import Drawer from '@mui/material/Drawer';
 import Grid from '@mui/material/Grid';
@@ -148,7 +147,7 @@ export function WorkspaceAdd({
           color="primary"
           onClick={() => setAddResourcesVisibility(true)}
         >
-          <AddIcon />
+          <BiIcon name="plus-lg" size={16} />
           {t('addResource')}
         </Fab>
 
@@ -189,7 +188,7 @@ export function WorkspaceAdd({
                   aria-label={t('closeAddResourceForm')}
                   color="inherit"
                 >
-                  <ExpandMoreIcon />
+                  <BiIcon name="chevron-down" size={16} />
                 </StyledMiradorMenuButton>
                 <Typography variant="h2" noWrap color="inherit" sx={{ flexGrow: 1 }}>
                   {t('addResource')}

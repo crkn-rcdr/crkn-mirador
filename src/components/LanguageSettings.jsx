@@ -1,7 +1,7 @@
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
-import CheckIcon from '@mui/icons-material/CheckSharp';
+import BiIcon from './BiIcon';
 import PropTypes from 'prop-types';
 
 /**
@@ -19,9 +19,7 @@ export function LanguageSettings({ handleClick, languages }) {
             onClick={() => { handleClick(language.locale); }}
           >
             <ListItemIcon>
-              {
-                language.current && <CheckIcon />
-              }
+              {language.current && <BiIcon name="check" size={14} />}
             </ListItemIcon>
             <ListItemText primaryTypographyProps={{ variant: 'body1' }}>
               {language.label}

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import ListSharpIcon from '@mui/icons-material/ListSharp';
+import BiIcon from './BiIcon';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -30,7 +30,7 @@ export function SelectCollection({
           color="primary"
           variant="contained"
           onClick={openCollectionDialog}
-          startIcon={<ListSharpIcon />}
+          startIcon={<BiIcon name="list" size={16} />}
         >
           {t('showCollection')}
         </Button>

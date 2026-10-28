@@ -17,6 +17,25 @@ function createWrapper(props, contextProps = { active: false }) {
 }
 
 describe('FullScreenButton', () => {
+  it('does not render on mobile', () => {
+    const originalMatchMedia = window.matchMedia;
+    window.matchMedia = vi.fn().mockImplementation(query => ({
+      addEventListener: vi.fn(),
+      addListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+      matches: query === '(max-width:600px)',
+      media: query,
+      onchange: null,
+      removeEventListener: vi.fn(),
+      removeListener: vi.fn(),
+    }));
+
+    createWrapper();
+
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+    window.matchMedia = originalMatchMedia;
+  });
+
   it('renders without an error', () => {
     createWrapper();
 

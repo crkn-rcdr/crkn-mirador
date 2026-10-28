@@ -1,130 +1,182 @@
-import { useEffect, useRef, useState } from 'react';
+// components/GalleryViewThumbnail.jsx
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import Chip from '@mui/material/Chip';
-import AnnotationIcon from '@mui/icons-material/CommentSharp';
-import SearchIcon from '@mui/icons-material/SearchSharp';
+import Tooltip from '@mui/material/Tooltip';
+import BiIcon from './BiIcon';
+import { useTranslation } from 'react-i18next';
 import { InView } from 'react-intersection-observer';
 import IIIFThumbnail from '../containers/IIIFThumbnail';
 
-const Root = styled('div', { name: 'GalleryView', slot: 'thumbnail' })(({ ownerState, theme }) => ({
-  '&:focus': {
-    outline: 'none',
-  },
-  '&:hover': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  border: '2px solid transparent',
-  ...(ownerState.selected && {
-    borderColor: theme.palette.primary.main,
-  }),
-  ...(!ownerState.selected && ownerState.searchAnnotationsCount > 0 && {
-    borderColor: theme.palette.action.selected,
-  }),
-  cursor: 'pointer',
-  display: 'inline-block',
-  margin: theme.spacing(1, 0.5),
-  maxHeight: ownerState.config.height + 45,
-  minWidth: '60px',
-  overflow: 'hidden',
-  padding: theme.spacing(0.5),
-  position: 'relative',
-  width: 'min-content',
-  borderRadius: '7px'
-}));
+const THUMBNAIL_REQUEST_MAX_DIMENSION = 500;
+const THUMBNAIL_REQUEST_DPR_CAP = 2;
 
-const StyledChipsContainer = styled('div', { name: 'GalleryView', slot: 'chipArea' })(({ theme }) => ({
+const Root = styled('div', { name: 'GalleryView', slot: 'thumbnail' })(
+  ({ ownerState, theme }) => ({
+    '&:focus': { outline: 'none' },
+    '&:hover': { backgroundColor: theme.palette.action.hover },
+    alignItems: 'flex-start',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    cursor: 'pointer',
+    // Margin here caused overflow beyond grid cells; spacing comes from Grid gap.
+    margin: 0,
+    border: 0,
+    borderRadius: theme.shape.borderRadius * 1.5,
+    padding: ownerState?.isMobileStrip
+      ? theme.spacing(0.5)
+      : (ownerState?.isVerticalStrip ? theme.spacing(0.75) : theme.spacing(1)),
+    paddingTop: ownerState?.isMobileStrip
+      ? theme.spacing(0.5)
+      : (ownerState?.isVerticalStrip ? theme.spacing(0.75) : theme.spacing(1)),
+    position: 'relative',
+    width: ownerState?.isMobileStrip ? 'max-content' : '100%',
+    height: ownerState?.isMobileStrip ? 'auto' : '100%',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    transition: 'background-color 120ms ease',
+    '& img': {
+      alignSelf: 'flex-start',
+      marginLeft: 0,
+      marginRight: 'auto',
+      objectPosition: 'left top',
+    },
+    ...(ownerState?.selected && ownerState?.isMobileStrip && {
+      border: `2px solid ${theme.palette.primary.main}`,
+    }),
+    ...(ownerState?.selected && !ownerState?.isMobileStrip && {
+      '& img': {
+        outline: `2px solid ${theme.palette.primary.main}`,
+        outlineOffset: 2,
+        borderRadius: theme.shape.borderRadius,
+      },
+    }),
+  }),
+);
+
+const Chips = styled('div')(({ theme }) => ({
   display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(0.25),
+  gap: theme.spacing(0.5),
   position: 'absolute',
-  right: 0,
-  top: 0,
+  right: theme.spacing(1),
+  bottom: theme.spacing(1),
 }));
 
-const AnnotationChip = styled(Chip, { name: 'GalleryView', slot: 'chip' })(({ theme }) => ({
-  backgroundColor: theme.palette.annotations.chipBackground,
-  opacity: 0.875,
-  textAlign: 'right',
+const TopLeft = styled('div')(({ theme }) => ({
+  position: 'absolute',
+  left: theme.spacing(1),
+  top: theme.spacing(1),
+  display: 'flex',
+  gap: theme.spacing(0.5),
+  pointerEvents: 'none',
+  zIndex: 2,
 }));
 
-/**
- * Represents a WindowViewer in the mirador workspace. Responsible for mounting
- * OSD and Navigation
- */
 export function GalleryViewThumbnail({
-  canvas, selected = false, setCanvas, focusOnCanvas, annotationsCount = undefined, requestCanvasAnnotations = () => {},
+  canvas,
+  selected = false,
+  highlighted = false,
+  setCanvas,
+  focusOnCanvas,
+  annotationsCount = undefined,
+  requestCanvasAnnotations = () => {},
   searchAnnotationsCount = 0,
+  matchingTerms = [],
   config = { height: 100, width: null },
+  thumbSize = 'm',      // 's' | 'm' | 'l' | 'fit'
+  tileW,                // new: inner cell width from Grid (already minus gap)
+  tileH,                // new: inner cell height from Grid (already minus gap)
+  isMobileStrip = false,
+  isVerticalStrip = false,
 }) {
   const myRef = useRef();
   const [requestedAnnotations, setRequestedAnnotations] = useState(false);
+  const { t } = useTranslation();
 
-  useEffect(() => {
-    if (selected) {
-      myRef.current?.scrollIntoView(true);
+  // Prefer tile-based sizing from Grid to avoid mismatch/overlap.
+  const pad = isMobileStrip ? 6 : 16;
+  const baseLabelReserve = thumbSize === 's' ? 40 : 44;
+  const labelReserve = isMobileStrip ? 32 : baseLabelReserve;
+  const outlineReserve = isMobileStrip ? 4 : 0;
+  const maxHeight = (typeof tileH === 'number' && tileH > 0)
+    ? Math.max(1, tileH - pad - labelReserve - outlineReserve)
+    : Math.max(1, Math.round(((typeof config.height === 'number' ? config.height : 100) * ((thumbSize === 'l') ? 4.0 : 2.0))) - labelReserve);
+
+  const maxWidth = isMobileStrip
+    ? null
+    : (typeof tileW === 'number' && tileW > 0)
+      ? Math.max(1, tileW - pad - outlineReserve)
+    : (config.width == null ? null : Math.max(1, Math.round(config.width * ((thumbSize === 'l') ? 4.0 : 2.0))));
+  const stretchToTileWidth = !isMobileStrip && typeof tileW === 'number' && tileW > 0;
+  const thumbnailStyle = stretchToTileWidth
+    ? {
+      width: 'auto',
+      maxWidth: '100%',
+      maxHeight: maxHeight ? `${maxHeight}px` : '100%',
+      height: 'auto',
+      objectFit: 'contain',
+      objectPosition: 'left top',
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    : (maxHeight ? {
+      maxHeight: `${maxHeight}px`,
+      maxWidth: '100%',
+      height: 'auto',
+      width: 'auto',
+      objectFit: 'contain',
+    } : undefined);
+  const wantsFullResRequest = thumbSize === 'l'
+    || thumbSize === 'fit'
+    || (typeof maxWidth === 'number' && maxWidth > THUMBNAIL_REQUEST_MAX_DIMENSION);
 
-  /** @private */
-  const handleSelect = () => {
-    if (selected) {
-      focusOnCanvas();
-    } else {
-      setCanvas(canvas.id);
-    }
-  };
-
-  /** @private */
-  const handleKey = (event) => {
-    const keys = {
-      enter: 'Enter',
-      space: ' ',
-    };
-
-    const chars = {
-      enter: 13,
-      space: 32,
-    };
-
-    const enterOrSpace = (
-      event.key === keys.enter
-      || event.which === chars.enter
-      || event.key === keys.space
-      || event.which === chars.space
+  // Request denser source pixels on HiDPI screens so small thumbnails
+  // stay crisp while keeping the rendered CSS size unchanged.
+  const requestScale = wantsFullResRequest
+    ? 1
+    : Math.max(
+      1,
+      Math.min(
+        THUMBNAIL_REQUEST_DPR_CAP,
+        (typeof window !== 'undefined' && Number(window.devicePixelRatio)) || 1,
+      ),
     );
+  const scaledRequestMaxHeight = (typeof maxHeight === 'number' && maxHeight > 0)
+    ? Math.round(maxHeight * requestScale)
+    : null;
+  const scaledRequestMaxWidth = (typeof maxWidth === 'number' && maxWidth > 0)
+    ? Math.round(maxWidth * requestScale)
+    : maxWidth;
 
-    if (enterOrSpace) {
-      focusOnCanvas();
-    } else {
-      setCanvas(canvas.id);
-    }
-  };
+  // Keep constrained thumbnail requests for fast/default rendering.
+  // For large modes, IIIFThumbnail will request full-res first and then
+  // gracefully fall back to constrained sizes if it errors.
+  const requestMaxHeight = isMobileStrip && typeof maxHeight === 'number'
+    ? Math.min(scaledRequestMaxHeight || maxHeight, THUMBNAIL_REQUEST_MAX_DIMENSION)
+    : null;
+  const requestMaxWidth = (typeof scaledRequestMaxWidth === 'number' && scaledRequestMaxWidth > 0)
+    ? Math.min(scaledRequestMaxWidth, THUMBNAIL_REQUEST_MAX_DIMENSION)
+    : scaledRequestMaxWidth;
 
-  /** */
-  const handleIntersection = (_inView, { isIntersecting }) => {
-    if (
-      !isIntersecting
-      || annotationsCount === undefined
-      || annotationsCount > 0
-      || requestedAnnotations) return;
-
+  const handleIntersection = (inView) => {
+    if (!inView) return;
+    if (requestedAnnotations || annotationsCount === undefined || annotationsCount > 0) return;
     setRequestedAnnotations(true);
     requestCanvasAnnotations();
   };
 
-  const ownerState = {
-    annotationsCount, canvas, config, searchAnnotationsCount, selected,
+  const handleSelect = () => {
+    if (selected) focusOnCanvas();
+    else setCanvas(canvas.id);
   };
+
+  const ownerState = { selected, highlighted, isMobileStrip, isVerticalStrip };
 
   return (
     <InView onChange={handleIntersection}>
       <Root
         ownerState={ownerState}
-        key={canvas.id || canvas.index}
-        className={selected ? 'selected' : ''}
         onClick={handleSelect}
-        onKeyUp={handleKey}
         ref={myRef}
         role="button"
         tabIndex={0}
@@ -133,25 +185,102 @@ export function GalleryViewThumbnail({
           resource={canvas}
           labelled
           variant="outside"
-          maxHeight={config.height}
-          maxWidth={config.width}
+          maxHeight={maxHeight}
+          maxWidth={maxWidth}
+          requestMaxHeight={requestMaxHeight}
+          requestMaxWidth={requestMaxWidth}
+          preferFullRes={wantsFullResRequest}
+          style={thumbnailStyle}
         >
-          <StyledChipsContainer>
-            {searchAnnotationsCount > 0 && (
-              <AnnotationChip
-                icon={<SearchIcon fontSize="small" />}
-                label={searchAnnotationsCount}
-                size="small"
-              />
-            )}
+          {/* Search results count (top-left, high contrast) */}
+          {searchAnnotationsCount > 0 && (
+            <TopLeft>
+              <Tooltip title={t('searchHitsCount', { count: searchAnnotationsCount })} arrow>
+                <Chip
+                  icon={<BiIcon name="search" size={'0.7rem'} />}
+                  label={searchAnnotationsCount}
+                  size="small"
+                  aria-label={t('searchHitsCount', { count: searchAnnotationsCount })}
+                  sx={(theme) => ({
+                    pointerEvents: 'auto',
+                    height: 20,
+                    borderRadius: 12,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    // Softer translucent background and always-light icon/text for better contrast
+                    bgcolor: theme.palette.mode === 'dark'
+                      ? 'rgba(20,20,20,0.55)'
+                      : 'rgba(0,0,0,0.45)',
+                    color: theme.palette.common.white,
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.18)',
+                    backdropFilter: 'blur(2px)',
+                    '& .MuiChip-icon': {
+                      mr: 0.5,
+                      color: (theme.palette.highlights && theme.palette.highlights.primary) || '#ffff00',
+                      opacity: 1,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      height: '100%',
+                      lineHeight: '0.5 !important',
+                      '& .bi': { fontSize: '0.7rem', lineHeight: 1, verticalAlign: 'middle' },
+                    },
+                    '& .MuiChip-label': {
+                      px: 0.5,
+                      fontSize: '0.7rem',
+                      fontWeight: 600,
+                      letterSpacing: 0.15,
+                      lineHeight: 1,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      color: (theme.palette.highlights && theme.palette.highlights.primary) || '#ffff00',
+                    },
+                  })}
+                />
+              </Tooltip>
+            </TopLeft>
+          )}
+
+          {/* Search term pills (left) */}
+          {Array.isArray(matchingTerms) && matchingTerms.length > 0 && (
+            <div style={{
+              position: 'absolute',
+              left: 8,
+              bottom: 8,
+              display: 'flex',
+              gap: 4,
+              flexWrap: 'nowrap',
+              maxWidth: '60%',
+              pointerEvents: 'none',
+            }}>
+              {matchingTerms.slice(0, 3).map((t) => (
+                <Chip
+                  key={t}
+                  size="small"
+                  label={t}
+                  sx={{
+                    pointerEvents: 'none',
+                    height: 20,
+                    '& .MuiChip-label': { px: 0.75, fontSize: '0.7rem' },
+                    bgcolor: 'highlights.primary',
+                    color: 'common.white',
+                  }}
+                />
+              ))}
+              {matchingTerms.length > 3 && (
+                <Chip
+                  size="small"
+                  label={`+${matchingTerms.length - 3}`}
+                  sx={{ pointerEvents: 'none', height: 20, '& .MuiChip-label': { px: 0.75, fontSize: '0.7rem' } }}
+                />
+              )}
+            </div>
+          )}
+          <Chips>
             {annotationsCount > 0 && (
-              <AnnotationChip
-                icon={<AnnotationIcon fontSize="small" />}
-                label={annotationsCount}
-                size="small"
-              />
+              <Chip icon={<BiIcon name="chat-dots" size={12} />} label={annotationsCount} size="small" />
             )}
-          </StyledChipsContainer>
+          </Chips>
         </IIIFThumbnail>
       </Root>
     </InView>
@@ -160,14 +289,32 @@ export function GalleryViewThumbnail({
 
 GalleryViewThumbnail.propTypes = {
   annotationsCount: PropTypes.number,
-  canvas: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  config: PropTypes.shape({
-    height: PropTypes.number,
-    width: PropTypes.number,
-  }),
+  canvas: PropTypes.object.isRequired,
+  config: PropTypes.shape({ height: PropTypes.number, width: PropTypes.number }),
   focusOnCanvas: PropTypes.func.isRequired,
   requestCanvasAnnotations: PropTypes.func,
   searchAnnotationsCount: PropTypes.number,
   selected: PropTypes.bool,
+  highlighted: PropTypes.bool,
   setCanvas: PropTypes.func.isRequired,
+  matchingTerms: PropTypes.arrayOf(PropTypes.string),
+  isMobileStrip: PropTypes.bool,
+  isVerticalStrip: PropTypes.bool,
+  thumbSize: PropTypes.oneOf(['s', 'm', 'l', 'fit']),
+  tileW: PropTypes.number,
+  tileH: PropTypes.number,
 };
+
+export default React.memo(GalleryViewThumbnail, (prev, next) => (
+  prev.selected === next.selected &&
+  prev.highlighted === next.highlighted &&
+  prev.searchAnnotationsCount === next.searchAnnotationsCount &&
+  prev.annotationsCount === next.annotationsCount &&
+  prev.config?.height === next.config?.height &&
+  prev.config?.width === next.config?.width &&
+  (prev.canvas?.id || prev.canvas?.index) === (next.canvas?.id || next.canvas?.index) &&
+  prev.isMobileStrip === next.isMobileStrip &&
+  prev.thumbSize === next.thumbSize &&
+  prev.tileW === next.tileW &&
+  prev.tileH === next.tileH
+));

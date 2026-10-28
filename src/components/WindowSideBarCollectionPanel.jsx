@@ -8,7 +8,7 @@ import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpwardSharp';
+import BiIcon from './BiIcon';
 import { useTranslation } from 'react-i18next';
 import CompanionWindow from '../containers/CompanionWindow';
 import IIIFThumbnail from '../containers/IIIFThumbnail';
@@ -94,7 +94,7 @@ export function WindowSideBarCollectionPanel({
                 }
               >
                 <ListItemIcon>
-                  <ArrowUpwardIcon />
+                  <BiIcon name="arrow-up" size={16} />
                 </ListItemIcon>
                 <ListItemText primaryTypographyProps={{ variant: 'body1' }}>
                   <IIIFResourceLabel resource={parentCollection} />

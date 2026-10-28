@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import BiIcon from './BiIcon';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -22,7 +22,7 @@ export function CollapsibleSection({
 
   return (
     <Accordion slotProps={{ heading: { component: 'h4' } }} id={id} elevation={0} expanded={open} onChange={handleChange} disableGutters square variant="compact">
-      <AccordionSummary id={`${id}-header`} aria-controls={`${id}-content`} aria-label={t(open ? 'collapseSection' : 'expandSection', { section: label })} expandIcon={<ExpandMoreIcon />}>
+      <AccordionSummary id={`${id}-header`} aria-controls={`${id}-content`} aria-label={t(open ? 'collapseSection' : 'expandSection', { section: label })} expandIcon={<BiIcon name="chevron-down" size={16} />}>
         <Typography variant="overline">
           {label}
         </Typography>

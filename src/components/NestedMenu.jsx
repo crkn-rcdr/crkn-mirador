@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
-import ExpandLess from '@mui/icons-material/ExpandLessSharp';
-import ExpandMore from '@mui/icons-material/ExpandMoreSharp';
+import BiIcon from './BiIcon';
 
 /**
  * NestedMenu ~ A presentation component to render a menu item and have
@@ -28,8 +27,8 @@ export function NestedMenu({
         </ListItemText>
         {
           nestedMenuIsOpen
-            ? <ExpandLess />
-            : <ExpandMore />
+            ? <BiIcon name="chevron-up" size={16} />
+            : <BiIcon name="chevron-down" size={16} />
         }
       </MenuItem>
       {nestedMenuIsOpen && children}

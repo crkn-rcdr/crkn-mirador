@@ -1,6 +1,6 @@
 import { useId, useState } from 'react';
 import PropTypes from 'prop-types';
-import BookmarksIcon from '@mui/icons-material/BookmarksSharp';
+import BiIcon from './BiIcon';
 import { useTranslation } from 'react-i18next';
 import WindowList from '../containers/WindowList';
 import MiradorMenuButton from '../containers/MiradorMenuButton';
@@ -37,7 +37,7 @@ export function WindowListButton({ disabled = false, windowCount }) {
         }}
         onClick={(e) => handleOpen(e)}
       >
-        <BookmarksIcon />
+        <BiIcon name="bookmarks" size={18} />
       </MiradorMenuButton>
 
       {Boolean(windowListAnchor) && (

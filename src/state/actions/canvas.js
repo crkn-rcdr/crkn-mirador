@@ -3,6 +3,7 @@ import {
   getNextCanvasGrouping,
   getPreviousCanvasGrouping,
   getCanvasGrouping,
+  getCanvas,
   getConfig,
 } from '../selectors';
 
@@ -17,16 +18,21 @@ export function setCanvas(windowId, canvasId, newGroup = undefined, options = {}
   return ((dispatch, getState) => {
     const state = getState();
     const { preserveViewport } = getConfig(state).osdConfig;
+    const sequenceCanvas = getCanvas(state, { canvasId, windowId });
+    const targetCanvasId = sequenceCanvas ? (sequenceCanvas.id || sequenceCanvas['@id'] || canvasId) : canvasId;
     let visibleCanvases = newGroup;
 
     if (!visibleCanvases) {
-      const group = getCanvasGrouping(state, { canvasId, windowId });
+      const group = getCanvasGrouping(state, { canvasId: targetCanvasId, windowId });
       visibleCanvases = (group || []).map(c => c.id);
+    }
+    if (!visibleCanvases || visibleCanvases.length === 0) {
+      visibleCanvases = [targetCanvasId];
     }
 
     dispatch({
       ...options,
-      canvasId,
+      canvasId: targetCanvasId,
       preserveViewport,
       type: ActionTypes.SET_CANVAS,
       visibleCanvases,

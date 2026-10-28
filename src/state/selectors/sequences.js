@@ -4,6 +4,7 @@ import {
   getManifestoInstance,
 } from './manifests';
 import { getWindow } from './getters';
+import { normalizeCanvasId } from './utils';
 
 /**
  * Returns the sequences for a given windowId
@@ -73,10 +74,16 @@ export const getCanvasIndex = createSelector(
     getWindow,
     getSequence,
   ],
-  (window, sequence) => (
-    (sequence && window && window.canvasId
-      && sequence.getCanvasById(window.canvasId))
-    || {}).index || 0,
+  (window, sequence) => {
+    if (!sequence || !window || !window.canvasId) return 0;
+    const direct = sequence.getCanvasById(window.canvasId);
+    if (direct && typeof direct.index === 'number') return direct.index;
+
+    const normTarget = normalizeCanvasId(window.canvasId);
+    const canvases = sequence.getCanvases() || [];
+    const found = canvases.find(c => normalizeCanvasId(c.id || c['@id']) === normTarget);
+    return (found && typeof found.index === 'number') ? found.index : 0;
+  },
 );
 
 /**

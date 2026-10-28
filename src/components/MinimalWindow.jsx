@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
-import MenuIcon from '@mui/icons-material/MenuSharp';
+import BiIcon from './BiIcon';
 import cn from 'classnames';
 import Paper from '@mui/material/Paper';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import CloseIcon from '@mui/icons-material/CloseSharp';
+// Close icon replaced with Bootstrap icon
 import { useTranslation } from 'react-i18next';
 import MiradorMenuButton from '../containers/MiradorMenuButton';
 import ns from '../config/css-ns';
@@ -64,7 +64,7 @@ export function MinimalWindow({
               aria-label={t('toggleWindowSideBar')}
               disabled
             >
-              <MenuIcon />
+              <BiIcon name="list" size={16} />
             </MiradorMenuButton>
           )}
           <Typography
@@ -88,7 +88,7 @@ export function MinimalWindow({
                 tabIndex: ariaLabel ? 0 : -1,
               }}
             >
-              <CloseIcon />
+              <BiIcon name="x-lg" size={16} />
             </StyledMiradorMenuButton>
           )}
         </Toolbar>

@@ -1,4 +1,4 @@
-import { borderRadius } from '@mui/system';
+import { borderRadius, color } from '@mui/system';
 import { v4 as uuid } from 'uuid';
 
 export default {
@@ -146,9 +146,10 @@ export default {
       overline: {
         fontSize: "0.678rem",
         fontWeight: 500,
-        letterSpacing: "0.166em",
+        letterSpacing: "0em",
         lineHeight: "2em",
         textTransform: "uppercase",
+        color: "#424242"
       },
       h1: {
         fontSize: "2.822rem",
@@ -200,6 +201,100 @@ export default {
       borderRadius: 4
     },
     components: {
+      MuiCssBaseline: {
+        styleOverrides: {
+          body: {
+            scrollbarColor: '#bdbdbd transparent',
+          },
+          '*::-webkit-scrollbar': {
+            width: 10,
+            height: 10,
+          },
+          '*::-webkit-scrollbar-thumb': ({ theme }) => ({
+            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.24)' : 'rgba(0,0,0,0.24)',
+            borderRadius: 8,
+            border: '2px solid transparent',
+            backgroundClip: 'content-box',
+          }),
+          '*::-webkit-scrollbar-track': {
+            backgroundColor: 'transparent',
+          },
+          ':focus-visible': {
+            outlineOffset: 2,
+          },
+        },
+      },
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            backgroundColor: 'transparent',
+            boxShadow: 'none',
+          },
+        },
+      },
+      MuiToolbar: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            backdropFilter: 'blur(6px)',
+            borderBottom: `1px solid ${theme.palette.divider}`,
+          }),
+        },
+      },
+      MuiTooltip: {
+        defaultProps: { arrow: true, enterDelay: 250 },
+        styleOverrides: {
+          tooltip: ({ theme }) => ({
+            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(30,30,30,0.92)' : 'rgba(33,33,33,0.92)',
+            boxShadow: theme.shadows[2],
+            fontSize: '0.72rem',
+            letterSpacing: 0.1,
+          }),
+          arrow: ({ theme }) => ({
+            color: theme.palette.mode === 'dark' ? 'rgba(30,30,30,0.92)' : 'rgba(33,33,33,0.92)',
+          }),
+        },
+      },
+      MuiChip: {
+        styleOverrides: {
+          root: {
+            borderRadius: 12,
+            '&.MuiChip-sizeSmall': { height: 22 },
+          },
+          label: { fontWeight: 600 },
+        },
+      },
+      MuiToggleButtonGroup: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            borderRadius: 50,
+            background: theme.palette.mode === 'dark' ? 'rgba(30,30,30,0.7)' : 'rgba(255,255,255,0.8)',
+            boxShadow: theme.shadows[2],
+            padding: 6,
+          }),
+        },
+      },
+      MuiToggleButton: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            border: 'none',
+            borderRadius: 50,
+            '&.Mui-selected': {
+              backgroundColor: theme.palette.action.selected,
+              color: theme.palette.text.primary,
+            },
+          }),
+        },
+      },
+      MuiListItemButton: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            borderRadius: 8,
+            '&.Mui-selected': {
+              backgroundColor: theme.palette.action.selected,
+            },
+          }),
+        },
+      },
       MuiMenuItem: {
         variants: [
           {
@@ -296,8 +391,17 @@ export default {
               height: 'inherit',
               position: 'relative',
             }),
+            ...(ownerState?.variant === 'outside' && {
+              alignItems: 'flex-start',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-start',
+              minWidth: 0,
+              overflow: 'visible',
+              width: '100%',
+            }),
           }),
-          label: ({ ownerState }) => ({
+          label: ({ ownerState, theme }) => ({
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             lineHeight: '1.5em',
@@ -307,25 +411,43 @@ export default {
               WebkitLineClamp: 1,
               whiteSpace: 'nowrap',
             }),
-            ...(ownerState?.variant === 'outside' && {
-              display: '-webkit-box',
-              maxHeight: '3em',
-              MozBoxOrient: 'vertical',
-              WebkitLineClamp: 2,
-            }),
+              ...(ownerState?.variant === 'outside' && {
+                display: '-webkit-box',
+                marginTop: theme.spacing(0.5),
+                maxHeight: '3em',
+                MozBoxOrient: 'vertical',
+                WebkitLineClamp: 2,
+                overflowWrap: 'break-word',
+                textAlign: 'left',
+                width: '100%',
+                wordBreak: 'normal',
+              }),
             ...(ownerState?.variant === 'inside' && {
-              background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
+              // Softer, multi-stop gradient for improved readability
+              background: 'linear-gradient(to top, '
+                + 'rgba(0,0,0,0.78) 0%, '
+                + 'rgba(0,0,0,0.55) 35%, '
+                + 'rgba(0,0,0,0.25) 65%, '
+                + 'rgba(0,0,0,0.06) 85%, '
+                + 'rgba(0,0,0,0) 100%)',
               bottom: '5px',
               boxSizing: 'border-box',
               left: '0px',
               padding: '4px',
               position: 'absolute',
+              textShadow: '0 1px 2px rgba(0,0,0,0.6)',
+              backdropFilter: 'blur(1.5px)',
               width: '100%',
             }),
           }),
           image: ({ ownerState }) => ({
             ...(ownerState?.border && {
               border: '1px solid rgba(0, 0, 0, 0.125)',
+            }),
+            ...(ownerState?.variant === 'outside' && {
+              marginLeft: 0,
+              marginRight: 'auto',
+              objectPosition: 'left top',
             }),
           })
         }
@@ -534,6 +656,9 @@ export default {
       canvasId: 'https://iiif.harvardartmuseums.org/manifests/object/299843/page_2',
       thumbnailNavigationPosition: 'far-bottom',
       maximized: false,
+      // Seed a Content Search query on load:
+      // - defaultSearchQuery: 'ontario'           // seeds the left sidebar Search panel
+      // - contentSearch: { query: 'ontario' }     // seeds the WindowTopBar inline search
     }
     // ../state/actions/window.js `defaultOptions`
     // ../lib/MiradorViewer.js `windowAction`
@@ -577,8 +702,13 @@ export default {
     preserveImageSizeOnResize: true,
     preserveViewport: true,
     showNavigationControl: true,
-    zoomPerClick: 1, // disable zoom-to-click
-    zoomPerDoubleClick: 2.0
+    // Use a normal zoom factor for controls; do NOT set to 1
+    // (a value of 1 disables zooming for both toolbar buttons and clicks)
+    zoomPerClick: 1.3,
+    // Keep double-click zoom factor
+    zoomPerDoubleClick: 2.0,
+    // Disable click-to-zoom on the image while preserving toolbar button zooming
+    gestureSettingsMouse: { clickToZoom: false }
   },
   export: {
     catalog: true,

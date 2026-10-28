@@ -1,6 +1,5 @@
 import { compose } from 'redux';
 import { connect } from 'react-redux';
-import flatten from 'lodash/flatten';
 import { withPlugins } from '../extend/withPlugins';
 import { SearchHit } from '../components/SearchHit';
 import * as actions from '../state/actions';
@@ -40,7 +39,7 @@ const mapStateToProps = (state, {
   const currentCanvas = getCurrentCanvas(state, { windowId });
 
   return {
-    adjacent: selectedCanvasIds.includes(hitAnnotation.targetId),
+    adjacent: hitAnnotation && selectedCanvasIds.includes(hitAnnotation.targetId),
     annotation: hitAnnotation,
     annotationId: realAnnoId,
     annotationLabel: annotationLabel[0],
@@ -56,6 +55,10 @@ const mapStateToProps = (state, {
 const mapDispatchToProps = (dispatch, { windowId }) => ({
   selectAnnotation: (...args) => dispatch(actions.selectAnnotation(windowId, ...args)),
   setCanvas: (...args) => dispatch(actions.setCanvas(windowId, ...args)),
+  focusOnCanvas: (canvasId) => {
+    dispatch(actions.setWindowViewType(windowId, 'single'));
+    dispatch(actions.setCanvas(windowId, canvasId));
+  },
 });
 
 const enhance = compose(

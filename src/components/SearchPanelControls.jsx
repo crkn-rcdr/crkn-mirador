@@ -8,7 +8,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
-import SearchIcon from '@mui/icons-material/SearchSharp';
+import Typography from '@mui/material/Typography';
+import BiIcon from './BiIcon';
 import { useTranslation } from 'react-i18next';
 import MiradorMenuButton from '../containers/MiradorMenuButton';
 import SearchPanelNavigation from '../containers/SearchPanelNavigation';
@@ -19,6 +20,27 @@ const StyledForm = styled('form', { name: 'SearchPanelControls', slot: 'form' })
   width: '100%',
 }));
 
+const UnavailableNote = styled(Typography, { name: 'SearchPanelControls', slot: 'unavailableNote' })(({ theme }) => ({
+  ...theme.typography.h6,
+  alignItems: 'center',
+  color: theme.palette.text.secondary,
+  cursor: 'default',
+  display: 'flex',
+  fontFamily: '"Roboto", "Helvetica Neue", Arial, sans-serif',
+  fontSize: '1rem',
+  fontWeight: 500,
+  letterSpacing: 0,
+  lineHeight: 1.25,
+  minHeight: 40,
+  overflow: 'hidden',
+  padding: theme.spacing(0, 0.5),
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '0.92rem',
+  },
+}));
+
 /** Sometimes an autocomplete match can be a simple string, other times an object
     with a `match` property, this function abstracts that away */
 const getMatch = (option) => (isObject(option) ? option.match : option);
@@ -26,7 +48,7 @@ const getMatch = (option) => (isObject(option) ? option.match : option);
 /** */
 export function SearchPanelControls({
   autocompleteService = undefined, companionWindowId, fetchSearch, query = '',
-  searchIsFetching = false, searchService, windowId,
+  searchIsFetching = false, searchService, windowId, showUnavailableMessage = false,
 }) {
   const { t } = useTranslation();
   const [input, setInput] = useState(query);
@@ -40,10 +62,19 @@ export function SearchPanelControls({
   }, [query]);
 
   useEffect(() => {
-    if (search && search !== '' && searchService) {
-      fetchSearch(windowId, companionWindowId, `${searchService.id}?${new URLSearchParams({ q: search })}`, search);
+    // Avoid firing a duplicate search when the query prop seeds local state
+    // (e.g., from defaultSearchQuery/contentSearch). Only fetch when the
+    // local search differs from the current query in state, or when a user
+    // explicitly enters a new value via the UI.
+    if (search && search !== '' && searchService && search !== query) {
+      fetchSearch(
+        windowId,
+        companionWindowId,
+        `${searchService.id}?${new URLSearchParams({ q: search })}`,
+        search,
+      );
     }
-  }, [search, searchService, companionWindowId, fetchSearch, windowId]);
+  }, [search, query, searchService, companionWindowId, fetchSearch, windowId]);
 
   /** */
   const handleChange = (event, value, reason) => {
@@ -94,6 +125,20 @@ export function SearchPanelControls({
   };
 
   const id = `search-${companionWindowId}`;
+
+  if (showUnavailableMessage) {
+    return (
+      <StyledForm
+        aria-label={t('searchTitle')}
+        onSubmit={event => event.preventDefault()}
+      >
+        <UnavailableNote component="div" variant="h6" noWrap aria-label={t('searchUnavailable')}>
+          {t('searchUnavailable')}
+        </UnavailableNote>
+      </StyledForm>
+    );
+  }
+
   return (
     <>
       <StyledForm
@@ -114,17 +159,30 @@ export function SearchPanelControls({
           onInputChange={handleChange}
           freeSolo
           disableClearable
+          sx={{ width: '100%' }}
           renderInput={params => (
             <TextField
               {...params}
               label={t('searchInputLabel')}
               variant="standard"
+              InputLabelProps={{
+                ...(params.InputLabelProps || {}),
+                sx: {
+                  ...((params.InputLabelProps && params.InputLabelProps.sx) || {}),
+                  fontSize: '14px',
+                  '&.MuiInputLabel-shrink': {
+                    fontSize: '14px',
+                    transform: 'translate(0, 6px) scale(0.85)',
+                    transformOrigin: 'left top',
+                  },
+                },
+              }}
               InputProps={{
                 ...params.InputProps,
                 endAdornment: (
                   <InputAdornment sx={{ position: 'relative' }} position="end">
                     <MiradorMenuButton aria-label={t('searchSubmitAria')} type="submit">
-                      <SearchIcon />
+                      <BiIcon name="search" size={16} />
                     </MiradorMenuButton>
                     {Boolean(searchIsFetching) && (
                     <CircularProgress
@@ -160,6 +218,7 @@ SearchPanelControls.propTypes = {
   searchIsFetching: PropTypes.bool,
   searchService: PropTypes.shape({
     id: PropTypes.string,
-  }).isRequired,
+  }),
+  showUnavailableMessage: PropTypes.bool,
   windowId: PropTypes.string.isRequired,
 };

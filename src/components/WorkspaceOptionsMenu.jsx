@@ -1,7 +1,6 @@
 import { useContext, useId, useState } from 'react';
 import PropTypes from 'prop-types';
-import ImportIcon from '@mui/icons-material/Input';
-import SaveAltIcon from '@mui/icons-material/SaveAltSharp';
+import BiIcon from './BiIcon';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -62,7 +61,7 @@ export function WorkspaceOptionsMenu({
           aria-owns={selectedOption === 'exportWorkspace' ? exportId : undefined}
         >
           <ListItemIcon>
-            <SaveAltIcon />
+            <BiIcon name="download" size={16} />
           </ListItemIcon>
           <Typography variant="body1">{t('downloadExportWorkspace')}</Typography>
         </MenuItem>
@@ -72,7 +71,7 @@ export function WorkspaceOptionsMenu({
           aria-owns={selectedOption === 'importWorkspace' ? importId : undefined}
         >
           <ListItemIcon>
-            <ImportIcon />
+            <BiIcon name="upload" size={16} />
           </ListItemIcon>
           <Typography variant="body1">{t('importWorkspace')}</Typography>
         </MenuItem>

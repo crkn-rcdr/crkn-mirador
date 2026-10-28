@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import MoreHorizontalIcon from '@mui/icons-material/MoreHorizSharp';
+import BiIcon from './BiIcon';
 import { useTranslation } from 'react-i18next';
 import MiradorMenuButton from '../containers/MiradorMenuButton';
 import WorkspaceOptionsMenu from '../containers/WorkspaceOptionsMenu';
@@ -31,7 +31,7 @@ export function WorkspaceOptionsButton() {
         onClick={handleMenuClick}
         selected={open}
       >
-        <MoreHorizontalIcon />
+        <BiIcon name="three-dots" size={18} />
       </MiradorMenuButton>
       <WorkspaceOptionsMenu
         anchorEl={anchorEl}

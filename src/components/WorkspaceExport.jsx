@@ -6,8 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import Typography from '@mui/material/Typography';
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import CloseIcon from '@mui/icons-material/Close';
+import BiIcon from './BiIcon';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -44,7 +43,7 @@ export function WorkspaceExport({
         message={t('exportCopied')}
         action={(
           <IconButton size="small" aria-label={t('dismiss')} color="inherit" onClick={handleClose}>
-            <CloseIcon fontSize="small" />
+            <BiIcon name="x-lg" size={14} />
           </IconButton>
         )}
       />
@@ -68,7 +67,7 @@ export function WorkspaceExport({
       <DialogContent>
         <Accordion slotProps={{ heading: { component: 'h4' } }} elevation={2}>
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
+            expandIcon={<BiIcon name="chevron-down" size={16} />}
           >
             <Typography>{t('viewWorkspaceConfiguration')}</Typography>
           </AccordionSummary>

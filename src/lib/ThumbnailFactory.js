@@ -38,6 +38,8 @@ function iiifv3ImageServiceType(service) {
 
 /** */
 function iiifImageService(resource) {
+  if (!resource || typeof resource.getServices !== 'function') return undefined;
+
   const service = resource
     && resource.getServices().find(s => (
       iiifv3ImageServiceType(s) || Utils.isImageProfile(s.getProfile())
@@ -46,6 +48,32 @@ function iiifImageService(resource) {
   if (!(service)) return undefined;
 
   return service;
+}
+
+/** */
+function hasSpatialDimensions(resource) {
+  if (!resource || typeof resource === 'string') return false;
+
+  const width = typeof resource.getWidth === 'function'
+    ? resource.getWidth()
+    : resource.getProperty && resource.getProperty('width');
+  const height = typeof resource.getHeight === 'function'
+    ? resource.getHeight()
+    : resource.getProperty && resource.getProperty('height');
+
+  return Number(width) > 0 && Number(height) > 0;
+}
+
+/** */
+function fullSizeKeyword(service) {
+  const type = asArray(service.getProperty('type') || service.getProperty('@type'));
+  if (type.some(v => `${v}`.includes('ImageService3'))) return 'max';
+
+  const profile = service.getProfile && service.getProfile();
+  if (typeof profile === 'string' && profile.startsWith('http://iiif.io/api/image/3')) return 'max';
+  if (profile === 'level0' || profile === 'level1' || profile === 'level2') return 'max';
+
+  return 'full';
 }
 
 /** */
@@ -126,7 +154,11 @@ class ThumbnailFactory {
     const minDimension = 120;
     let maxHeight = minDimension;
     let maxWidth = minDimension;
-    const { maxHeight: requestedMaxHeight, maxWidth: requestedMaxWidth } = this.iiifOpts;
+    const {
+      maxHeight: requestedMaxHeight,
+      maxWidth: requestedMaxWidth,
+      preferFullRes = false,
+    } = this.iiifOpts;
 
     if (requestedMaxHeight) maxHeight = Math.max(requestedMaxHeight, minDimension);
     if (requestedMaxWidth) maxWidth = Math.max(requestedMaxWidth, minDimension);
@@ -138,51 +170,59 @@ class ThumbnailFactory {
     const aspectRatio = resource.getWidth()
       && resource.getHeight()
       && (resource.getWidth() / resource.getHeight());
-    const target = (requestedMaxWidth && requestedMaxHeight)
-      ? requestedMaxWidth * requestedMaxHeight
-      : maxHeight * maxWidth;
-    const closestSize = ThumbnailFactory.selectBestImageSize(service, target);
+    if (preferFullRes) {
+      size = fullSizeKeyword(service);
+      const resourceWidth = resource.getWidth && resource.getWidth();
+      const resourceHeight = resource.getHeight && resource.getHeight();
+      width = Number(resourceWidth) > 0 ? resourceWidth : service.getProperty('width');
+      height = Number(resourceHeight) > 0 ? resourceHeight : service.getProperty('height');
+    } else {
+      const target = (requestedMaxWidth && requestedMaxHeight)
+        ? requestedMaxWidth * requestedMaxHeight
+        : maxHeight * maxWidth;
+      const closestSize = ThumbnailFactory.selectBestImageSize(service, target);
 
-    if (closestSize) {
-      // Embedded service advertises an appropriate size
-      width = closestSize.width;
-      height = closestSize.height;
-      size = `${width},${height}`;
-    } else if (isLevel0ImageProfile(service)) {
-      /** Bail if the best available size is the full size.. maybe we'll get lucky with the @id */
-      if (!service.getProperty('height') && !service.getProperty('width')) {
-        return ThumbnailFactory.staticImageUrl(resource);
-      }
-    } else if (requestedMaxHeight && requestedMaxWidth) {
-      // IIIF level 2, no problem.
-      if (isLevel2ImageProfile(service)) {
-        size = `!${maxWidth},${maxHeight}`;
-        width = maxWidth;
+      if (closestSize) {
+        // Embedded service advertises an appropriate size
+        width = closestSize.width;
+        height = closestSize.height;
+        size = `${width},${height}`;
+      } else if (isLevel0ImageProfile(service)) {
+        /** Bail if the best available size is the full size.. maybe we'll get lucky with the @id */
+        if (!service.getProperty('height') && !service.getProperty('width')) {
+          return ThumbnailFactory.staticImageUrl(resource);
+        }
+      } else if (requestedMaxHeight && requestedMaxWidth) {
+        // IIIF level 2, no problem.
+        if (isLevel2ImageProfile(service)) {
+          size = `!${maxWidth},${maxHeight}`;
+          width = maxWidth;
+          height = maxHeight;
+
+          if (aspectRatio && aspectRatio > 1) height = Math.round(maxWidth / aspectRatio);
+          if (aspectRatio && aspectRatio < 1) width = Math.round(maxHeight * aspectRatio);
+        } else if ((maxWidth / maxHeight) < aspectRatio) {
+          size = `${maxWidth},`;
+          width = maxWidth;
+          if (aspectRatio) height = Math.round(maxWidth / aspectRatio);
+        } else {
+          size = `,${maxHeight}`;
+          height = maxHeight;
+          if (aspectRatio) width = Math.round(maxHeight * aspectRatio);
+        }
+      } else if (requestedMaxHeight && !requestedMaxWidth) {
+        size = `,${maxHeight}`;
         height = maxHeight;
-
-        if (aspectRatio && aspectRatio > 1) height = Math.round(maxWidth / aspectRatio);
-        if (aspectRatio && aspectRatio < 1) width = Math.round(maxHeight * aspectRatio);
-      } else if ((maxWidth / maxHeight) < aspectRatio) {
+        if (aspectRatio) width = Math.round(maxHeight * aspectRatio);
+      } else if (!requestedMaxHeight && requestedMaxWidth) {
         size = `${maxWidth},`;
         width = maxWidth;
         if (aspectRatio) height = Math.round(maxWidth / aspectRatio);
       } else {
-        size = `,${maxHeight}`;
-        height = maxHeight;
-        if (aspectRatio) width = Math.round(maxHeight * aspectRatio);
+        size = `,${minDimension}`;
+        height = minDimension;
+        if (aspectRatio) width = Math.round(height * aspectRatio);
       }
-    } else if (requestedMaxHeight && !requestedMaxWidth) {
-      size = `,${maxHeight}`;
-      height = maxHeight;
-      if (aspectRatio) width = Math.round(maxHeight * aspectRatio);
-    } else if (!requestedMaxHeight && requestedMaxWidth) {
-      size = `${maxWidth},`;
-      width = maxWidth;
-      if (aspectRatio) height = Math.round(maxWidth / aspectRatio);
-    } else {
-      size = `,${minDimension}`;
-      height = minDimension;
-      if (aspectRatio) width = Math.round(height * aspectRatio);
     }
 
     const region = 'full';
@@ -245,6 +285,14 @@ class ThumbnailFactory {
     if (thumbnail) {
       if (typeof thumbnail.__jsonld === 'string') return thumbnail.__jsonld;
 
+      // For canvases, prefer the image service when a non-IIIF thumbnail
+      // has no explicit dimensions (often tiny static thumbs).
+      if (resource.isCanvas() && typeof resource.getImages === 'function'
+        && !iiifImageService(thumbnail) && !hasSpatialDimensions(thumbnail)) {
+        const image = ThumbnailFactory.getPreferredImage(this.getMiradorCanvas(resource));
+        if (image && iiifImageService(image)) return image;
+      }
+
       // Prefer an image's ImageService over its image's thumbnail
       // Note that Collection, Manifest, and Canvas don't have `getType()`
       if (!resource.isCollection() && !resource.isManifest() && !resource.isCanvas()) {
@@ -272,6 +320,7 @@ class ThumbnailFactory {
     }
 
     if (resource.isCanvas()) {
+      if (typeof resource.getImages !== 'function') return undefined;
       const image = ThumbnailFactory.getPreferredImage(this.getMiradorCanvas(resource));
       if (image) return this.getSourceContentResource(image);
 

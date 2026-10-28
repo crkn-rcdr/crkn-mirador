@@ -64,6 +64,14 @@ describe('SearchPanelControls', () => {
 
     expect(screen.getByRole('combobox')).toHaveAttribute('id', 'search-cw');
   });
+
+  it('renders a read-only unavailable message when content search is missing', () => {
+    createWrapper({ searchService: undefined, showUnavailableMessage: true });
+
+    expect(screen.getByRole('textbox', { name: 'search terms' })).toHaveValue('Search is not available');
+    expect(screen.getByRole('button', { name: 'Submit search' })).toBeDisabled();
+  });
+
   it('endAdornment is a SearchIcon (with no CircularProgress indicator)', () => {
     createWrapper();
     expect(screen.getByRole('button').querySelector('svg')).toBeInTheDocument(); // eslint-disable-line testing-library/no-node-access

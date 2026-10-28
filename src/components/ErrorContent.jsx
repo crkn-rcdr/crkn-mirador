@@ -5,7 +5,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import BiIcon from './BiIcon';
 import { useTranslation } from 'react-i18next';
 import { PluginHook } from './PluginHook';
 
@@ -40,7 +40,7 @@ export function ErrorContent({
       {t('errorDialogTitle')}
       {showJsError && (
         <InlineAccordion elevation={2} square>
-          <AccordionSummary sx={{ marginInlineStart: '-1rem' }} expandIcon={<ExpandMoreIcon sx={{ color: '#fff' }} />}>
+          <AccordionSummary sx={{ marginInlineStart: '-1rem' }} expandIcon={<BiIcon name="chevron-down" size={16} style={{ color: '#fff' }} />}>
             {t('jsError', { message: error.message, name: error.name })}
           </AccordionSummary>
           <AccordionDetails>

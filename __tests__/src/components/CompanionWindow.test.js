@@ -140,4 +140,27 @@ describe('CompanionWindow', () => {
     expect(container.querySelector('.react-draggable')).toHaveStyle({ height: '201px', width: 'auto' }); // eslint-disable-line testing-library/no-node-access, testing-library/no-container
     expect(container.querySelector('[style*="cursor: row-resize;"]')).toHaveStyle({ top: '-5px' }); // eslint-disable-line testing-library/no-node-access, testing-library/no-container
   });
+
+  it('disables thumbnail resizing on mobile', () => {
+    const originalMatchMedia = window.matchMedia;
+    window.matchMedia = vi.fn().mockImplementation(query => ({
+      addEventListener: vi.fn(),
+      addListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+      matches: query === '(max-width:600px)',
+      media: query,
+      onchange: null,
+      removeEventListener: vi.fn(),
+      removeListener: vi.fn(),
+    }));
+
+    const { container } = createWrapper({
+      content: 'thumbnailNavigation',
+      position: 'bottom',
+    });
+
+    expect(container.querySelector('[style*="cursor: row-resize;"]')).toBeNull(); // eslint-disable-line testing-library/no-node-access, testing-library/no-container
+
+    window.matchMedia = originalMatchMedia;
+  });
 });

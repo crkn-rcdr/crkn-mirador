@@ -64,6 +64,28 @@ describe('IIIFThumbnail', () => {
     expect(img).toHaveStyle({ height: '60px', width: '50px' });
   });
 
+  it('fills maxWidth and maxHeight bounds even when the image is smaller', () => {
+    const { container } = createWrapper({
+      maxHeight: 120,
+      maxWidth: 100,
+      thumbnail: { height: 12, url, width: 10 },
+    });
+    const img = container.querySelector('img');
+
+    expect(img).toHaveStyle({ height: '120px', width: '100px' });
+  });
+
+  it('fills bounds for unknown image dimensions', () => {
+    const { container } = createWrapper({
+      maxHeight: 120,
+      maxWidth: 100,
+      thumbnail: { url },
+    });
+    const img = container.querySelector('img');
+
+    expect(img).toHaveStyle({ height: '120px', width: '100px', objectFit: 'contain' });
+  });
+
   it('constrains what it can when the image dimensions are unknown', () => {
     const { container } = createWrapper({ maxHeight: 90, thumbnail: { height: 120, url } });
     const img = container.querySelector('img');

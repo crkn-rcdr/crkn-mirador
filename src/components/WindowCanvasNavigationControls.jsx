@@ -24,13 +24,16 @@ const Root = styled(Paper, { name: 'WindowCanvasNavigationControls', slot: 'root
   flexWrap: 'wrap',
   justifyContent: 'flex-start',
   position: 'absolute',
+  pointerEvents: 'auto',
   textAlign: 'left',
+  touchAction: 'manipulation',
   width: '100%',
-  height: '54px',
-  paddingLeft: '1rem',
+  height: '52px',
+  padding: '6px',
   border: `none`,
-  borderRadius: "7px",
-  boxShadow: "0px 10px 15px -3px rgba(0,0,0,0.1)"
+  borderRadius: "3px",
+  boxShadow: "none",
+  zIndex: 100000002,
 }));
 
 /**

@@ -1,89 +1,132 @@
 import { styled } from '@mui/material/styles';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
-import ListSubheader from '@mui/material/ListSubheader';
-import SingleIcon from '@mui/icons-material/CropOriginalSharp';
-import ScrollViewIcon from '@mui/icons-material/ViewColumn';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import BiIcon from './BiIcon';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
-import BookViewIcon from './icons/BookViewIcon';
-import GalleryViewIcon from './icons/GalleryViewIcon';
 
-const ViewOption = styled(MenuItem, { name: 'WindowViewSettings', slot: 'option' })(({ selected, theme }) => ({
-  '& .MuiFormControlLabel-label': {
-    borderBottom: '2px solid transparent',
-    ...(selected && {
-      borderBottomColor: theme.palette.secondary.main,
-    }),
-    '&.Mui-selected': {
-      backgroundColor: 'transparent !important',
-    },
-    '&.Mui-selected.Mui-focusVisible': {
-      backgroundColor: `${(theme.vars || theme).palette.action.focus} !important`,
-    },
-    '&:focused': {
-      backgroundColor: `${(theme.vars || theme).palette.action.focus} !important`,
-    },
-    color: selected ? theme.palette.secondary.main : undefined,
+const StyledToggleGroup = styled(ToggleButtonGroup, { name: 'WindowViewSettings', slot: 'option' })(({ theme }) => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: theme.spacing(1.35),
+  backgroundColor: 'transparent',
+  color: theme.palette.text.primary,
+  border: 'none',
+  borderRadius: 0,
+  marginTop: 0,
+  marginRight: theme.spacing(0.6),
+  padding: 0,
+  '& .MuiToggleButton-root': {
+    margin: 0,
+    minWidth: 0,
+    height: 40,
+    padding: 0,
+    lineHeight: 1.1,
+    border: 'none',
+    borderRadius: 0,
+    borderBottom: '1px solid transparent',
+    transition: 'color 120ms ease, border-color 120ms ease, transform 60ms ease',
+    color: theme.palette.text.secondary,
+    display: 'inline-flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: theme.spacing(0.55),
+    whiteSpace: 'nowrap',
+  },
+  '& .MuiToggleButton-root:hover': {
+    backgroundColor: 'transparent',
+    color: theme.palette.primary.main,
+  },
+  '& .MuiToggleButton-root:active': {
+    transform: 'scale(0.98)',
+  },
+  '& .MuiToggleButton-root .bi': {
+    fontSize: '1.2rem',
+    lineHeight: 1,
     display: 'inline-block',
   },
-}));
-
-const StyledMenuList = styled(MenuList, { name: 'WindowViewSettings', slot: 'option' })(() => ({
-  display: 'inline-flex',
+  '& .MuiToggleButton-root .view-label': {
+    fontSize: '1rem',
+    lineHeight: 1.1,
+    fontWeight: 400,
+    color: theme.palette.text.secondary,
+    letterSpacing: 0,
+    textTransform: 'none',
+  },
+  '& .MuiToggleButton-root.Mui-selected': {
+    color: theme.palette.primary.main,
+    backgroundColor: 'transparent',
+    borderBottomColor: theme.palette.primary.main,
+    boxShadow: 'none',
+  },
+  '& .MuiToggleButton-root.Mui-selected .view-label': {
+    color: theme.palette.primary.main,
+    fontWeight: 500,
+  },
+  '& .MuiToggleButton-root.Mui-selected:hover': {
+    backgroundColor: 'transparent',
+  },
 }));
 
 /**
  *
  */
 export function WindowViewSettings({
-  handleClose = () => {}, windowViewType, viewTypes = [], setWindowViewType, windowId,
+  handleClose = () => {},
+  windowViewType,
+  viewTypes = [],
+  setWindowViewType,
+  windowId,
+  disabled = false,
 }) {
   const { t } = useTranslation();
-  /** */
+  const deepZoomViewTypes = (viewTypes || []).filter(value => value !== 'gallery');
+  const selectedDeepZoomView = deepZoomViewTypes.includes(windowViewType)
+    ? windowViewType
+    : deepZoomViewTypes[0];
+
   const handleChange = (value) => {
+    if (disabled) return;
+    if (!value || value === selectedDeepZoomView) return;
     setWindowViewType(windowId, value);
+    handleClose();
   };
 
   const iconMap = {
-    book: BookViewIcon,
-    scroll: ScrollViewIcon,
-    single: SingleIcon,
+    book: 'book',
+    scroll: 'columns',
+    single: 'app',
   };
 
-  /** Suspiciously similar to a component, yet if it is invoked through JSX
-      none of the click handlers work? 
-              label={t(value)}*/
-  const menuItem = ({ value, Icon }) => (
-    <ViewOption
-      aria-checked={windowViewType === value}
-      autoFocus={windowViewType === value}
-      key={value}
-      onClick={() => { handleChange(value); handleClose(); }}
-      role="menuitemradio"
-      selected={windowViewType === value}
-    >
-      <FormControlLabel
-        value={value}
-        control={<Icon fill="currentcolor" color={windowViewType === value ? 'secondary' : undefined} />}
-        labelPlacement="bottom"
-      />
-    </ViewOption>
-  );
-
-  if (viewTypes.length === 0) return null;
+  // Only show when there are multiple view options available
+  if (!Array.isArray(deepZoomViewTypes) || deepZoomViewTypes.length <= 1) return null;
   return (
-    <>
-      <StyledMenuList role="menubar">
-        { viewTypes.map(value => menuItem({ Icon: iconMap[value], value })) }
-      </StyledMenuList>
-    </>
+    <StyledToggleGroup
+      exclusive
+      size="small"
+      value={selectedDeepZoomView}
+      onChange={(event, value) => handleChange(value)}
+      aria-label={t('windowViewMode')}
+    >
+      {deepZoomViewTypes.map(value => (
+        <ToggleButton
+          key={value}
+          value={value}
+          disabled={disabled}
+          aria-label={t(value)}
+        >
+          <BiIcon name={iconMap[value] || 'app'} size={16} />
+          <span className="view-label">{t(value)}</span>
+        </ToggleButton>
+      ))}
+    </StyledToggleGroup>
   );
 }
 
 WindowViewSettings.propTypes = {
   handleClose: PropTypes.func,
+  disabled: PropTypes.bool,
   setWindowViewType: PropTypes.func.isRequired,
   viewTypes: PropTypes.arrayOf(PropTypes.string),
   windowId: PropTypes.string.isRequired,
