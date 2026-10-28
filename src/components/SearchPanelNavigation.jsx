@@ -6,23 +6,56 @@ import BiIcon from './BiIcon';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 import MiradorMenuButton from '../containers/MiradorMenuButton';
+import { OSDReferences } from '../plugins/OSDReferences';
+import { normalizeCanvasId, normalizeAnnotationId } from '../state/selectors/utils';
 
 const TOPBAR_FONT_STACK = '"Roboto", "Helvetica Neue", Arial, sans-serif';
 
 /** Helper to parse canvasId from annotation target */
-function getCanvasIdFromAnnotation(annotation, searchAnnotations = []) {
-  // Accept either a resource object with targetId or an annotation id string
-  if (annotation && typeof annotation === 'object' && annotation.targetId) {
-    const [canvasId] = annotation.targetId.split('#');
-    return canvasId;
+function getCanvasIdFromAnnotation(annotation, searchAnnotations = [], canvases = []) {
+  if (!annotation) return null;
+  // If annotation is an object with target properties
+  if (typeof annotation === 'object') {
+    if (annotation.targetId) return String(annotation.targetId).split('#')[0];
+    if (annotation.target) return String(annotation.target).split('#')[0];
+    if (Array.isArray(annotation.on) && annotation.on[0]) return String(annotation.on[0]).split('#')[0];
+    if (typeof annotation.on === 'string') return annotation.on.split('#')[0];
   }
-  if (typeof annotation === 'string') {
-    const res = (searchAnnotations || []).find(r => (r.id === annotation) || (r['@id'] === annotation));
-    if (res && res.targetId) {
-      const [canvasId] = res.targetId.split('#');
-      return canvasId;
-    }
+  const annoId = typeof annotation === 'object' ? (annotation.id || annotation['@id']) : String(annotation);
+  if (!annoId) return null;
+
+  const annoList = Array.isArray(searchAnnotations)
+    ? searchAnnotations
+    : (searchAnnotations?.resources || []);
+
+  const norm = (s) => normalizeAnnotationId(s);
+  const normBase = (s) => norm(s).split('#')[0];
+
+  const res = annoList.find(r => {
+    if (!r) return false;
+    const rId = r.id || r['@id'];
+    if (!rId) return false;
+    return norm(rId) === norm(annoId) || normBase(rId) === normBase(annoId);
+  });
+
+  if (res) {
+    if (res.targetId) return String(res.targetId).split('#')[0];
+    if (res.target) return String(res.target).split('#')[0];
+    if (Array.isArray(res.on) && res.on[0]) return String(res.on[0]).split('#')[0];
+    if (typeof res.on === 'string') return String(res.on).split('#')[0];
+    if (res.resource && typeof res.resource.on === 'string') return String(res.resource.on).split('#')[0];
   }
+
+  // Fallback: check if the annoId itself matches or contains a canvas URI
+  const cand = normalizeCanvasId(annoId);
+  if (canvases && canvases.length > 0) {
+    const matchedCanvas = canvases.find(c => {
+      const cNorm = normalizeCanvasId(c.id || c['@id']);
+      return cNorm === cand || cand.includes(cNorm);
+    });
+    if (matchedCanvas) return matchedCanvas.id || matchedCanvas['@id'];
+  }
+
   return null;
 }
 
@@ -71,12 +104,15 @@ export function SearchPanelNavigation({
   selectedContentSearchAnnotation = [],
   direction,
   selectAnnotation,
+  setContentSearchCurrentAnnotation,
   setCurrentCanvas,
+  focusOnCanvas,
   fetchSearch,
   windowId,
   companionWindowId,
   viewer,
   canvases = [],
+  currentCanvas,
   nextSearch,
   query,
   viewType,
@@ -85,29 +121,72 @@ export function SearchPanelNavigation({
 }) {
   const { t } = useTranslation();
 
-  // Defensive: find current hit index
-  const currentHitIndex = selectedContentSearchAnnotation.length > 0
-    ? searchHits.findIndex(val =>
-        val.annotations.includes(selectedContentSearchAnnotation[0])
-      )
+  // Find current hit index matching selectedContentSearchAnnotation
+  const currentHitIndex = (selectedContentSearchAnnotation && selectedContentSearchAnnotation.length > 0)
+    ? searchHits.findIndex(val => {
+        const selectedId = selectedContentSearchAnnotation[0];
+        if (!selectedId) return false;
+        const hitAnnos = Array.isArray(val.annotations) ? val.annotations : [val.annotation || val.id].filter(Boolean);
+        return hitAnnos.some(a => {
+          const aId = typeof a === 'object' ? (a.id || a['@id']) : a;
+          return normalizeAnnotationId(aId) === normalizeAnnotationId(selectedId);
+        });
+      })
     : -1;
 
-  // If no current hit, default to first
-  const safeHitIndex = currentHitIndex >= 0 ? currentHitIndex : 0;
+  const [activeHitIndex, setActiveHitIndex] = useState(0);
+  const navigatingRef = useRef(false);
+
+  useEffect(() => {
+    // Only sync from Redux when the user hasn't just explicitly navigated
+    if (currentHitIndex >= 0 && !navigatingRef.current) {
+      setActiveHitIndex(currentHitIndex);
+    }
+  }, [currentHitIndex]);
+
+  const safeHitIndex = navigatingRef.current
+    ? Math.min(activeHitIndex, Math.max(0, searchHits.length - 1))
+    : (currentHitIndex >= 0
+      ? currentHitIndex
+      : Math.min(activeHitIndex, Math.max(0, searchHits.length - 1)));
 
   const prevLoadedCountRef = useRef(searchHits.length);
+  const lastQueryRef = useRef(query);
   const [pendingNext, setPendingNext] = useState(false);
 
   useEffect(() => {
+    if (lastQueryRef.current !== query) {
+      lastQueryRef.current = query;
+      prevLoadedCountRef.current = 0;
+      setActiveHitIndex(0);
+    }
+
     // Auto-select first hit on initial load unless explicitly skipped
     if (!pendingNext && prevLoadedCountRef.current === 0 && searchHits.length > 0) {
       prevLoadedCountRef.current = searchHits.length;
       if (skipInitialSelect) return; // do not jump on config-seeded queries
-      const firstAnno = searchHits[0]?.annotations?.[0];
-      if (firstAnno) {
-        selectAnnotation(firstAnno);
-        const canvasId = getCanvasIdFromAnnotation(firstAnno, searchAnnotations);
-        if (canvasId) setCurrentCanvas(windowId, canvasId);
+      const firstHit = searchHits[0];
+      const rawAnno = Array.isArray(firstHit?.annotations) ? firstHit.annotations[0] : firstHit?.annotation;
+      const firstAnnoId = typeof rawAnno === 'object' ? (rawAnno.id || rawAnno['@id']) : rawAnno;
+      if (firstAnnoId) {
+        setActiveHitIndex(0);
+        selectAnnotation(firstAnnoId);
+        if (typeof setContentSearchCurrentAnnotation === 'function') {
+          setContentSearchCurrentAnnotation([firstAnnoId]);
+        }
+        const canvasId = getCanvasIdFromAnnotation(firstAnnoId, searchAnnotations, canvases);
+        if (canvasId) {
+          const normTarget = normalizeCanvasId(canvasId);
+          const targetCanvas = (canvases || []).find(c => normalizeCanvasId(c.id || c['@id'] || c.canvas?.id) === normTarget);
+          const targetCanvasId = targetCanvas ? (targetCanvas.id || targetCanvas['@id']) : canvasId;
+          const currentCanvasId = currentCanvas ? (currentCanvas.id || currentCanvas['@id']) : '';
+          const normCurrentCanvas = normalizeCanvasId(currentCanvasId);
+
+          if (normTarget && normCurrentCanvas && normTarget !== normCurrentCanvas) {
+            if (typeof focusOnCanvas === 'function') focusOnCanvas(targetCanvasId);
+            else if (typeof setCurrentCanvas === 'function') setCurrentCanvas(windowId, targetCanvasId);
+          }
+        }
       }
       return;
     }
@@ -115,18 +194,35 @@ export function SearchPanelNavigation({
     if (pendingNext && searchHits.length > prevLoadedCountRef.current) {
       // select first new hit
       const newIndex = prevLoadedCountRef.current; // first of newly fetched page
-      const annotation = searchHits[newIndex]?.annotations?.[0];
-      if (annotation) {
-        selectAnnotation(annotation);
-        const canvasId = getCanvasIdFromAnnotation(annotation, searchAnnotations);
-        if (canvasId) setCurrentCanvas(windowId, canvasId);
+      const newHit = searchHits[newIndex];
+      const rawAnno = Array.isArray(newHit?.annotations) ? newHit.annotations[0] : newHit?.annotation;
+      const annotationId = typeof rawAnno === 'object' ? (rawAnno.id || rawAnno['@id']) : rawAnno;
+      if (annotationId) {
+        setActiveHitIndex(newIndex);
+        selectAnnotation(annotationId);
+        if (typeof setContentSearchCurrentAnnotation === 'function') {
+          setContentSearchCurrentAnnotation([annotationId]);
+        }
+        const canvasId = getCanvasIdFromAnnotation(annotationId, searchAnnotations, canvases);
+        if (canvasId) {
+          const normTarget = normalizeCanvasId(canvasId);
+          const targetCanvas = (canvases || []).find(c => normalizeCanvasId(c.id || c['@id'] || c.canvas?.id) === normTarget);
+          const targetCanvasId = targetCanvas ? (targetCanvas.id || targetCanvas['@id']) : canvasId;
+          const currentCanvasId = currentCanvas ? (currentCanvas.id || currentCanvas['@id']) : '';
+          const normCurrentCanvas = normalizeCanvasId(currentCanvasId);
+
+          if (normTarget && normCurrentCanvas && normTarget !== normCurrentCanvas) {
+            if (typeof focusOnCanvas === 'function') focusOnCanvas(targetCanvasId);
+            else if (typeof setCurrentCanvas === 'function') setCurrentCanvas(windowId, targetCanvasId);
+          }
+        }
       }
       setPendingNext(false);
       prevLoadedCountRef.current = searchHits.length;
     } else if (!pendingNext) {
       prevLoadedCountRef.current = searchHits.length;
     }
-  }, [searchHits, pendingNext, searchAnnotations, selectAnnotation, setCurrentCanvas, windowId, skipInitialSelect]);
+  }, [searchHits, pendingNext, searchAnnotations, canvases, selectAnnotation, setContentSearchCurrentAnnotation, setCurrentCanvas, focusOnCanvas, windowId, skipInitialSelect, query, currentCanvas]);
 
   const goToSearchResult = (hitIndex) => {
     if (hitIndex < 0) return;
@@ -137,15 +233,43 @@ export function SearchPanelNavigation({
       }
       return;
     }
-    const annotation = searchHits[hitIndex].annotations[0];
-    selectAnnotation(annotation);
+    const hit = searchHits[hitIndex];
+    if (!hit) return;
+    const rawAnno = Array.isArray(hit.annotations) ? hit.annotations[0] : hit.annotation;
+    const annotationId = typeof rawAnno === 'object' ? (rawAnno.id || rawAnno['@id']) : rawAnno;
+    if (!annotationId) return;
 
-    const canvasId = getCanvasIdFromAnnotation(annotation, searchAnnotations);
+    // Mark that the user is explicitly navigating — prevents the useEffect
+    // from resetting activeHitIndex back to the stale currentHitIndex
+    navigatingRef.current = true;
+    setActiveHitIndex(hitIndex);
+    selectAnnotation(annotationId);
+    if (typeof setContentSearchCurrentAnnotation === 'function') {
+      setContentSearchCurrentAnnotation([annotationId]);
+    }
+
+    // Allow Redux state to settle, then re-enable sync from currentHitIndex
+    Promise.resolve().then(() => {
+      setTimeout(() => { navigatingRef.current = false; }, 100);
+    });
+
+    const canvasId = getCanvasIdFromAnnotation(annotationId, searchAnnotations, canvases);
     if (canvasId) {
-      // Update Redux
-      setCurrentCanvas(windowId, canvasId);
+      const normTarget = normalizeCanvasId(canvasId);
+      const targetCanvas = (canvases || []).find(c => normalizeCanvasId(c.id || c['@id'] || c.canvas?.id) === normTarget);
+      const targetCanvasId = targetCanvas ? (targetCanvas.id || targetCanvas['@id']) : canvasId;
 
-      // Let OSD react to canvas change; avoid duplicate goToPage calls
+      const currentCanvasId = currentCanvas ? (currentCanvas.id || currentCanvas['@id']) : '';
+      const normCurrentCanvas = normalizeCanvasId(currentCanvasId);
+
+      // Only switch canvas if moving to a different canvas
+      if (normTarget && normCurrentCanvas && normTarget !== normCurrentCanvas) {
+        if (typeof focusOnCanvas === 'function') {
+          focusOnCanvas(targetCanvasId);
+        } else if (typeof setCurrentCanvas === 'function') {
+          setCurrentCanvas(windowId, targetCanvasId);
+        }
+      }
     }
   };
 
@@ -189,13 +313,16 @@ SearchPanelNavigation.propTypes = {
   searchHits: PropTypes.arrayOf(PropTypes.object),
   searchAnnotations: PropTypes.arrayOf(PropTypes.object),
   selectAnnotation: PropTypes.func.isRequired,
+  setContentSearchCurrentAnnotation: PropTypes.func,
   setCurrentCanvas: PropTypes.func.isRequired,
+  focusOnCanvas: PropTypes.func,
   fetchSearch: PropTypes.func,
   selectedContentSearchAnnotation: PropTypes.arrayOf(PropTypes.string),
   windowId: PropTypes.string.isRequired,
   companionWindowId: PropTypes.string,
   viewer: PropTypes.object,
   canvases: PropTypes.arrayOf(PropTypes.object),
+  currentCanvas: PropTypes.object,
   nextSearch: PropTypes.string,
   query: PropTypes.string,
   viewType: PropTypes.string,

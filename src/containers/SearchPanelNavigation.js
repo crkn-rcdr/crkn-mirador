@@ -14,7 +14,10 @@ import {
   getWindowViewType,
   getManifestSearchService,
   getWindow,
+  getCanvases,
+  getCurrentCanvas,
 } from '../state/selectors';
+import { OSDReferences } from '../plugins/OSDReferences';
 
 /**
  * mapStateToProps - used to hook up connect to state
@@ -42,6 +45,9 @@ const mapStateToProps = (state, { companionWindowId, windowId }) => {
     nextSearch: getNextSearchId(state, { companionWindowId, windowId }),
     query: getSearchQuery(state, { companionWindowId, windowId }) || '',
     viewType: getWindowViewType(state, { windowId }),
+    canvases: getCanvases(state, { windowId }),
+    currentCanvas: getCurrentCanvas(state, { windowId }),
+    viewer: OSDReferences.get(windowId),
     isV2,
     // If this is the topbar search and its current query matches
     // the configured topBarSearchQuery from settings, skip auto-selecting
@@ -63,14 +69,21 @@ const mapStateToProps = (state, { companionWindowId, windowId }) => {
  * @memberof SearchPanelNavigation
  * @private
  */
-const mapDispatchToProps = (dispatch, { windowId }) => ({
+const mapDispatchToProps = (dispatch, { companionWindowId, windowId }) => ({
   selectAnnotation: (...args) => dispatch(
     actions.selectAnnotation(windowId, ...args),
+  ),
+  setContentSearchCurrentAnnotation: (annotationIds) => dispatch(
+    actions.setContentSearchCurrentAnnotation(windowId, companionWindowId, annotationIds),
   ),
   // Map to setCanvas (setCurrentCanvas is not defined in actions)
   setCurrentCanvas: (windowId2, canvasId) => dispatch(
     actions.setCanvas(windowId2, canvasId),
-  ), 
+  ),
+  focusOnCanvas: (canvasId) => {
+    dispatch(actions.setWindowViewType(windowId, 'single'));
+    dispatch(actions.setCanvas(windowId, canvasId));
+  },
   fetchSearch: (...args) => dispatch(actions.fetchSearch(...args)),
 });
 

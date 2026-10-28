@@ -1,6 +1,7 @@
 import omit from 'lodash/omit';
 import flatten from 'lodash/flatten';
 import ActionTypes from '../actions/action-types';
+import { normalizeAnnotationId } from '../selectors/utils';
 
 /**
  * searchReducer
@@ -107,15 +108,33 @@ export const searchesReducer = (state = {}, action) => {
         ...state,
         [action.windowId]: Object.keys(state[action.windowId]).reduce((object, key) => {
           const search = state[action.windowId][key];
+          const norm = (s) => normalizeAnnotationId(s);
+          const normBase = (s) => norm(s).split('#')[0];
+          const targetId = action.annotationId;
+
+          const matchAnno = (r) => {
+            if (!r) return false;
+            const rid = r['@id'] || r.id;
+            if (!rid) return false;
+            return norm(rid) === norm(targetId) || normBase(rid) === normBase(targetId);
+          };
+
           const searchHasAnnotation = search.data && Object.values(search.data).some(resp => {
             if (!resp.json) return false;
             // v2 (old) shape with `resources`
             if (resp.json.resources) {
-              return flatten([resp.json.resources]).some(r => r['@id'] === action.annotationId || r.id === action.annotationId);
+              return flatten([resp.json.resources]).some(matchAnno);
             }
             // Content Search API v2 (AnnotationPage with `items`)
             if (Array.isArray(resp.json.items)) {
-              return resp.json.items.some(item => (item['@id'] === action.annotationId) || (item.id === action.annotationId));
+              return resp.json.items.some(matchAnno);
+            }
+            // hits fallback
+            if (Array.isArray(resp.json.hits)) {
+              return resp.json.hits.some(hit => (hit.annotations || []).some(a => {
+                const aId = typeof a === 'object' ? (a.id || a['@id']) : a;
+                return norm(aId) === norm(targetId) || normBase(aId) === normBase(targetId);
+              }));
             }
             return false;
           });

@@ -26,10 +26,11 @@ const navButtonSx = {
 
 const canvasIndexSelectSx = {
   display: 'inline-block',
-  flex: '0 0 100px',
+  flex: '0 0 140px',
   height: 40,
   marginRight: '1rem',
-  width: 100,
+  width: 140,
+  minWidth: 140,
   '& .MuiAutocomplete-endAdornment': {
     top: '50%',
     transform: 'translateY(-50%)',
@@ -66,6 +67,9 @@ const canvasIndexSelectSx = {
   },
   '@media (pointer: coarse)': {
     height: 44,
+    flex: '0 0 140px',
+    width: 140,
+    minWidth: 140,
     '& .MuiFormControl-root': {
       height: 44,
     },
@@ -155,6 +159,35 @@ export function ViewerNavigation({
         slotProps={{
           popper: {
             style: { zIndex: 100000003 },
+          },
+          paper: {
+            elevation: 8,
+            sx: {
+              backgroundColor: '#f8f9fa',
+              border: '1px solid #767676',
+              borderRadius: '4px',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.25)',
+              '& .MuiAutocomplete-listbox': {
+                padding: '4px 0',
+                maxHeight: '260px',
+                '& .MuiAutocomplete-option': {
+                  color: '#212529',
+                  fontWeight: 500,
+                  fontSize: '0.9rem',
+                  '&[aria-selected="true"]': {
+                    backgroundColor: '#e2e6ea',
+                    color: '#000',
+                    fontWeight: 700,
+                  },
+                  '&.Mui-focused': {
+                    backgroundColor: '#e9ecef',
+                  },
+                  '&:hover': {
+                    backgroundColor: '#dee2e6',
+                  },
+                },
+              },
+            },
           },
         }}
         sx={canvasIndexSelectSx}

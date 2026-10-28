@@ -13,6 +13,7 @@ import CanvasWorld from '../lib/CanvasWorld';
 import { PluginHook } from './PluginHook';
 import { OSDReferences } from '../plugins/OSDReferences';
 import { getCanvasIndex } from '../state/selectors';
+import { normalizeCanvasId, normalizeAnnotationId } from '../state/selectors/utils';
 
 const DEFAULT_OSD_CONFIG = {};
 const TRANSPARENT_NAV_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
@@ -171,6 +172,7 @@ export function OpenSeadragonViewer({
   deselectAnnotation,
   hoverAnnotation,
   selectedAnnotationId,
+  setCanvas,
   palette,
   highlightAllAnnotations,
   ...rest
@@ -356,7 +358,22 @@ export function OpenSeadragonViewer({
       });
     });
 
+    const containerEl = containerRef.current;
+    if (containerEl) {
+      containerEl.setAttribute('data-lenis-prevent', '');
+    }
+    const handleWheel = (e) => {
+      // Prevent browser / Lenis from scrolling the page when zooming with the scroll wheel
+      e.preventDefault();
+    };
+    if (containerEl) {
+      containerEl.addEventListener('wheel', handleWheel, { passive: false });
+    }
+
     return () => {
+      if (containerEl) {
+        containerEl.removeEventListener('wheel', handleWheel);
+      }
       cleanupTouchControls();
       viewer.destroy();
       viewerRef.current = null;
@@ -457,26 +474,45 @@ export function OpenSeadragonViewer({
     // Avoid reapplying zoom for the same selection if user pans/zooms
     if (lastZoomedAnnoRef.current === selectedAnnotationId) return;
 
-    // find annotation resource
-    const res = (searchAnnotations || []).find(r => (
-      r && (r.id === selectedAnnotationId || r['@id'] === selectedAnnotationId)
-    ));
+    // Find annotation resource
+    const norm = (s) => normalizeAnnotationId(s);
+    const normBase = (s) => norm(s).split('#')[0];
+
+    const res = (searchAnnotations || []).find(r => {
+      if (!r) return false;
+      const rid = r.id || r['@id'];
+      if (!rid) return false;
+      return norm(rid) === norm(selectedAnnotationId) || normBase(rid) === normBase(selectedAnnotationId);
+    });
     if (!res) return;
 
-    const target = res.targetId || res.target || '';
-    const [canvasIdRaw, frag] = String(target).split('#');
-    if (!frag || !frag.startsWith('xywh=')) return;
-    const normalize = (s) => (s || '').toString().split('#')[0];
-    const canvasId = normalize(canvasIdRaw);
-    const [x, y, w, h] = frag.replace('xywh=', '').split(',').map(n => parseInt(n, 10));
+    let rawTarget = '';
+    if (typeof res.target === 'string') rawTarget = res.target;
+    else if (typeof res.targetId === 'string' && res.targetId.includes('#')) rawTarget = res.targetId;
+    else if (Array.isArray(res.on) && typeof res.on[0] === 'string') rawTarget = res.on[0];
+    else if (typeof res.on === 'string') rawTarget = res.on;
+    else if (res.resource && typeof res.resource.on === 'string') rawTarget = res.resource.on;
+    else if (typeof res.targetId === 'string') rawTarget = res.targetId;
+
+    const [canvasIdRaw, frag] = rawTarget.split('#');
+    const canvasId = normalizeCanvasId(canvasIdRaw || res.targetId || '');
+
+    let rect = null;
+    if (frag && frag.startsWith('xywh=')) {
+      rect = frag.replace('xywh=', '').split(',').map(n => parseInt(n, 10));
+    } else if (Array.isArray(res.fragmentSelector) && res.fragmentSelector.length === 4) {
+      rect = res.fragmentSelector;
+    }
 
     const zoomOnItem = (itemIndex) => {
+      if (!rect) return false;
+      const [x, y, w, h] = rect;
       const item = viewer.world.getItemAt(itemIndex);
-      if (!item || !item.imageToViewportRectangle) return;
+      if (!item || !item.imageToViewportRectangle) return false;
       const vpRect = item.imageToViewportRectangle(new OpenSeadragon.Rect(x, y, w, h));
       const itemRect = item.getBounds ? item.getBounds() : null;
       const expandedRect = expandSearchHitRect(vpRect, itemRect);
-      if (!expandedRect) return;
+      if (!expandedRect) return false;
 
       const padded = new OpenSeadragon.Rect(
         expandedRect.x,
@@ -485,31 +521,39 @@ export function OpenSeadragonViewer({
         expandedRect.height,
       );
       viewer.viewport.fitBoundsWithConstraints(padded, true);
+      return true;
+    };
+
+    const tryZoom = (itemIndex, retries = 10) => {
+      if (zoomOnItem(itemIndex)) {
+        lastZoomedAnnoRef.current = selectedAnnotationId;
+      } else if (retries > 0) {
+        setTimeout(() => tryZoom(itemIndex, retries - 1), 50);
+      }
     };
 
     if (viewType === 'single') {
-      // If we are already on the right page, zoom now; otherwise, zoom after the page changes
-      const targetIndex = canvases.findIndex(c => normalize(c.id) === canvasId);
+      const targetIndex = canvases.findIndex(c => normalizeCanvasId(c.id || c['@id'] || c.canvas?.id) === canvasId);
       if (targetIndex < 0) return;
-      if (canvasIndex === targetIndex) {
+      if (canvasIndex === targetIndex && (typeof viewer.currentPage !== 'function' || viewer.currentPage() === targetIndex)) {
         // world holds current page at item 0 in sequence mode
-        const doZoom = () => { zoomOnItem(0); lastZoomedAnnoRef.current = selectedAnnotationId; };
-        if (viewer.world.getItemCount() > 0) doZoom();
-        else viewer.addOnceHandler('open', () => setTimeout(doZoom, 0));
+        if (viewer.world.getItemCount() > 0) tryZoom(0);
+        else viewer.addOnceHandler('open', () => setTimeout(() => tryZoom(0), 50));
       } else {
-        viewer.addOnceHandler('page', () => setTimeout(() => { zoomOnItem(0); lastZoomedAnnoRef.current = selectedAnnotationId; }, 0));
+        viewer.addOnceHandler('open', () => setTimeout(() => tryZoom(0), 50));
+        viewer.goToPage(targetIndex);
+        if (typeof setCanvas === 'function') setCanvas(canvases[targetIndex].id);
       }
       return;
     }
 
     // book/scroll: zoom on the corresponding item index in the laid out world
-    const vi = (visibleCanvases || []).findIndex(c => normalize(c.id) === canvasId);
+    const vi = (visibleCanvases || []).findIndex(c => normalizeCanvasId(c.id || c['@id'] || c.canvas?.id) === canvasId);
     if (vi >= 0 && vi < (viewer.world.getItemCount() || 0)) {
-      zoomOnItem(vi);
-      lastZoomedAnnoRef.current = selectedAnnotationId;
+      tryZoom(vi);
     } else {
       // wait for world layout
-      viewer.addOnceHandler('open', () => setTimeout(() => { zoomOnItem(vi); lastZoomedAnnoRef.current = selectedAnnotationId; }, 0));
+      viewer.addOnceHandler('open', () => setTimeout(() => tryZoom(vi), 50));
     }
   }, [selectedAnnotationId, searchAnnotations, viewType, canvasIndex, addedCount, canvasKeys, visibleKeys]);
 
@@ -519,8 +563,9 @@ export function OpenSeadragonViewer({
     if (!viewer || !currentCanvasId) return;
 
     if (viewType === 'single') {
-      // Do not clamp to world.getItemCount(); in sequence mode it stays 1.
-      // Let OSD handle clamping internally.
+      if (typeof viewer.currentPage === 'function' && viewer.currentPage() === canvasIndex) {
+        return;
+      }
       viewer.goToPage(canvasIndex);
       return;
     }

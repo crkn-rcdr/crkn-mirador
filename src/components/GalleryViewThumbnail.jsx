@@ -35,7 +35,7 @@ const Root = styled('div', { name: 'GalleryView', slot: 'thumbnail' })(
     width: ownerState?.isMobileStrip ? 'max-content' : '100%',
     height: ownerState?.isMobileStrip ? 'auto' : '100%',
     boxSizing: 'border-box',
-    overflow: 'visible',
+    overflow: 'hidden',
     transition: 'background-color 120ms ease',
     '& img': {
       alignSelf: 'flex-start',
@@ -112,13 +112,20 @@ export function GalleryViewThumbnail({
   const stretchToTileWidth = !isMobileStrip && typeof tileW === 'number' && tileW > 0;
   const thumbnailStyle = stretchToTileWidth
     ? {
-      width: '100%',
+      width: 'auto',
       maxWidth: '100%',
+      maxHeight: maxHeight ? `${maxHeight}px` : '100%',
       height: 'auto',
       objectFit: 'contain',
       objectPosition: 'left top',
     }
-    : undefined;
+    : (maxHeight ? {
+      maxHeight: `${maxHeight}px`,
+      maxWidth: '100%',
+      height: 'auto',
+      width: 'auto',
+      objectFit: 'contain',
+    } : undefined);
   const wantsFullResRequest = thumbSize === 'l'
     || thumbSize === 'fit'
     || (typeof maxWidth === 'number' && maxWidth > THUMBNAIL_REQUEST_MAX_DIMENSION);

@@ -1,16 +1,31 @@
 import React, { useEffect, useRef } from "react";
 import OpenSeadragon from "openseadragon";
+import { normalizeCanvasId } from "../state/selectors/utils";
 
 /** Parse annotation target into canvasId + xywh */
 function parseTarget(annotation) {
-  const targetId = annotation?.targetId;
-  if (!targetId) return {};
-  const [canvasId, fragment] = targetId.split("#");
-  if (!fragment || !fragment.startsWith("xywh=")) return { canvasId };
-  const rect = fragment
-    .replace("xywh=", "")
-    .split(",")
-    .map((n) => parseInt(n, 10));
+  if (!annotation) return {};
+  let raw = '';
+  if (typeof annotation.target === 'string') raw = annotation.target;
+  else if (typeof annotation.targetId === 'string' && annotation.targetId.includes('#')) raw = annotation.targetId;
+  else if (Array.isArray(annotation.on) && typeof annotation.on[0] === 'string') raw = annotation.on[0];
+  else if (typeof annotation.on === 'string') raw = annotation.on;
+  else if (annotation.resource && typeof annotation.resource.on === 'string') raw = annotation.resource.on;
+  else if (typeof annotation.targetId === 'string') raw = annotation.targetId;
+
+  const [canvasIdRaw, fragment] = raw.split("#");
+  const canvasId = canvasIdRaw || annotation.targetId || '';
+
+  let rect = null;
+  if (fragment && fragment.startsWith("xywh=")) {
+    rect = fragment
+      .replace("xywh=", "")
+      .split(",")
+      .map((n) => parseInt(n, 10));
+  } else if (Array.isArray(annotation.fragmentSelector) && annotation.fragmentSelector.length === 4) {
+    rect = annotation.fragmentSelector;
+  }
+
   return { canvasId, rect };
 }
 
@@ -53,7 +68,7 @@ export function AnnotationsOverlay({
           if (!rect) return;
 
           // draw only if this canvas is visible in current world
-          const idx = ids.findIndex(id => id.split('#')[0] === (canvasId || '').split('#')[0]);
+          const idx = ids.findIndex(id => normalizeCanvasId(id) === normalizeCanvasId(canvasId));
           if (idx < 0 || idx >= viewer.world.getItemCount()) return;
 
           const [x, y, w, h] = rect;

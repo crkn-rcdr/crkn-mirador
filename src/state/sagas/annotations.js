@@ -11,17 +11,19 @@ import MiradorCanvas from '../../lib/MiradorCanvas';
 /** Fetch annotations for a given canvas */
 export function* fetchCanvasAnnotations({ canvasId, windowId }) {
   const canvas = yield select(getCanvas, { canvasId, windowId });
+  if (!canvas) return;
   const annotations = yield select(getAnnotations);
   const getMiradorCanvas = yield select(getMiradorCanvasWrapper);
   const miradorCanvas = getMiradorCanvas(canvas);
+  if (!miradorCanvas) return;
 
   return yield all([
     // IIIF v2
-    ...miradorCanvas.annotationListUris
+    ...(miradorCanvas.annotationListUris || [])
       .filter(uri => !(annotations[canvas.id] && annotations[canvas.id][uri]))
       .map(uri => put(requestAnnotation(canvas.id, uri))),
     // IIIF v3
-    ...miradorCanvas.canvasAnnotationPages
+    ...(miradorCanvas.canvasAnnotationPages || [])
       .filter(annotation => !(annotations[canvas.id] && annotations[canvas.id][annotation.id]))
       .map((annotation) => {
         // If there are no items, try to retrieve the referenced resource.

@@ -34,6 +34,7 @@ import {
   getSelectedAnnotationId,
   getSearchQuery,
   getWindowIds,
+  normalizeCanvasId,
 } from '../selectors';
 import { getCanvasIndex } from '../selectors/sequences';
 import { fetchManifests } from './iiif';
@@ -219,7 +220,19 @@ export function* setCurrentAnnotationsOnCurrentCanvas({
       companionWindowIds = companionWindowIds.filter(id => id !== topBarId);
     }
   } catch (e) { /* ignore */ }
-  if (companionWindowIds.length === 0) return;
+  // If an annotation is already selected, check if it belongs to one of the visible canvases.
+  // If so, do NOT clobber the user's active selection (e.g. during search hit navigation).
+  const currentlySelected = yield select(getSelectedAnnotationId, { windowId });
+  if (currentlySelected) {
+    const canvasForCurrent = yield select(getCanvasForAnnotation, { annotationId: currentlySelected, windowId });
+    if (canvasForCurrent) {
+      const normCurrentCanvas = normalizeCanvasId(canvasForCurrent.id || canvasForCurrent['@id']);
+      const isVisible = (visibleCanvases || []).some(cId => normalizeCanvasId(cId) === normCurrentCanvas);
+      if (isVisible) {
+        return;
+      }
+    }
+  }
 
   const annotationBySearch = yield select(
     getAnnotationsBySearch,
@@ -243,7 +256,6 @@ export function* setCurrentAnnotationsOnCurrentCanvas({
   if (Object.values(annotationBySearch).length > 0) {
     // Only auto-select if nothing is currently selected, to avoid clobbering
     // an explicit Next/Prev selection.
-    const currentlySelected = yield select(getSelectedAnnotationId, { windowId });
     if (!currentlySelected) {
       yield put(selectAnnotation(windowId, Object.values(annotationBySearch)[0][0]));
     }
@@ -311,7 +323,7 @@ export function* setCanvasOfFirstSearchResult({ companionWindowId, windowId }) {
   const canvas = yield select(getCanvasForAnnotation, { annotationId: first.id, windowId });
   if (canvas) {
     const { canvasId: currentCanvasId } = yield select(getWindow, { windowId });
-    if (currentCanvasId !== canvas.id) {
+    if (normalizeCanvasId(currentCanvasId) !== normalizeCanvasId(canvas.id)) {
       const thunk = yield call(setCanvas, windowId, canvas.id);
       yield put(thunk);
     }
@@ -325,7 +337,7 @@ export function* setCanvasforSelectedAnnotation({ annotationId, windowId }) {
 
   // Only switch if it's not already the current canvas
   const { canvasId: currentCanvasId } = yield select(getWindow, { windowId });
-  if (currentCanvasId === canvas.id) return;
+  if (normalizeCanvasId(currentCanvasId) === normalizeCanvasId(canvas.id)) return;
 
   const thunk = yield call(setCanvas, windowId, canvas.id);
   yield put(thunk);
@@ -358,15 +370,22 @@ export function* syncUrlWithCanvas({ windowId }) {
 export function* fetchInfoResponses({ visibleCanvases: visibleCanvasIds, windowId }) {
   const canvases = yield select(getCanvases, { windowId });
   const infoResponses = yield select(selectInfoResponses);
-  const visibleCanvases = (canvases || []).filter(c => visibleCanvasIds.includes(c.id));
+  const normVisibleIds = (visibleCanvasIds || []).map(id => normalizeCanvasId(id));
+  const visibleCanvases = (canvases || []).filter(c => {
+    const cNorm = normalizeCanvasId(c.id || c['@id']);
+    return normVisibleIds.some(nid => nid === cNorm);
+  });
   const getMiradorCanvas = yield select(getMiradorCanvasWrapper);
 
   yield all(visibleCanvases.map((canvas) => {
     const miradorCanvas = getMiradorCanvas(canvas);
-    return all(miradorCanvas.iiifImageResources.map(imageResource => (
-      !infoResponses[imageResource.getServices()[0].id]
-        && put(fetchInfoResponse({ imageResource, windowId }))
-    )).filter(Boolean));
+    if (!miradorCanvas) return all([]);
+    return all((miradorCanvas.iiifImageResources || []).map(imageResource => {
+      const services = imageResource.getServices();
+      if (!services || !services[0] || !services[0].id) return false;
+      return !infoResponses[services[0].id]
+        && put(fetchInfoResponse({ imageResource, windowId }));
+    }).filter(Boolean));
   }));
 }
 

@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import flatten from 'lodash/flatten';
 import CanvasGroupings from '../../lib/CanvasGroupings';
 import { getMiradorCanvasWrapper } from './wrappers';
-import { miradorSlice, EMPTY_ARRAY } from './utils';
+import { miradorSlice, EMPTY_ARRAY, normalizeCanvasId } from './utils';
 import { getWindow } from './getters';
 import { getSequence } from './sequences';
 import { getWindowViewType } from './windows';
@@ -35,7 +35,12 @@ export const getCanvas = createSelector(
   (sequence, canvasId) => {
     if (!sequence || !canvasId) return undefined;
 
-    return sequence.getCanvasById(canvasId);
+    const direct = sequence.getCanvasById(canvasId);
+    if (direct) return direct;
+
+    const normTarget = normalizeCanvasId(canvasId);
+    const canvases = sequence.getCanvases() || [];
+    return canvases.find(c => normalizeCanvasId(c.id || c['@id']) === normTarget);
   },
 );
 
@@ -56,7 +61,12 @@ export const getCurrentCanvas = createSelector(
 
     if (!window.canvasId) return sequence.getCanvasByIndex(0);
 
-    return sequence.getCanvasById(window.canvasId);
+    const direct = sequence.getCanvasById(window.canvasId);
+    if (direct) return direct;
+
+    const normTarget = normalizeCanvasId(window.canvasId);
+    const canvases = sequence.getCanvases() || [];
+    return canvases.find(c => normalizeCanvasId(c.id || c['@id']) === normTarget) || sequence.getCanvasByIndex(0);
   },
 );
 
@@ -81,7 +91,14 @@ export const getVisibleCanvasIds = createSelector(
  */
 export const getVisibleCanvases = createSelector(
   [getVisibleCanvasIds, getCanvases],
-  (canvasIds, canvases) => (canvases || []).filter(c => canvasIds.includes(c.id)),
+  (canvasIds, canvases) => {
+    if (!canvases || canvases.length === 0) return EMPTY_ARRAY;
+    if (!canvasIds || canvasIds.length === 0) return EMPTY_ARRAY;
+    return canvases.filter(c => {
+      const cNorm = normalizeCanvasId(c.id || c['@id']);
+      return canvasIds.some(id => normalizeCanvasId(id) === cNorm);
+    });
+  },
 );
 
 /**
@@ -120,8 +137,14 @@ export const getCanvasGrouping = createSelector(
     getCanvasGroupings,
     (state, { canvasId }) => canvasId,
   ],
-  (groupings, canvasId) => (groupings
-      && groupings.find(group => group.some(c => c.id === canvasId))) || EMPTY_ARRAY,
+  (groupings, canvasId) => {
+    if (!groupings || !canvasId) return EMPTY_ARRAY;
+    const direct = groupings.find(group => group.some(c => c.id === canvasId));
+    if (direct) return direct;
+
+    const normTarget = normalizeCanvasId(canvasId);
+    return groupings.find(group => group.some(c => normalizeCanvasId(c.id || c['@id']) === normTarget)) || EMPTY_ARRAY;
+  },
 );
 
 /**
@@ -140,7 +163,8 @@ export const getNextCanvasGrouping = createSelector(
   ],
   (groupings, canvas, view) => {
     if (!groupings || !canvas) return undefined;
-    const currentGroupIndex = groupings.findIndex(group => group.some(c => c.id === canvas.id));
+    const normCanvas = normalizeCanvasId(canvas.id || canvas['@id']);
+    const currentGroupIndex = groupings.findIndex(group => group.some(c => normalizeCanvasId(c.id || c['@id']) === normCanvas));
 
     if (currentGroupIndex < 0 || currentGroupIndex + 1 >= groupings.length) return undefined;
     const newGroup = groupings[currentGroupIndex + 1];
@@ -166,7 +190,8 @@ export const getPreviousCanvasGrouping = createSelector(
   (groupings, canvas, view) => {
     if (!groupings || !canvas) return undefined;
 
-    const currentGroupIndex = groupings.findIndex(group => group.some(c => c.id === canvas.id));
+    const normCanvas = normalizeCanvasId(canvas.id || canvas['@id']);
+    const currentGroupIndex = groupings.findIndex(group => group.some(c => normalizeCanvasId(c.id || c['@id']) === normCanvas));
 
     if (currentGroupIndex < 1) return undefined;
     const newGroup = groupings[currentGroupIndex - 1];
