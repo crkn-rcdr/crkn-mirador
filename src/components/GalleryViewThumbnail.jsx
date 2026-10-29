@@ -90,6 +90,7 @@ export function GalleryViewThumbnail({
   tileH,                // new: inner cell height from Grid (already minus gap)
   isMobileStrip = false,
   isVerticalStrip = false,
+  windowId = undefined,
 }) {
   const myRef = useRef();
   const [requestedAnnotations, setRequestedAnnotations] = useState(false);
@@ -165,9 +166,27 @@ export function GalleryViewThumbnail({
     requestCanvasAnnotations();
   };
 
+  const notifyGalleryThumbnailActivated = () => {
+    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+      window.dispatchEvent(new CustomEvent('mirador:select-gallery-thumbnail', {
+        detail: { canvasId: canvas?.id, windowId },
+      }));
+    }
+  };
+
   const handleSelect = () => {
     if (selected) focusOnCanvas();
     else setCanvas(canvas.id);
+    notifyGalleryThumbnailActivated();
+  };
+
+  const handleKeyUp = (e) => {
+    if (e.key === 'Enter' || e.key === ' ' || e.code === 'Enter' || e.code === 'Space') {
+      handleSelect();
+    } else {
+      setCanvas(canvas.id);
+      notifyGalleryThumbnailActivated();
+    }
   };
 
   const ownerState = { selected, highlighted, isMobileStrip, isVerticalStrip };
@@ -177,6 +196,7 @@ export function GalleryViewThumbnail({
       <Root
         ownerState={ownerState}
         onClick={handleSelect}
+        onKeyUp={handleKeyUp}
         ref={myRef}
         role="button"
         tabIndex={0}
@@ -303,6 +323,7 @@ GalleryViewThumbnail.propTypes = {
   thumbSize: PropTypes.oneOf(['s', 'm', 'l', 'fit']),
   tileW: PropTypes.number,
   tileH: PropTypes.number,
+  windowId: PropTypes.string,
 };
 
 export default React.memo(GalleryViewThumbnail, (prev, next) => (

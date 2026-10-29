@@ -177,7 +177,7 @@ const HorizontalStripOuter = React.forwardRef(({ style, ...props }, ref) => (
       ...style,
       boxSizing: 'border-box',
       overflowX: 'auto',
-      overflowY: 'visible',
+      overflowY: 'hidden',
       paddingBottom: 2,
       paddingTop: 4,
     }}

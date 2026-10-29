@@ -85,7 +85,7 @@ describe('WindowTopBar', () => {
     const onChangeViewMode = vi.fn();
     render(<Subject viewMode="both" onChangeViewMode={onChangeViewMode} />);
 
-    const button = screen.getByRole('button', { name: 'Gallery only' });
+    const button = screen.getByRole('button', { name: 'Gallery view' });
     expect(button).toBeInTheDocument();
     await user.click(button);
     expect(onChangeViewMode).toHaveBeenCalledWith('gallery');
@@ -117,8 +117,8 @@ describe('WindowTopBar', () => {
   it('renders only split and gallery view toggles with labels below icons', async () => {
     render(<Subject viewMode="both" onChangeViewMode={vi.fn()} />);
 
-    expect(screen.getByRole('button', { name: 'Split view' })).toHaveTextContent('Split view');
-    expect(screen.getByRole('button', { name: 'Gallery only' })).toHaveTextContent('Gallery only');
+    expect(screen.getByRole('button', { name: 'Page + thumbnails' })).toHaveTextContent('Page + thumbnails');
+    expect(screen.getByRole('button', { name: 'Gallery view' })).toHaveTextContent('Gallery view');
     expect(screen.queryByRole('button', { name: 'Primary only' })).not.toBeInTheDocument();
   });
 

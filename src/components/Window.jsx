@@ -215,10 +215,25 @@ export function Window({
   const effectiveResize = useMobileSplitLayout
     ? 'DISABLED'
     : { minimumPaneSizePercentage: effectiveMinimumPaneSizePercentage };
+  const switchViewModeRef = useRef(null);
+  switchViewModeRef.current = switchViewMode;
+
+  useEffect(() => {
+    const onGalleryThumbnailSelect = (e) => {
+      const targetWindowId = e?.detail?.windowId;
+      if (targetWindowId && targetWindowId !== windowId) return;
+      if (viewMode === 'gallery' && typeof switchViewModeRef.current === 'function') {
+        switchViewModeRef.current('both');
+      }
+    };
+    window.addEventListener('mirador:select-gallery-thumbnail', onGalleryThumbnailSelect);
+    return () => window.removeEventListener('mirador:select-gallery-thumbnail', onGalleryThumbnailSelect);
+  }, [viewMode, windowId]);
+
   const ELEMENT_MAP = {
     a: (
       <StyledPrimaryWindow
-        view={view}
+        view={view === 'gallery' ? 'single' : view}
         windowId={windowId}
         isFetching={isFetching}
         sideBarOpen={sideBarOpen}
