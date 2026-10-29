@@ -148,6 +148,7 @@ export function ViewerNavigation({
       </MiradorMenuButton>
       <Autocomplete
         size="small"
+        disableClearable
         disablePortal={false}
         value={(canvasIndex+1).toString()}
         onChange={(event, newValue) => {

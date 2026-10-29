@@ -90,12 +90,13 @@ const globalWindowViewerStyles = {
     width: '24px',
   },
   '.mirador-canvas-nav .mirador-osd-navigation .MuiAutocomplete-root': {
-    flex: '0 0 100px',
+    flex: '0 0 140px',
     height: '40px',
-    marginRight: '1rem',
+    marginRight: '0.75rem',
     maxHeight: '40px',
     minHeight: '40px',
-    width: '100px',
+    minWidth: '140px',
+    width: '140px',
   },
   '.mirador-canvas-nav .mirador-osd-navigation .MuiFormControl-root, .mirador-canvas-nav .mirador-osd-navigation .MuiTextField-root, .mirador-canvas-nav .mirador-osd-navigation .MuiInputBase-root': {
     height: '40px',
