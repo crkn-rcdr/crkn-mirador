@@ -65,7 +65,7 @@ export function AnnotationsOverlay({
       searchAnnotations.forEach((annoWrapper) => {
         (annoWrapper.resources || []).forEach((anno) => {
           const { canvasId, rect } = parseTarget(anno);
-          if (!rect) return;
+          if (!rect || rect[2] <= 0 || rect[3] <= 0) return;
 
           // draw only if this canvas is visible in current world
           const idx = ids.findIndex(id => normalizeCanvasId(id) === normalizeCanvasId(canvasId));
@@ -114,7 +114,7 @@ export function AnnotationsOverlay({
     searchAnnotations.forEach((annoWrapper) => {
       (annoWrapper.resources || []).forEach((anno) => {
         const { canvasId, rect } = parseTarget(anno);
-        if (!rect || canvasId !== currentCanvasId) return;
+        if (!rect || rect[2] <= 0 || rect[3] <= 0 || canvasId !== currentCanvasId) return;
 
         const [x, y, w, h] = rect;
         const item = viewer.world.getItemAt(0);

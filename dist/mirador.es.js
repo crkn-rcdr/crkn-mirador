@@ -102231,7 +102231,7 @@ function Rqe({
       t.forEach((v) => {
         (v.resources || []).forEach((y) => {
           const { canvasId: x, rect: E } = X9(y);
-          if (!E) return;
+          if (!E || E[2] <= 0 || E[3] <= 0) return;
           const T = m.findIndex((W) => pn(W) === pn(x));
           if (T < 0 || T >= e.world.getItemCount()) return;
           const [_, O, A, M] = E, P = e.world.getItemAt(T);
@@ -102254,7 +102254,7 @@ function Rqe({
     o.clearRect(0, 0, i.current.width, i.current.height), t.forEach((u) => {
       (u.resources || []).forEach((f) => {
         const { canvasId: p, rect: m } = X9(f);
-        if (!m || p !== n) return;
+        if (!m || m[2] <= 0 || m[3] <= 0 || p !== n) return;
         const [v, y, x, E] = m, T = e.world.getItemAt(0);
         if (!(T != null && T.imageToViewportRectangle)) return;
         const _ = new T0.Rect(v, y, x, E), O = T.imageToViewportRectangle(_), A = e.viewport.viewportToViewerElementRectangle(O);
@@ -106228,7 +106228,8 @@ function Roe({
     let ye = null;
     Fe && Fe.startsWith("xywh=") ? ye = Fe.replace("xywh=", "").split(",").map((j) => parseInt(j, 10)) : Array.isArray(_e.fragmentSelector) && _e.fragmentSelector.length === 4 && (ye = _e.fragmentSelector);
     const tt = (j) => {
-      if (!ye) return !1;
+      if (!ye || ye[2] <= 0 || ye[3] <= 0)
+        return !0;
       const [Z, fe, Le, He] = ye, ee = de.world.getItemAt(j);
       if (!ee || !ee.imageToViewportRectangle) return !1;
       const we = ee.imageToViewportRectangle(new T0.Rect(Z, fe, Le, He)), Be = ee.getBounds ? ee.getBounds() : null, Oe = H6e(we, Be);

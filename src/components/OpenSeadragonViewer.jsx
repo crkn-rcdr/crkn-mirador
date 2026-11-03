@@ -505,7 +505,10 @@ export function OpenSeadragonViewer({
     }
 
     const zoomOnItem = (itemIndex) => {
-      if (!rect) return false;
+      if (!rect || (rect[2] <= 0 || rect[3] <= 0)) {
+        // No bounding box coordinates available; maintain normal page view
+        return true;
+      }
       const [x, y, w, h] = rect;
       const item = viewer.world.getItemAt(itemIndex);
       if (!item || !item.imageToViewportRectangle) return false;
