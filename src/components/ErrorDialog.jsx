@@ -15,6 +15,17 @@ export function ErrorDialog({ error = null, removeError = () => {} }) {
 
   if (!error) return null;
 
+  // Suppress transient/non-fatal network errors like "Failed to fetch" (Issue #101)
+  const msg = String(error.message || '');
+  if (
+    msg.includes('Failed to fetch') ||
+    msg.includes('NetworkError') ||
+    msg.includes('Load failed') ||
+    msg.includes('aborted')
+  ) {
+    return null;
+  }
+
   return (
     <Dialog
       aria-labelledby="error-dialog-title"

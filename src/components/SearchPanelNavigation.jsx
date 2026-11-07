@@ -115,6 +115,7 @@ export function SearchPanelNavigation({
   currentCanvas,
   nextSearch,
   query,
+  searchIsFetching = false,
   viewType,
   isV2 = false,
   skipInitialSelect = false,
@@ -273,7 +274,28 @@ export function SearchPanelNavigation({
     }
   };
 
-  if (searchHits.length === 0) return null;
+  if (searchHits.length === 0) {
+    if (query && !searchIsFetching) {
+      return (
+        <NavPill>
+          <Typography
+            component="span"
+            variant="body2"
+            sx={{
+              px: 1,
+              color: 'text.secondary',
+              whiteSpace: 'nowrap',
+              fontSize: '0.85rem',
+              fontWeight: 500,
+            }}
+          >
+            {t('searchNoResults')}
+          </Typography>
+        </NavPill>
+      );
+    }
+    return null;
+  }
 
   const hasNextResult = safeHitIndex < searchHits.length - 1 || Boolean(nextSearch);
   const hasPreviousResult = safeHitIndex > 0;

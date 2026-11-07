@@ -18,7 +18,6 @@ export const errorsReducer = (state = defaultState, action) => {
           id: action.infoId,
           message: action.error,
         },
-        items: [...state.items, action.infoId],
       };
     case ActionTypes.RECEIVE_SEARCH_FAILURE:
       return {
@@ -27,7 +26,6 @@ export const errorsReducer = (state = defaultState, action) => {
           id: action.searchId,
           message: action.error,
         },
-        items: [...state.items, action.searchId],
       };
     case ActionTypes.REMOVE_ERROR:
       ret = Object.keys(state).reduce((object, key) => {

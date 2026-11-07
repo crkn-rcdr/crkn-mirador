@@ -6,6 +6,7 @@ import * as actions from '../state/actions';
 import {
   getSelectedContentSearchAnnotationIds,
   getSearchNumTotal,
+  getSearchIsFetching,
   getSortedSearchHitsForCompanionWindow,
   getNextSearchId,
   getSearchQuery,
@@ -43,6 +44,7 @@ const mapStateToProps = (state, { companionWindowId, windowId }) => {
     searchHits: getSortedSearchHitsForCompanionWindow(state, { companionWindowId, windowId }),
     searchAnnotations: getSortedSearchAnnotationsForCompanionWindow(state, { companionWindowId, windowId }),
     nextSearch: getNextSearchId(state, { companionWindowId, windowId }),
+    searchIsFetching: getSearchIsFetching(state, { companionWindowId, windowId }),
     query: getSearchQuery(state, { companionWindowId, windowId }) || '',
     viewType: getWindowViewType(state, { windowId }),
     canvases: getCanvases(state, { windowId }),
