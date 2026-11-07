@@ -14,11 +14,12 @@ import {
   receiveManifest,
   fetchInfoResponse,
   showCollectionDialog,
-  addOrUpdateCompanionWindow,
+  addCompanionWindow,
+  updateCompanionWindow,
 } from '../actions';
 import {
   getSearchForWindow, getSearchAnnotationsForCompanionWindow,
-  getCanvasGrouping, getWindow, getManifestoInstance,
+  getCanvasGrouping, getWindow, getWindows, getManifestoInstance,
   getCompanionWindowIdsForPosition, getManifestSearchService,
   getCanvasForAnnotation,
   getSelectedContentSearchAnnotationIds,
@@ -60,8 +61,13 @@ export function* fetchWindowManifest(action) {
     const hasToc = Boolean(treeStructure && treeStructure.nodes && treeStructure.nodes.length > 0);
 
     if (hasToc) {
-      const thunk = yield call(addOrUpdateCompanionWindow, windowId, { content: 'canvas', position: 'left' });
-      if (thunk) yield put(thunk);
+      const companionWindowIds = yield select(getCompanionWindowIdsForPosition, { position: 'left', windowId });
+      const companionWindowId = companionWindowIds && companionWindowIds[0];
+      if (companionWindowId) {
+        yield put(updateCompanionWindow(windowId, companionWindowId, { content: 'canvas', position: 'left' }));
+      } else {
+        yield put(addCompanionWindow(windowId, { content: 'canvas', position: 'left' }));
+      }
       yield put(updateWindow(windowId, { sideBarOpen: true, sideBarPanel: 'canvas' }));
     } else {
       yield put(updateWindow(windowId, { sideBarOpen: false }));
@@ -436,8 +442,36 @@ export function* determineAndShowCollectionDialog(manifestId, windowId) {
 }
 
 /** */
+export function* handleReceiveManifest(action) {
+  const { manifestId } = action;
+  const windows = yield select(getWindows);
+  if (!windows) return;
+
+  for (const [windowId, win] of Object.entries(windows)) {
+    if (win && win.manifestId === manifestId) {
+      const treeStructure = yield select(getSequenceTreeStructure, { windowId });
+      const hasToc = Boolean(treeStructure && treeStructure.nodes && treeStructure.nodes.length > 0);
+
+      if (hasToc) {
+        const companionWindowIds = yield select(getCompanionWindowIdsForPosition, { position: 'left', windowId });
+        const companionWindowId = companionWindowIds && companionWindowIds[0];
+        if (companionWindowId) {
+          yield put(updateCompanionWindow(windowId, companionWindowId, { content: 'canvas', position: 'left' }));
+        } else {
+          yield put(addCompanionWindow(windowId, { content: 'canvas', position: 'left' }));
+        }
+        yield put(updateWindow(windowId, { sideBarOpen: true, sideBarPanel: 'canvas' }));
+      } else {
+        yield put(updateWindow(windowId, { sideBarOpen: false }));
+      }
+    }
+  }
+}
+
+/** */
 export default function* windowsSaga() {
   yield all([
+    takeEvery(ActionTypes.RECEIVE_MANIFEST, handleReceiveManifest),
     takeEvery(ActionTypes.ADD_WINDOW, fetchWindowManifest),
     takeEvery(ActionTypes.UPDATE_WINDOW, fetchWindowManifest),
     takeEvery(ActionTypes.UPDATE_WINDOW, setCanvasOnNewSequence),

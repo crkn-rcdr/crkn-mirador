@@ -26,26 +26,8 @@ const Nav = styled('nav', { name: 'WindowSideBar', slot: 'nav' })({
 /**
  * WindowSideBar
  */
-export function WindowSideBar({
-  classes = {}, direction, windowId, sideBarOpen = false,
-}) {
-  const { t } = useTranslation();
-  return (
-    <Root
-      variant="persistent"
-      className={classes.drawer}
-      anchor={direction === 'rtl' ? 'right' : 'left'}
-      PaperProps={{
-        'aria-label': t('sidebarPanelsNavigation'),
-        component: Nav,
-        variant: 'outlined',
-      }}
-      SlideProps={{ direction: direction === 'rtl' ? 'left' : 'right', mountOnEnter: true, unmountOnExit: true }}
-      open={sideBarOpen}
-    >
-      <WindowSideBarButtons windowId={windowId} />
-    </Root>
-  );
+export function WindowSideBar() {
+  return null;
 }
 
 WindowSideBar.propTypes = {

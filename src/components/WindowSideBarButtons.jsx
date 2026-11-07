@@ -18,8 +18,7 @@ const Root = styled(Tabs, { name: 'WindowSideBarButtons', slot: 'root' })({
 
 const StyledTabButton = styled(Tab, { name: 'WindowSideBarButtons', slot: 'button' })(({ theme }) => ({
   '&.Mui-selected': {
-    borderRight: '2px solid',
-    borderRightColor: theme.palette.primary.main,
+    borderRight: 'none !important',
   },
   '&.MuiTab-root': {
     '&:active': {
@@ -41,7 +40,7 @@ const StyledTabButton = styled(Tab, { name: 'WindowSideBarButtons', slot: 'butto
       textDecoration: 'none',
       // Reset on touch devices, it doesn't add specificity
     },
-    borderRight: '2px solid transparent',
+    borderRight: 'none !important',
     minWidth: 'auto',
   },
   fill: 'currentcolor',

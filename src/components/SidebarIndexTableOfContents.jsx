@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { alpha, styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import BiIcon from './BiIcon';
@@ -101,6 +101,32 @@ export function SidebarIndexTableOfContents({
     return null;
   }
 
+  const getRenderNodes = () => {
+    if (!treeStructure || !Array.isArray(treeStructure.nodes)) return [];
+    if (
+      treeStructure.nodes.length === 1 &&
+      treeStructure.nodes[0].nodes &&
+      treeStructure.nodes[0].nodes.length > 0
+    ) {
+      const singleNode = treeStructure.nodes[0];
+      const label = (singleNode.label || '').trim().toLowerCase();
+      const tocTitle = (t('tableOfContents') || '').trim().toLowerCase();
+      if (
+        label === 'table of contents' ||
+        label === 'table des matières' ||
+        label === 'table des matieres' ||
+        label === 'contents' ||
+        label === 'sommaire' ||
+        label === tocTitle
+      ) {
+        return singleNode.nodes;
+      }
+    }
+    return treeStructure.nodes;
+  };
+
+  const nodesToRender = getRenderNodes();
+
   /** */
   const renderTree = (node) => (
     <ScrollToForTreeItem
@@ -113,13 +139,7 @@ export function SidebarIndexTableOfContents({
       <TreeItem
         itemId={node.id}
         label={(
-          <StyledVisibleNode
-            sx={theme => ({
-              backgroundColor: visibleNodeIds.indexOf(node.id) !== -1
-                && alpha(theme.palette.highlights?.primary || theme.palette.action.selected, 0.35),
-              display: visibleNodeIds.indexOf(node.id) !== -1 && 'inline',
-            })}
-          >
+          <StyledVisibleNode>
             {node.label}
           </StyledVisibleNode>
         )}
@@ -141,8 +161,8 @@ export function SidebarIndexTableOfContents({
       onExpandedItemsChange={handleNodeToggle}
       expandedItems={expandedNodeIds}
     >
-      {Array.isArray(treeStructure.nodes) && treeStructure.nodes.length > 0
-        ? treeStructure.nodes.map(n => renderTree(n))
+      {Array.isArray(nodesToRender) && nodesToRender.length > 0
+        ? nodesToRender.map(n => renderTree(n))
         : <Alert severity="error">{t('noTableOfContents')}</Alert>}
     </SimpleTreeView>
   );

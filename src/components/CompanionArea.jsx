@@ -16,7 +16,7 @@ const Root = styled('div', { name: 'CompanionArea', slot: 'root' })(({ ownerStat
   ...((ownerState.position === 'left') && {
     [theme.breakpoints.down('sm')]: {
       bottom: 0,
-      left: 48,
+      left: 0,
       minWidth: 0,
       position: 'absolute',
       right: 0,
