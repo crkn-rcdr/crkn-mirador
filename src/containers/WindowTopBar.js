@@ -5,6 +5,7 @@ import * as actions from '../state/actions';
 import {
   getManifestSearchService,
   getManifestStatus,
+  getSequenceTreeStructure,
   getWindowConfig,
   isFocused,
 } from '../state/selectors';
@@ -25,12 +26,15 @@ const mapStateToProps = (state, { windowId }) => {
     && !manifestStatus.isFetching
     && !manifestStatus.error;
 
+  const treeStructure = getSequenceTreeStructure(state, { windowId });
+  const hasToc = Boolean(treeStructure && treeStructure.nodes && treeStructure.nodes.length > 0);
+
   return {
     allowClose: config.allowClose,
     allowFullscreen: config.allowFullscreen,
     allowMaximize: config.allowMaximize,
     allowTopMenuButton: config.allowTopMenuButton,
-    allowWindowSideBar: config.allowWindowSideBar,
+    allowWindowSideBar: (config.allowWindowSideBar !== false) && hasToc,
     focused: isFocused(state, { windowId }),
     maximized: config.maximized,
     hideWindowTitle,

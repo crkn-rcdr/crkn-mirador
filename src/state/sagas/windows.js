@@ -14,6 +14,7 @@ import {
   receiveManifest,
   fetchInfoResponse,
   showCollectionDialog,
+  addOrUpdateCompanionWindow,
 } from '../actions';
 import {
   getSearchForWindow, getSearchAnnotationsForCompanionWindow,
@@ -36,7 +37,7 @@ import {
   getWindowIds,
   normalizeCanvasId,
 } from '../selectors';
-import { getCanvasIndex } from '../selectors/sequences';
+import { getCanvasIndex, getSequenceTreeStructure } from '../selectors/sequences';
 import { fetchManifests } from './iiif';
 
 /** */
@@ -51,6 +52,20 @@ export function* fetchWindowManifest(action) {
     yield put(receiveManifest(manifestId, action.manifest));
   } else {
     yield call(fetchManifests, manifestId, ...(collectionPath || []));
+  }
+
+  const windowId = id || (action.window && action.window.id);
+  if (windowId) {
+    const treeStructure = yield select(getSequenceTreeStructure, { windowId });
+    const hasToc = Boolean(treeStructure && treeStructure.nodes && treeStructure.nodes.length > 0);
+
+    if (hasToc) {
+      const thunk = yield call(addOrUpdateCompanionWindow, windowId, { content: 'canvas', position: 'left' });
+      if (thunk) yield put(thunk);
+      yield put(updateWindow(windowId, { sideBarOpen: true, sideBarPanel: 'canvas' }));
+    } else {
+      yield put(updateWindow(windowId, { sideBarOpen: false }));
+    }
   }
 
   yield call(setWindowStartingCanvas, action);
@@ -366,6 +381,29 @@ export function* syncUrlWithCanvas({ windowId }) {
   }
 }
 
+/**
+ * Sync the URL `q` query param with the current search query.
+ * Triggers on user search requests and search removals within the viewer.
+ */
+export function* syncUrlWithSearch({ query }) {
+  try {
+    if (typeof window !== 'undefined' && window?.history && window?.location) {
+      const url = new URL(window.location.href);
+      const params = new URLSearchParams(url.search);
+      const trimmedQuery = typeof query === 'string' ? query.trim() : '';
+      if (trimmedQuery.length > 0) {
+        params.set('q', trimmedQuery);
+      } else {
+        params.delete('q');
+      }
+      url.search = params.toString();
+      window.history.replaceState(window.history.state, '', url.toString());
+    }
+  } catch (e) {
+    // Silently ignore URL sync failures
+  }
+}
+
 /** Fetch info responses for the visible canvases */
 export function* fetchInfoResponses({ visibleCanvases: visibleCanvasIds, windowId }) {
   const canvases = yield select(getCanvases, { windowId });
@@ -406,6 +444,8 @@ export default function* windowsSaga() {
     takeEvery(ActionTypes.SET_CANVAS, setCurrentAnnotationsOnCurrentCanvas),
     takeEvery(ActionTypes.SET_CANVAS, fetchInfoResponses),
     takeEvery(ActionTypes.SET_CANVAS, syncUrlWithCanvas),
+    takeEvery(ActionTypes.REQUEST_SEARCH, syncUrlWithSearch),
+    takeEvery(ActionTypes.REMOVE_SEARCH, syncUrlWithSearch),
     takeEvery(ActionTypes.UPDATE_COMPANION_WINDOW, fetchCollectionManifests),
     takeEvery(ActionTypes.SET_WINDOW_VIEW_TYPE, updateVisibleCanvases),
     takeEvery(ActionTypes.RECEIVE_SEARCH, setCanvasOfFirstSearchResult),

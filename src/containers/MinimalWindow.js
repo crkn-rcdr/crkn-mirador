@@ -3,13 +3,19 @@ import { connect } from 'react-redux';
 import { withPlugins } from '../extend/withPlugins';
 import * as actions from '../state/actions';
 import { MinimalWindow } from '../components/MinimalWindow';
-import { getWindowConfig } from '../state/selectors';
+import { getWindowConfig, getSequenceTreeStructure } from '../state/selectors';
 
 /** mapStateToProps */
-const mapStateToProps = (state, { windowId }) => ({
-  allowClose: getWindowConfig(state, { windowId }).allowClose,
-  allowWindowSideBar: getWindowConfig(state, { windowId }).allowWindowSideBar,
-});
+const mapStateToProps = (state, { windowId }) => {
+  const config = getWindowConfig(state, { windowId });
+  const treeStructure = getSequenceTreeStructure(state, { windowId });
+  const hasToc = Boolean(treeStructure && treeStructure.nodes && treeStructure.nodes.length > 0);
+
+  return {
+    allowClose: config.allowClose,
+    allowWindowSideBar: (config.allowWindowSideBar !== false) && hasToc,
+  };
+};
 
 /**
  * mapDispatchToProps - used to hook up connect to action creators
