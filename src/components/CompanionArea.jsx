@@ -96,7 +96,7 @@ export function CompanionArea({
           ownerState={ownerState}
           className={`${ns('companion-windows')}`}
         >
-          {companionWindowIds.map((id) => (
+          {(position === 'left' ? companionWindowIds.slice(0, 1) : companionWindowIds).map((id) => (
             <CompanionWindowFactory id={id} key={id} windowId={windowId} />
           ))}
         </Container>

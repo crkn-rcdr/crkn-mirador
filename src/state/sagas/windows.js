@@ -16,6 +16,7 @@ import {
   showCollectionDialog,
   addCompanionWindow,
   updateCompanionWindow,
+  removeCompanionWindow,
 } from '../actions';
 import {
   getSearchForWindow, getSearchAnnotationsForCompanionWindow,
@@ -53,30 +54,6 @@ export function* fetchWindowManifest(action) {
     yield put(receiveManifest(manifestId, action.manifest));
   } else {
     yield call(fetchManifests, manifestId, ...(collectionPath || []));
-  }
-
-  const windowId = id || (action.window && action.window.id);
-  if (windowId) {
-    const isMobile = typeof window !== 'undefined' && (
-      (typeof window.innerWidth === 'number' && window.innerWidth <= 991)
-      || (typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 991px)').matches)
-    );
-
-    const treeStructure = yield select(getSequenceTreeStructure, { windowId });
-    const hasToc = Boolean(treeStructure && treeStructure.nodes && treeStructure.nodes.length > 0);
-
-    if (hasToc && !isMobile) {
-      const companionWindowIds = yield select(getCompanionWindowIdsForPosition, { position: 'left', windowId });
-      const companionWindowId = companionWindowIds && companionWindowIds[0];
-      if (companionWindowId) {
-        yield put(updateCompanionWindow(windowId, companionWindowId, { content: 'canvas', position: 'left' }));
-      } else {
-        yield put(addCompanionWindow(windowId, { content: 'canvas', position: 'left' }));
-      }
-      yield put(updateWindow(windowId, { sideBarOpen: true, sideBarPanel: 'canvas' }));
-    } else {
-      yield put(updateWindow(windowId, { sideBarOpen: false }));
-    }
   }
 
   yield call(setWindowStartingCanvas, action);
@@ -464,9 +441,11 @@ export function* handleReceiveManifest(action) {
 
       if (hasToc && !isMobile) {
         const companionWindowIds = yield select(getCompanionWindowIdsForPosition, { position: 'left', windowId });
-        const companionWindowId = companionWindowIds && companionWindowIds[0];
-        if (companionWindowId) {
-          yield put(updateCompanionWindow(windowId, companionWindowId, { content: 'canvas', position: 'left' }));
+        if (companionWindowIds && companionWindowIds.length > 0) {
+          yield put(updateCompanionWindow(windowId, companionWindowIds[0], { content: 'canvas', position: 'left' }));
+          for (let i = 1; i < companionWindowIds.length; i += 1) {
+            yield put(removeCompanionWindow(windowId, companionWindowIds[i]));
+          }
         } else {
           yield put(addCompanionWindow(windowId, { content: 'canvas', position: 'left' }));
         }

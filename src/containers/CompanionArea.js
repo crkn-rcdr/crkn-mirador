@@ -8,12 +8,15 @@ import * as actions from '../state/actions';
 import { CompanionArea } from '../components/CompanionArea';
 
 /** */
-const mapStateToProps = (state, { windowId, position }) => ({
-  companionAreaOpen: getCompanionAreaVisibility(state, { position, windowId }),
-  companionWindowIds: getCompanionWindowIdsForPosition(state, { position, windowId }),
-  direction: getThemeDirection(state),
-  sideBarOpen: (getWindow(state, { windowId }) || {}).sideBarOpen,
-});
+const mapStateToProps = (state, { windowId, position }) => {
+  const companionWindowIds = getCompanionWindowIdsForPosition(state, { position, windowId }) || [];
+  return {
+    companionAreaOpen: getCompanionAreaVisibility(state, { position, windowId }),
+    companionWindowIds: position === 'left' ? companionWindowIds.slice(0, 1) : companionWindowIds,
+    direction: getThemeDirection(state),
+    sideBarOpen: (getWindow(state, { windowId }) || {}).sideBarOpen,
+  };
+};
 
 const mapDispatchToProps = ({
   setCompanionAreaOpen: actions.setCompanionAreaOpen,
