@@ -5,6 +5,11 @@ import * as actions from '../state/actions';
 import { MinimalWindow } from '../components/MinimalWindow';
 import { getWindowConfig, getSequenceTreeStructure } from '../state/selectors';
 
+const isMobile = () => typeof window !== 'undefined' && (
+  (typeof window.innerWidth === 'number' && window.innerWidth <= 991)
+  || (typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 991px)').matches)
+);
+
 /** mapStateToProps */
 const mapStateToProps = (state, { windowId }) => {
   const config = getWindowConfig(state, { windowId });
@@ -13,7 +18,7 @@ const mapStateToProps = (state, { windowId }) => {
 
   return {
     allowClose: config.allowClose,
-    allowWindowSideBar: (config.allowWindowSideBar !== false) && hasToc,
+    allowWindowSideBar: Boolean(hasToc && !isMobile()),
   };
 };
 

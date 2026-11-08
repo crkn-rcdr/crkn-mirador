@@ -522,7 +522,7 @@ export function WindowTopBar({
               <MiradorMenuButton
                 aria-label={t('toggleWindowSideBar')}
                 onClick={toggleWindowSideBar}
-                className={ns('window-menu-btn')}
+                className={classNames(ns('window-menu-btn'), 'mirador-window-sidebar-toggle-btn')}
               >
                 <BiIcon name="list" size={16} />
               </MiradorMenuButton>

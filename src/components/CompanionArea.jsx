@@ -14,6 +14,12 @@ const Root = styled('div', { name: 'CompanionArea', slot: 'root' })(({ ownerStat
   position: 'relative',
   zIndex: COMPANION_OVERLAY_Z_INDEX,
   ...((ownerState.position === 'left') && {
+    '@media (max-width: 991px)': {
+      display: 'none !important',
+      width: '0 !important',
+      minWidth: '0 !important',
+      maxWidth: '0 !important',
+    },
     [theme.breakpoints.down('sm')]: {
       bottom: 0,
       left: 0,
@@ -40,6 +46,12 @@ const Container = styled('div', { name: 'CompanionArea', slot: 'container' })(({
   }),
   ...((ownerState?.position === 'left' && (ownerState?.companionWindowIds && ownerState.companionWindowIds.length > 0)) && {
     minWidth: '235px',
+    '@media (max-width: 991px)': {
+      display: 'none !important',
+      width: '0 !important',
+      minWidth: '0 !important',
+      maxWidth: '0 !important',
+    },
     [theme.breakpoints.down('sm')]: {
       maxWidth: '100%',
       minWidth: '100%',

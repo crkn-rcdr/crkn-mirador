@@ -11,6 +11,11 @@ import {
 } from '../state/selectors';
 import { WindowTopBar } from '../components/WindowTopBar';
 
+const isMobile = () => typeof window !== 'undefined' && (
+  (typeof window.innerWidth === 'number' && window.innerWidth <= 991)
+  || (typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 991px)').matches)
+);
+
 /** mapStateToProps */
 const mapStateToProps = (state, { windowId }) => {
   const config = getWindowConfig(state, { windowId });
@@ -34,7 +39,7 @@ const mapStateToProps = (state, { windowId }) => {
     allowFullscreen: config.allowFullscreen,
     allowMaximize: config.allowMaximize,
     allowTopMenuButton: config.allowTopMenuButton,
-    allowWindowSideBar: (config.allowWindowSideBar !== false) && hasToc,
+    allowWindowSideBar: Boolean(hasToc && !isMobile()),
     focused: isFocused(state, { windowId }),
     maximized: config.maximized,
     hideWindowTitle,

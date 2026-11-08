@@ -62,6 +62,7 @@ export function MinimalWindow({
           {allowWindowSideBar && (
             <MiradorMenuButton
               aria-label={t('toggleWindowSideBar')}
+              className={cn(ns('window-menu-btn'), 'mirador-window-sidebar-toggle-btn')}
               disabled
             >
               <BiIcon name="list" size={16} />

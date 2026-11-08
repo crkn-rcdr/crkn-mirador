@@ -57,10 +57,15 @@ export function* fetchWindowManifest(action) {
 
   const windowId = id || (action.window && action.window.id);
   if (windowId) {
+    const isMobile = typeof window !== 'undefined' && (
+      (typeof window.innerWidth === 'number' && window.innerWidth <= 991)
+      || (typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 991px)').matches)
+    );
+
     const treeStructure = yield select(getSequenceTreeStructure, { windowId });
     const hasToc = Boolean(treeStructure && treeStructure.nodes && treeStructure.nodes.length > 0);
 
-    if (hasToc) {
+    if (hasToc && !isMobile) {
       const companionWindowIds = yield select(getCompanionWindowIdsForPosition, { position: 'left', windowId });
       const companionWindowId = companionWindowIds && companionWindowIds[0];
       if (companionWindowId) {
@@ -447,12 +452,17 @@ export function* handleReceiveManifest(action) {
   const windows = yield select(getWindows);
   if (!windows) return;
 
+  const isMobile = typeof window !== 'undefined' && (
+    (typeof window.innerWidth === 'number' && window.innerWidth <= 991)
+    || (typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 991px)').matches)
+  );
+
   for (const [windowId, win] of Object.entries(windows)) {
     if (win && win.manifestId === manifestId) {
       const treeStructure = yield select(getSequenceTreeStructure, { windowId });
       const hasToc = Boolean(treeStructure && treeStructure.nodes && treeStructure.nodes.length > 0);
 
-      if (hasToc) {
+      if (hasToc && !isMobile) {
         const companionWindowIds = yield select(getCompanionWindowIdsForPosition, { position: 'left', windowId });
         const companionWindowId = companionWindowIds && companionWindowIds[0];
         if (companionWindowId) {

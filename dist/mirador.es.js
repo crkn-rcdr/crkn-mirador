@@ -1,12 +1,12 @@
 var dse = Object.defineProperty;
 var fse = (e, t, n) => t in e ? dse(e, t, { enumerable: !0, configurable: !0, writable: !0, value: n }) : e[t] = n;
-var qn = (e, t, n) => fse(e, typeof t != "symbol" ? t + "" : t, n);
+var Gn = (e, t, n) => fse(e, typeof t != "symbol" ? t + "" : t, n);
 import * as G from "react";
 import dt, { createContext as Q0, forwardRef as CO, useContext as oa, isValidElement as ov, cloneElement as fd, Children as ZB, useRef as en, useEffect as fn, useCallback as ci, createElement as ds, PureComponent as _O, createRef as IY, useState as yn, useId as To, useMemo as Ii, useInsertionEffect as pse, useLayoutEffect as DY, memo as hse, version as gse, Suspense as XB, lazy as Kf, Component as MY, Fragment as Y5 } from "react";
 import * as mse from "react-dom";
 import Uf, { flushSync as RO } from "react-dom";
 import { useTranslation as jt, initReactI18next as vse, I18nextProvider as yse } from "react-i18next";
-import { useTranslation as m9e, withTranslation as v9e } from "react-i18next";
+import { useTranslation as y9e, withTranslation as b9e } from "react-i18next";
 import { unstable_createGetCssVar as bse, createSpacing as wse, useTheme as xse, GlobalStyles as Tse, unstable_memoTheme as Sse, ThemeProvider as Ese, unstable_createCssVarsProvider as Cse, keyframes as Tv, css as OO, shouldForwardProp as _se, alpha as Xs, StyledEngineProvider as Rse, createStack as Ose, unstable_resolveBreakpointValues as AO, handleBreakpoints as KB, darken as Ase, lighten as Ise } from "@mui/system";
 import Dse from "@emotion/styled";
 import { ThemeContext as Mse, CacheProvider as Nse } from "@emotion/react";
@@ -1457,7 +1457,7 @@ Error generating stack: ` + b.message + `
   function Rt(d, g) {
     d.pendingLanes |= g, g !== 268435456 && (d.suspendedLanes = 0, d.pingedLanes = 0, d.warmLanes = 0);
   }
-  function ln(d, g, b, S, D, L) {
+  function cn(d, g, b, S, D, L) {
     var X = d.pendingLanes;
     d.pendingLanes = b, d.suspendedLanes = 0, d.pingedLanes = 0, d.warmLanes = 0, d.expiredLanes &= b, d.entangledLanes &= b, d.errorRecoveryDisabledLanes &= b, d.shellSuspendCounter = 0;
     var le = d.entanglements, ve = d.expirationTimes, Pe = d.hiddenUpdates;
@@ -1501,18 +1501,18 @@ Error generating stack: ` + b.message + `
       Te.p = b;
     }
   }
-  var pr = Math.random().toString(36).slice(2), cn = "__reactFiber$" + pr, bn = "__reactProps$" + pr, wi = "__reactContainer$" + pr, la = "__reactEvents$" + pr, pt = "__reactListeners$" + pr, rt = "__reactHandles$" + pr, Et = "__reactResources$" + pr, yt = "__reactMarker$" + pr;
+  var pr = Math.random().toString(36).slice(2), un = "__reactFiber$" + pr, bn = "__reactProps$" + pr, wi = "__reactContainer$" + pr, la = "__reactEvents$" + pr, pt = "__reactListeners$" + pr, rt = "__reactHandles$" + pr, Et = "__reactResources$" + pr, yt = "__reactMarker$" + pr;
   function be(d) {
-    delete d[cn], delete d[bn], delete d[la], delete d[pt], delete d[rt];
+    delete d[un], delete d[bn], delete d[la], delete d[pt], delete d[rt];
   }
   function it(d) {
-    var g = d[cn];
+    var g = d[un];
     if (g) return g;
     for (var b = d.parentNode; b; ) {
-      if (g = b[wi] || b[cn]) {
+      if (g = b[wi] || b[un]) {
         if (b = g.alternate, g.child !== null || b !== null && b.child !== null)
           for (d = Zc(d); d !== null; ) {
-            if (b = d[cn]) return b;
+            if (b = d[un]) return b;
             d = Zc(d);
           }
         return g;
@@ -1522,7 +1522,7 @@ Error generating stack: ` + b.message + `
     return null;
   }
   function St(d) {
-    if (d = d[cn] || d[wi]) {
+    if (d = d[un] || d[wi]) {
       var g = d.tag;
       if (g === 5 || g === 6 || g === 13 || g === 26 || g === 27 || g === 3)
         return d;
@@ -2544,33 +2544,33 @@ Error generating stack: ` + b.message + `
   }
   function Yw(d) {
     var g = d.stateNode, b = d.type, S = d.memoizedProps;
-    switch (g[cn] = d, g[bn] = S, b) {
+    switch (g[un] = d, g[bn] = S, b) {
       case "dialog":
-        Fn("cancel", g), Fn("close", g);
+        Vn("cancel", g), Vn("close", g);
         break;
       case "iframe":
       case "object":
       case "embed":
-        Fn("load", g);
+        Vn("load", g);
         break;
       case "video":
       case "audio":
         for (b = 0; b < Ol.length; b++)
-          Fn(Ol[b], g);
+          Vn(Ol[b], g);
         break;
       case "source":
-        Fn("error", g);
+        Vn("error", g);
         break;
       case "img":
       case "image":
       case "link":
-        Fn("error", g), Fn("load", g);
+        Vn("error", g), Vn("load", g);
         break;
       case "details":
-        Fn("toggle", g);
+        Vn("toggle", g);
         break;
       case "input":
-        Fn("invalid", g), Ew(
+        Vn("invalid", g), Ew(
           g,
           S.value,
           S.defaultValue,
@@ -2582,12 +2582,12 @@ Error generating stack: ` + b.message + `
         ), jv(g);
         break;
       case "select":
-        Fn("invalid", g);
+        Vn("invalid", g);
         break;
       case "textarea":
-        Fn("invalid", g), Wv(g, S.value, S.defaultValue, S.children), jv(g);
+        Vn("invalid", g), Wv(g, S.value, S.defaultValue, S.children), jv(g);
     }
-    b = S.children, typeof b != "string" && typeof b != "number" && typeof b != "bigint" || g.textContent === "" + b || S.suppressHydrationWarning === !0 || Qe(g.textContent, b) ? (S.popover != null && (Fn("beforetoggle", g), Fn("toggle", g)), S.onScroll != null && Fn("scroll", g), S.onScrollEnd != null && Fn("scrollend", g), S.onClick != null && (g.onclick = Rn), g = !0) : g = !1, g || Hd(d);
+    b = S.children, typeof b != "string" && typeof b != "number" && typeof b != "bigint" || g.textContent === "" + b || S.suppressHydrationWarning === !0 || Qe(g.textContent, b) ? (S.popover != null && (Vn("beforetoggle", g), Vn("toggle", g)), S.onScroll != null && Vn("scroll", g), S.onScrollEnd != null && Vn("scrollend", g), S.onClick != null && (g.onclick = Rn), g = !0) : g = !1, g || Hd(d);
   }
   function Zw(d) {
     for (lo = d.return; lo; )
@@ -2930,7 +2930,7 @@ Error generating stack: ` + b.message + `
         return g(ze, Ku);
       }), er && _u(ze, an), Ut;
     }
-    function un(ze, Ae, qe, gt) {
+    function dn(ze, Ae, qe, gt) {
       if (qe == null) throw Error(r(151));
       for (var Ut = null, Pn = null, Kt = Ae, an = Ae = 0, vi = null, nr = qe.next(); Kt !== null && !nr.done; an++, nr = qe.next()) {
         Kt.index > an ? (vi = Kt, Kt = null) : vi = Kt.sibling;
@@ -3036,7 +3036,7 @@ Error generating stack: ` + b.message + `
           );
         if (z(qe)) {
           if (Ut = z(qe), typeof Ut != "function") throw Error(r(150));
-          return qe = Ut.call(qe), un(
+          return qe = Ut.call(qe), dn(
             ze,
             Ae,
             qe,
@@ -5052,7 +5052,7 @@ Error generating stack: ` + b.message + `
           null
         )) ? g.memoizedState = b : er || (b = g.type, d = g.pendingProps, S = um(
           ye.current
-        ).createElement(b), S[cn] = g, S[bn] = d, Xi(S, b, d), _n(S), g.stateNode = S) : g.memoizedState = po(
+        ).createElement(b), S[un] = g, S[bn] = d, Xi(S, b, d), _n(S), g.stateNode = S) : g.memoizedState = po(
           g.type,
           d.memoizedProps,
           g.pendingProps,
@@ -5401,12 +5401,12 @@ Error generating stack: ` + b.message + `
             next: null
           });
           e: {
-            var Ft = d, un = le;
+            var Ft = d, dn = le;
             Xe = g;
             var $r = b;
-            switch (un.tag) {
+            switch (dn.tag) {
               case 1:
-                if (Ft = un.payload, typeof Ft == "function") {
+                if (Ft = dn.payload, typeof Ft == "function") {
                   vt = Ft.call($r, vt, Xe);
                   break e;
                 }
@@ -5415,7 +5415,7 @@ Error generating stack: ` + b.message + `
               case 3:
                 Ft.flags = Ft.flags & -65537 | 128;
               case 0:
-                if (Ft = un.payload, Xe = typeof Ft == "function" ? Ft.call($r, vt, Xe) : Ft, Xe == null) break e;
+                if (Ft = dn.payload, Xe = typeof Ft == "function" ? Ft.call($r, vt, Xe) : Ft, Xe == null) break e;
                 vt = k({}, vt, Xe);
                 break e;
               case 2:
@@ -5618,7 +5618,7 @@ Error generating stack: ` + b.message + `
       for (qg(d, g, b), d = d.sibling; d !== null; )
         qg(d, g, b), d = d.sibling;
   }
-  var $n = !1, qr = !1, wx = !1, xx = typeof WeakSet == "function" ? WeakSet : Set, $i = null, o_ = !1;
+  var Yn = !1, qr = !1, wx = !1, xx = typeof WeakSet == "function" ? WeakSet : Set, $i = null, o_ = !1;
   function Tx(d, g) {
     if (d = d.containerInfo, ub = bm, d = yg(d), ey(d)) {
       if ("selectionStart" in d)
@@ -5680,11 +5680,11 @@ Error generating stack: ` + b.message + `
                     Ft,
                     L
                   ), S.__reactInternalSnapshotBeforeUpdate = d;
-                } catch (un) {
+                } catch (dn) {
                   hr(
                     b,
                     b.return,
-                    un
+                    dn
                   );
                 }
               }
@@ -5793,14 +5793,14 @@ Error generating stack: ` + b.message + `
         Ns(d, b), S & 4 && Ms(d, b);
         break;
       case 22:
-        if (D = b.memoizedState !== null || $n, !D) {
+        if (D = b.memoizedState !== null || Yn, !D) {
           g = g !== null && g.memoizedState !== null || qr;
-          var L = $n, X = qr;
-          $n = D, (qr = g) && !X ? Uc(
+          var L = Yn, X = qr;
+          Yn = D, (qr = g) && !X ? Uc(
             d,
             b,
             (b.subtreeFlags & 8772) !== 0
-          ) : Ns(d, b), $n = L, qr = X;
+          ) : Ns(d, b), Yn = L, qr = X;
         }
         S & 512 && (b.memoizedProps.mode === "manual" ? Tl(b, b.return) : ga(b, b.return));
         break;
@@ -5994,7 +5994,7 @@ Error generating stack: ` + b.message + `
         Oa(g, d), ma(d), S & 4 && (Bc(3, d, d.return), Lp(3, d), Bc(5, d, d.return));
         break;
       case 1:
-        Oa(g, d), ma(d), S & 512 && (qr || b === null || ga(b, b.return)), S & 64 && $n && (d = d.updateQueue, d !== null && (S = d.callbacks, S !== null && (b = d.shared.hiddenCallbacks, d.shared.hiddenCallbacks = b === null ? S : b.concat(S))));
+        Oa(g, d), ma(d), S & 512 && (qr || b === null || ga(b, b.return)), S & 64 && Yn && (d = d.updateQueue, d !== null && (S = d.callbacks, S !== null && (b = d.shared.hiddenCallbacks, d.shared.hiddenCallbacks = b === null ? S : b.concat(S))));
         break;
       case 26:
         var D = Qa;
@@ -6007,10 +6007,10 @@ Error generating stack: ` + b.message + `
                   S = d.type, b = d.memoizedProps, D = D.ownerDocument || D;
                   t: switch (S) {
                     case "title":
-                      L = D.getElementsByTagName("title")[0], (!L || L[yt] || L[cn] || L.namespaceURI === "http://www.w3.org/2000/svg" || L.hasAttribute("itemprop")) && (L = D.createElement(S), D.head.insertBefore(
+                      L = D.getElementsByTagName("title")[0], (!L || L[yt] || L[un] || L.namespaceURI === "http://www.w3.org/2000/svg" || L.hasAttribute("itemprop")) && (L = D.createElement(S), D.head.insertBefore(
                         L,
                         D.querySelector("head > title")
-                      )), Xi(L, S, b), L[cn] = d, _n(L), S = L;
+                      )), Xi(L, S, b), L[un] = d, _n(L), S = L;
                       break e;
                     case "link":
                       var X = vm(
@@ -6044,7 +6044,7 @@ Error generating stack: ` + b.message + `
                     default:
                       throw Error(r(468, S));
                   }
-                  L[cn] = d, _n(L), S = L;
+                  L[un] = d, _n(L), S = L;
                 }
                 d.stateNode = S;
               } else
@@ -6085,7 +6085,7 @@ Error generating stack: ` + b.message + `
             }
             for (var vt = d.type, Xe = D.attributes; Xe.length; )
               D.removeAttributeNode(Xe[0]);
-            Xi(D, vt, L), D[cn] = d, D[bn] = L;
+            Xi(D, vt, L), D[un] = d, D[bn] = L;
           } catch (Ft) {
             hr(d, d.return, Ft);
           }
@@ -6138,7 +6138,7 @@ Error generating stack: ` + b.message + `
         Oa(g, d), ma(d), d.child.flags & 8192 && d.memoizedState !== null != (b !== null && b.memoizedState !== null) && (va = Be()), S & 4 && (S = d.updateQueue, S !== null && (d.updateQueue = null, $y(d, S)));
         break;
       case 22:
-        if (S & 512 && (qr || b === null || ga(b, b.return)), ve = d.memoizedState !== null, Pe = b !== null && b.memoizedState !== null, st = $n, vt = qr, $n = st || ve, qr = vt || Pe, Oa(g, d), qr = vt, $n = st, ma(d), g = d.stateNode, g._current = d, g._visibility &= -3, g._visibility |= g._pendingVisibility & 2, S & 8192 && (g._visibility = ve ? g._visibility & -2 : g._visibility | 1, ve && (g = $n || qr, b === null || Pe || g || rf(d)), d.memoizedProps === null || d.memoizedProps.mode !== "manual"))
+        if (S & 512 && (qr || b === null || ga(b, b.return)), ve = d.memoizedState !== null, Pe = b !== null && b.memoizedState !== null, st = Yn, vt = qr, Yn = st || ve, qr = vt || Pe, Oa(g, d), qr = vt, Yn = st, ma(d), g = d.stateNode, g._current = d, g._visibility &= -3, g._visibility |= g._pendingVisibility & 2, S & 8192 && (g._visibility = ve ? g._visibility & -2 : g._visibility | 1, ve && (g = Yn || qr, b === null || Pe || g || rf(d)), d.memoizedProps === null || d.memoizedProps.mode !== "manual"))
           e: for (b = null, g = d; ; ) {
             if (g.tag === 5 || g.tag === 26 || g.tag === 27) {
               if (b === null) {
@@ -6933,7 +6933,7 @@ Error generating stack: ` + b.message + `
                     d = typeof S.is == "string" ? D.createElement(b, { is: S.is }) : D.createElement(b);
                 }
             }
-            d[cn] = g, d[bn] = S;
+            d[un] = g, d[bn] = S;
             e: for (D = g.child; D !== null; ) {
               if (D.tag === 5 || D.tag === 6)
                 d.appendChild(D.stateNode);
@@ -6980,11 +6980,11 @@ Error generating stack: ` + b.message + `
                 case 5:
                   S = D.memoizedProps;
               }
-            d[cn] = g, d = !!(d.nodeValue === b || S !== null && S.suppressHydrationWarning === !0 || Qe(d.nodeValue, b)), d || Hd(g);
+            d[un] = g, d = !!(d.nodeValue === b || S !== null && S.suppressHydrationWarning === !0 || Qe(d.nodeValue, b)), d || Hd(g);
           } else
             d = um(d).createTextNode(
               S
-            ), d[cn] = g, g.stateNode = d;
+            ), d[un] = g, g.stateNode = d;
         }
         return zr(g), null;
       case 13:
@@ -6993,7 +6993,7 @@ Error generating stack: ` + b.message + `
             if (d === null) {
               if (!D) throw Error(r(318));
               if (D = g.memoizedState, D = D !== null ? D.dehydrated : null, !D) throw Error(r(317));
-              D[cn] = g;
+              D[un] = g;
             } else
               Ud(), (g.flags & 128) === 0 && (g.memoizedState = null), g.flags |= 4;
             zr(g), D = !1;
@@ -7647,7 +7647,7 @@ Error generating stack: ` + b.message + `
     if (d.finishedWork = null, d.finishedLanes = 0, ve === d.current) throw Error(r(177));
     d.callbackNode = null, d.callbackPriority = 0, d.cancelPendingCommit = null;
     var Pe = ve.lanes | ve.childLanes;
-    if (Pe |= ry, ln(
+    if (Pe |= ry, cn(
       d,
       S,
       Pe,
@@ -7986,7 +7986,7 @@ Error generating stack: ` + b.message + `
       }
     }
   }
-  function Fn(d, g) {
+  function Vn(d, g) {
     var b = g[la];
     b === void 0 && (b = g[la] = /* @__PURE__ */ new Set());
     var S = d + "__bubble";
@@ -8147,70 +8147,70 @@ Error generating stack: ` + b.message + `
             case "beforetoggle":
               lt = jw;
           }
-          var un = (g & 4) !== 0, $r = !un && (d === "scroll" || d === "scrollend"), ze = un ? Xe !== null ? Xe + "Capture" : null : Xe;
-          un = [];
+          var dn = (g & 4) !== 0, $r = !dn && (d === "scroll" || d === "scrollend"), ze = dn ? Xe !== null ? Xe + "Capture" : null : Xe;
+          dn = [];
           for (var Ae = Pe, qe; Ae !== null; ) {
             var gt = Ae;
-            if (qe = gt.stateNode, gt = gt.tag, gt !== 5 && gt !== 26 && gt !== 27 || qe === null || ze === null || (gt = gc(Ae, ze), gt != null && un.push(
+            if (qe = gt.stateNode, gt = gt.tag, gt !== 5 && gt !== 26 && gt !== 27 || qe === null || ze === null || (gt = gc(Ae, ze), gt != null && dn.push(
               hf(Ae, gt, qe)
             )), $r) break;
             Ae = Ae.return;
           }
-          0 < un.length && (Xe = new lt(
+          0 < dn.length && (Xe = new lt(
             Xe,
             Ft,
             null,
             b,
             st
-          ), vt.push({ event: Xe, listeners: un }));
+          ), vt.push({ event: Xe, listeners: dn }));
         }
       }
       if ((g & 7) === 0) {
         e: {
           if (Xe = d === "mouseover" || d === "pointerover", lt = d === "mouseout" || d === "pointerout", Xe && b !== Rw && (Ft = b.relatedTarget || b.fromElement) && (it(Ft) || Ft[wi]))
             break e;
-          if ((lt || Xe) && (Xe = st.window === st ? st : (Xe = st.ownerDocument) ? Xe.defaultView || Xe.parentWindow : window, lt ? (Ft = b.relatedTarget || b.toElement, lt = Pe, Ft = Ft ? it(Ft) : null, Ft !== null && ($r = se(Ft), un = Ft.tag, Ft !== $r || un !== 5 && un !== 27 && un !== 6) && (Ft = null)) : (lt = null, Ft = Pe), lt !== Ft)) {
-            if (un = Mw, gt = "onMouseLeave", ze = "onMouseEnter", Ae = "mouse", (d === "pointerout" || d === "pointerover") && (un = Zv, gt = "onPointerLeave", ze = "onPointerEnter", Ae = "pointer"), $r = lt == null ? Xe : mn(lt), qe = Ft == null ? Xe : mn(Ft), Xe = new un(
+          if ((lt || Xe) && (Xe = st.window === st ? st : (Xe = st.ownerDocument) ? Xe.defaultView || Xe.parentWindow : window, lt ? (Ft = b.relatedTarget || b.toElement, lt = Pe, Ft = Ft ? it(Ft) : null, Ft !== null && ($r = se(Ft), dn = Ft.tag, Ft !== $r || dn !== 5 && dn !== 27 && dn !== 6) && (Ft = null)) : (lt = null, Ft = Pe), lt !== Ft)) {
+            if (dn = Mw, gt = "onMouseLeave", ze = "onMouseEnter", Ae = "mouse", (d === "pointerout" || d === "pointerover") && (dn = Zv, gt = "onPointerLeave", ze = "onPointerEnter", Ae = "pointer"), $r = lt == null ? Xe : mn(lt), qe = Ft == null ? Xe : mn(Ft), Xe = new dn(
               gt,
               Ae + "leave",
               lt,
               b,
               st
-            ), Xe.target = $r, Xe.relatedTarget = qe, gt = null, it(st) === Pe && (un = new un(
+            ), Xe.target = $r, Xe.relatedTarget = qe, gt = null, it(st) === Pe && (dn = new dn(
               ze,
               Ae + "enter",
               Ft,
               b,
               st
-            ), un.target = qe, un.relatedTarget = $r, gt = un), $r = gt, lt && Ft)
+            ), dn.target = qe, dn.relatedTarget = $r, gt = dn), $r = gt, lt && Ft)
               t: {
-                for (un = lt, ze = Ft, Ae = 0, qe = un; qe; qe = Zi(qe))
+                for (dn = lt, ze = Ft, Ae = 0, qe = dn; qe; qe = Zi(qe))
                   Ae++;
                 for (qe = 0, gt = ze; gt; gt = Zi(gt))
                   qe++;
                 for (; 0 < Ae - qe; )
-                  un = Zi(un), Ae--;
+                  dn = Zi(dn), Ae--;
                 for (; 0 < qe - Ae; )
                   ze = Zi(ze), qe--;
                 for (; Ae--; ) {
-                  if (un === ze || ze !== null && un === ze.alternate)
+                  if (dn === ze || ze !== null && dn === ze.alternate)
                     break t;
-                  un = Zi(un), ze = Zi(ze);
+                  dn = Zi(dn), ze = Zi(ze);
                 }
-                un = null;
+                dn = null;
               }
-            else un = null;
+            else dn = null;
             lt !== null && Gx(
               vt,
               Xe,
               lt,
-              un,
+              dn,
               !1
             ), Ft !== null && $r !== null && Gx(
               vt,
               $r,
               Ft,
-              un,
+              dn,
               !0
             );
           }
@@ -8429,10 +8429,10 @@ Error generating stack: ` + b.message + `
         S != null && (d.onclick = Rn);
         break;
       case "onScroll":
-        S != null && Fn("scroll", d);
+        S != null && Vn("scroll", d);
         break;
       case "onScrollEnd":
-        S != null && Fn("scrollend", d);
+        S != null && Vn("scrollend", d);
         break;
       case "dangerouslySetInnerHTML":
         if (S != null) {
@@ -8520,7 +8520,7 @@ Error generating stack: ` + b.message + `
         S == null || typeof S == "function" || typeof S == "symbol" || isNaN(S) ? d.removeAttribute(b) : d.setAttribute(b, S);
         break;
       case "popover":
-        Fn("beforetoggle", d), Fn("toggle", d), bu(d, "popover", S);
+        Vn("beforetoggle", d), Vn("toggle", d), bu(d, "popover", S);
         break;
       case "xlinkActuate":
         ws(
@@ -8623,10 +8623,10 @@ Error generating stack: ` + b.message + `
         typeof S == "string" ? hc(d, S) : (typeof S == "number" || typeof S == "bigint") && hc(d, "" + S);
         break;
       case "onScroll":
-        S != null && Fn("scroll", d);
+        S != null && Vn("scroll", d);
         break;
       case "onScrollEnd":
-        S != null && Fn("scrollend", d);
+        S != null && Vn("scrollend", d);
         break;
       case "onClick":
         S != null && (d.onclick = Rn);
@@ -8662,7 +8662,7 @@ Error generating stack: ` + b.message + `
       case "li":
         break;
       case "img":
-        Fn("error", d), Fn("load", d);
+        Vn("error", d), Vn("load", d);
         var S = !1, D = !1, L;
         for (L in b)
           if (b.hasOwnProperty(L)) {
@@ -8685,7 +8685,7 @@ Error generating stack: ` + b.message + `
         D && or(d, g, "srcSet", b.srcSet, b, null), S && or(d, g, "src", b.src, b, null);
         return;
       case "input":
-        Fn("invalid", d);
+        Vn("invalid", d);
         var le = L = X = D = null, ve = null, Pe = null;
         for (S in b)
           if (b.hasOwnProperty(S)) {
@@ -8731,7 +8731,7 @@ Error generating stack: ` + b.message + `
         ), jv(d);
         return;
       case "select":
-        Fn("invalid", d), S = X = L = null;
+        Vn("invalid", d), S = X = L = null;
         for (D in b)
           if (b.hasOwnProperty(D) && (le = b[D], le != null))
             switch (D) {
@@ -8749,7 +8749,7 @@ Error generating stack: ` + b.message + `
         g = L, b = X, d.multiple = !!S, g != null ? ip(d, !!S, g, !1) : b != null && ip(d, !!S, b, !0);
         return;
       case "textarea":
-        Fn("invalid", d), L = D = S = null;
+        Vn("invalid", d), L = D = S = null;
         for (X in b)
           if (b.hasOwnProperty(X) && (le = b[X], le != null))
             switch (X) {
@@ -8782,27 +8782,27 @@ Error generating stack: ` + b.message + `
             }
         return;
       case "dialog":
-        Fn("cancel", d), Fn("close", d);
+        Vn("cancel", d), Vn("close", d);
         break;
       case "iframe":
       case "object":
-        Fn("load", d);
+        Vn("load", d);
         break;
       case "video":
       case "audio":
         for (S = 0; S < Ol.length; S++)
-          Fn(Ol[S], d);
+          Vn(Ol[S], d);
         break;
       case "image":
-        Fn("error", d), Fn("load", d);
+        Vn("error", d), Vn("load", d);
         break;
       case "details":
-        Fn("toggle", d);
+        Vn("toggle", d);
         break;
       case "embed":
       case "source":
       case "link":
-        Fn("error", d), Fn("load", d);
+        Vn("error", d), Vn("load", d);
       case "area":
       case "base":
       case "br":
@@ -9039,8 +9039,8 @@ Error generating stack: ` + b.message + `
       case "track":
       case "wbr":
       case "menuitem":
-        for (var un in b)
-          Xe = b[un], b.hasOwnProperty(un) && Xe != null && !S.hasOwnProperty(un) && or(d, g, un, null, S, Xe);
+        for (var dn in b)
+          Xe = b[dn], b.hasOwnProperty(dn) && Xe != null && !S.hasOwnProperty(dn) && or(d, g, dn, null, S, Xe);
         for (Pe in S)
           if (Xe = S[Pe], lt = b[Pe], S.hasOwnProperty(Pe) && Xe !== lt && (Xe != null || lt != null))
             switch (Pe) {
@@ -9563,7 +9563,7 @@ Error generating stack: ` + b.message + `
     if (S.has(d)) return S;
     for (S.set(d, null), b = b.getElementsByTagName(d), D = 0; D < b.length; D++) {
       var L = b[D];
-      if (!(L[yt] || L[cn] || d === "link" && L.getAttribute("rel") === "stylesheet") && L.namespaceURI !== "http://www.w3.org/2000/svg") {
+      if (!(L[yt] || L[un] || d === "link" && L.getAttribute("rel") === "stylesheet") && L.namespaceURI !== "http://www.w3.org/2000/svg") {
         var X = L.getAttribute(g) || "";
         X = d + X;
         var le = S.get(X);
@@ -10330,7 +10330,7 @@ function Gse() {
           return "Fragment";
         case Ol:
           return "Portal";
-        case Fn:
+        case Vn:
           return "Profiler";
         case lm:
           return "StrictMode";
@@ -11158,9 +11158,9 @@ Error generating stack: ` + ie.message + `
       a[$u] = !0;
     }
     function Rt(a, l) {
-      ln(a, l), ln(a + "Capture", l);
+      cn(a, l), cn(a + "Capture", l);
     }
-    function ln(a, l) {
+    function cn(a, l) {
       vf[a] && console.error(
         "EventRegistry: More than one plugin attempted to publish the same registration name, `%s`.",
         a
@@ -11244,7 +11244,7 @@ Error generating stack: ` + ie.message + `
         ye(w, h), a.setAttributeNS(l, h, "" + w);
       }
     }
-    function cn(a) {
+    function un(a) {
       switch (typeof a) {
         case "bigint":
         case "boolean":
@@ -11332,13 +11332,13 @@ Error generating stack: ` + ie.message + `
       ), tT = !0);
     }
     function be(a, l, h, w, C, I, H, Y) {
-      a.name = "", H != null && typeof H != "function" && typeof H != "symbol" && typeof H != "boolean" ? (ye(H, "type"), a.type = H) : a.removeAttribute("type"), l != null ? H === "number" ? (l === 0 && a.value === "" || a.value != l) && (a.value = "" + cn(l)) : a.value !== "" + cn(l) && (a.value = "" + cn(l)) : H !== "submit" && H !== "reset" || a.removeAttribute("value"), l != null ? St(a, H, cn(l)) : h != null ? St(a, H, cn(h)) : w != null && a.removeAttribute("value"), C == null && I != null && (a.defaultChecked = !!I), C != null && (a.checked = C && typeof C != "function" && typeof C != "symbol"), Y != null && typeof Y != "function" && typeof Y != "symbol" && typeof Y != "boolean" ? (ye(Y, "name"), a.name = "" + cn(Y)) : a.removeAttribute("name");
+      a.name = "", H != null && typeof H != "function" && typeof H != "symbol" && typeof H != "boolean" ? (ye(H, "type"), a.type = H) : a.removeAttribute("type"), l != null ? H === "number" ? (l === 0 && a.value === "" || a.value != l) && (a.value = "" + un(l)) : a.value !== "" + un(l) && (a.value = "" + un(l)) : H !== "submit" && H !== "reset" || a.removeAttribute("value"), l != null ? St(a, H, un(l)) : h != null ? St(a, H, un(h)) : w != null && a.removeAttribute("value"), C == null && I != null && (a.defaultChecked = !!I), C != null && (a.checked = C && typeof C != "function" && typeof C != "symbol"), Y != null && typeof Y != "function" && typeof Y != "symbol" && typeof Y != "boolean" ? (ye(Y, "name"), a.name = "" + un(Y)) : a.removeAttribute("name");
     }
     function it(a, l, h, w, C, I, H, Y) {
       if (I != null && typeof I != "function" && typeof I != "symbol" && typeof I != "boolean" && (ye(I, "type"), a.type = I), l != null || h != null) {
         if (!(I !== "submit" && I !== "reset" || l != null))
           return;
-        h = h != null ? "" + cn(h) : "", l = l != null ? "" + cn(l) : h, Y || l === a.value || (a.value = l), a.defaultValue = l;
+        h = h != null ? "" + un(h) : "", l = l != null ? "" + un(l) : h, Y || l === a.value || (a.value = l), a.defaultValue = l;
       }
       w = w ?? C, w = typeof w != "function" && typeof w != "symbol" && !!w, a.checked = Y ? a.checked : !!w, a.defaultChecked = !!w, H != null && typeof H != "function" && typeof H != "symbol" && typeof H != "boolean" && (ye(H, "name"), a.name = H);
     }
@@ -11370,7 +11370,7 @@ Check the render method of \`` + a + "`." : "";
         for (h = 0; h < a.length; h++)
           C = l.hasOwnProperty("$" + a[h].value), a[h].selected !== C && (a[h].selected = C), C && w && (a[h].defaultSelected = !0);
       } else {
-        for (h = "" + cn(h), l = null, C = 0; C < a.length; C++) {
+        for (h = "" + un(h), l = null, C = 0; C < a.length; C++) {
           if (a[C].value === h) {
             a[C].selected = !0, w && (a[C].defaultSelected = !0);
             return;
@@ -11409,11 +11409,11 @@ Check the render method of \`` + a + "`." : "";
       );
     }
     function Pi(a, l, h) {
-      if (l != null && (l = "" + cn(l), l !== a.value && (a.value = l), h == null)) {
+      if (l != null && (l = "" + un(l), l !== a.value && (a.value = l), h == null)) {
         a.defaultValue !== l && (a.defaultValue = l);
         return;
       }
-      a.defaultValue = h != null ? "" + cn(h) : "";
+      a.defaultValue = h != null ? "" + un(h) : "";
     }
     function rn(a, l, h, w) {
       if (l == null) {
@@ -11431,7 +11431,7 @@ Check the render method of \`` + a + "`." : "";
         }
         h == null && (h = ""), l = h;
       }
-      h = cn(l), a.defaultValue = h, w = a.textContent, w === h && w !== "" && w !== null && (a.value = w);
+      h = un(l), a.defaultValue = h, w = a.textContent, w === h && w !== "" && w !== null && (a.value = w);
     }
     function Vr(a, l) {
       return a.serverProps === void 0 && a.serverTail.length === 0 && a.children.length === 1 && 3 < a.distanceFromLeaf && a.distanceFromLeaf > 15 - l ? Vr(a.children[0], l) : a;
@@ -12325,7 +12325,7 @@ This will cause a hydration error.%s`,
     }
     function qv() {
       if (ze) return ze;
-      var a, l = $r, h = l.length, w, C = "value" in un ? un.value : un.textContent, I = C.length;
+      var a, l = $r, h = l.length, w, C = "value" in dn ? dn.value : dn.textContent, I = C.length;
       for (a = 0; a < h && l[a] === C[a]; a++) ;
       var H = h - a;
       for (w = 1; w <= H && l[h - w] === C[I - w]; w++) ;
@@ -12401,7 +12401,7 @@ This will cause a hydration error.%s`,
     }
     function Dd(a, l) {
       if (Cb)
-        return a === "compositionend" || !hD && cg(a, l) ? (a = qv(), ze = $r = un = null, Cb = !1, a) : null;
+        return a === "compositionend" || !hD && cg(a, l) ? (a = qv(), ze = $r = dn = null, Cb = !1, a) : null;
       switch (a) {
         case "paste":
           return null;
@@ -14022,7 +14022,7 @@ Incoming: %s`,
         var Y = H = null, ie = null, ue = l, Ge = !1;
         do {
           var ct = ue.lane & -536870913;
-          if (ct !== ue.lane ? (Yn & ct) === ct : (ah & ct) === ct) {
+          if (ct !== ue.lane ? (Zn & ct) === ct : (ah & ct) === ct) {
             var $e = ue.revertLane;
             if ($e === 0)
               ie !== null && (ie = ie.next = {
@@ -14099,7 +14099,7 @@ Incoming: %s`,
           throw Error(
             "Expected a work-in-progress root. This is a bug in React. Please file an issue."
           );
-        (Yn & 60) !== 0 || hl(w, l, I);
+        (Zn & 60) !== 0 || hl(w, l, I);
       }
       return C.memoizedState = I, h = { value: I, getSnapshot: l }, C.queue = h, Vd(
         $w.bind(null, w, h, a),
@@ -16587,7 +16587,7 @@ Please update the following component: %s`,
         H = 0, Ge = ue = ie = null, Y = I;
         do {
           var $e = Y.lane & -536870913, mt = $e !== Y.lane;
-          if (mt ? (Yn & $e) === $e : (w & $e) === $e) {
+          if (mt ? (Zn & $e) === $e : (w & $e) === $e) {
             $e !== 0 && $e === Rm && (jD = !0), Ge !== null && (Ge = Ge.next = {
               lane: 0,
               tag: Y.tag,
@@ -16749,7 +16749,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
           } while (h !== C);
         }
       } catch (Y) {
-        $n(l, l.return, Y);
+        Yn(l, l.return, Y);
       }
     }
     function Pu(a, l, h) {
@@ -16777,7 +16777,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
           } while (w !== I);
         }
       } catch (ie) {
-        $n(l, l.return, ie);
+        Yn(l, l.return, ie);
       }
     }
     function ox(a, l) {
@@ -16813,7 +16813,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
             h
           );
         } catch (w) {
-          $n(a, a.return, w);
+          Yn(a, a.return, w);
         }
       }
     }
@@ -16848,7 +16848,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
           );
         })), l.__reactInternalSnapshotBeforeUpdate = I;
       } catch (H) {
-        $n(a, a.return, H);
+        Yn(a, a.return, H);
       }
     }
     function GC(a, l, h) {
@@ -16892,7 +16892,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
       try {
         te(a, ax, a);
       } catch (h) {
-        $n(a, l, h);
+        Yn(a, l, h);
       }
     }
     function ha(a, l) {
@@ -16908,7 +16908,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
               }
             else te(a, w);
           } catch (C) {
-            $n(a, l, C);
+            Yn(a, l, C);
           } finally {
             a.refCleanup = null, a = a.alternate, a != null && (a.refCleanup = null);
           }
@@ -16922,7 +16922,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
               }
             else te(a, h, null);
           } catch (C) {
-            $n(a, l, C);
+            Yn(a, l, C);
           }
         else h.current = null;
     }
@@ -16963,7 +16963,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
           a
         );
       } catch (C) {
-        $n(a, a.return, C);
+        Yn(a, a.return, C);
       }
     }
     function YC(a, l, h) {
@@ -16978,7 +16978,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
           a
         );
       } catch (w) {
-        $n(a, a.return, w);
+        Yn(a, a.return, w);
       }
     }
     function ZC(a) {
@@ -17218,7 +17218,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
                 C
               );
             } catch (Y) {
-              $n(h, h.return, Y);
+              Yn(h, h.return, Y);
             }
           }
           a.effectDuration += cp(l);
@@ -17243,7 +17243,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
                 a.effectDuration
               );
             } catch (Y) {
-              $n(h, h.return, Y);
+              Yn(h, h.return, Y);
             }
           } else Ds(a, h);
           break;
@@ -17324,7 +17324,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
                   h.stateNode
                 );
               } catch (I) {
-                $n(
+                Yn(
                   h,
                   l,
                   I
@@ -17339,7 +17339,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
                   h.stateNode
                 );
               } catch (I) {
-                $n(
+                Yn(
                   h,
                   l,
                   I
@@ -17416,7 +17416,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
             a
           );
         } catch (h) {
-          $n(l, l.return, h);
+          Yn(l, l.return, h);
         }
     }
     function cx(a) {
@@ -17601,7 +17601,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
                 a
               );
             } catch (Ge) {
-              $n(a, a.return, Ge);
+              Yn(a, a.return, Ge);
             }
           }
         case 5:
@@ -17610,7 +17610,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
             try {
               te(a, sf, l);
             } catch (Ge) {
-              $n(a, a.return, Ge);
+              Yn(a, a.return, Ge);
             }
           }
           w & 4 && a.stateNode != null && (l = a.memoizedProps, YC(
@@ -17637,7 +17637,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
                 w
               );
             } catch (Ge) {
-              $n(a, a.return, Ge);
+              Yn(a, a.return, Ge);
             }
           }
           break;
@@ -17650,7 +17650,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
                 l.containerInfo
               );
             } catch (Ge) {
-              $n(a, a.return, Ge);
+              Yn(a, a.return, Ge);
             }
           zD && (zD = !1, ux(a)), l.effectDuration += cp(C);
           break;
@@ -17685,7 +17685,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
                       Y.memoizedProps
                     );
                   } catch (Ge) {
-                    $n(Y, Y.return, Ge);
+                    Yn(Y, Y.return, Ge);
                   }
                 }
               } else if (l.tag === 6) {
@@ -17703,7 +17703,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
                       Y.memoizedProps
                     );
                   } catch (Ge) {
-                    $n(Y, Y.return, Ge);
+                    Yn(Y, Y.return, Ge);
                   }
                 }
               } else if ((l.tag !== 22 && l.tag !== 23 || l.memoizedState === null || l === a) && l.child !== null) {
@@ -17735,7 +17735,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
         try {
           te(a, Ly, a);
         } catch (h) {
-          $n(a, a.return, h);
+          Yn(a, a.return, h);
         }
         a.flags &= -3;
       }
@@ -17825,7 +17825,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
                 a
               );
             } catch (I) {
-              $n(h, h.return, I);
+              Yn(h, h.return, I);
             }
           }
           w && C & 64 && Ny(h), ku(h, h.return);
@@ -17856,7 +17856,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
                 w.effectDuration
               );
             } catch (I) {
-              $n(h, h.return, I);
+              Yn(h, h.return, I);
             }
           } else
             wl(
@@ -17953,7 +17953,7 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
                 a.passiveEffectDuration
               );
             } catch (H) {
-              $n(l, l.return, H);
+              Yn(l, l.return, H);
             }
           } else
             Mc(
@@ -18317,11 +18317,11 @@ Learn more about data fetching with Hooks: https://react.dev/link/hooks-data-fet
           case lm:
             H = 8, C |= wa, C |= tu;
             break;
-          case Fn:
+          case Vn:
             return a = h, w = C, typeof a.id != "string" && console.error(
               'Profiler must specify an "id" of type `string` as a prop. Received the type `%s` instead.',
               typeof a.id
-            ), l = f(12, a, l, w | Zo), l.elementType = Fn, l.lanes = I, l.stateNode = { effectDuration: 0, passiveEffectDuration: 0 }, l;
+            ), l = f(12, a, l, w | Zo), l.elementType = Vn, l.lanes = I, l.stateNode = { effectDuration: 0, passiveEffectDuration: 0 }, l;
           case cm:
             return l = f(13, h, l, C), l.elementType = cm, l.lanes = I, l;
           case hf:
@@ -18425,7 +18425,7 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
       if (l.type !== "stylesheet" || (l.state.loading & Wl) !== Hm)
         a.flags &= -16777217;
       else if (a.flags |= 16777216, !ib(l)) {
-        if (l = Ll.current, l !== null && ((Yn & 4194176) === Yn ? Ju !== null : (Yn & 62914560) !== Yn && (Yn & 536870912) === 0 || l !== Ju))
+        if (l = Ll.current, l !== null && ((Zn & 4194176) === Zn ? Ju !== null : (Zn & 62914560) !== Zn && (Zn & 536870912) === 0 || l !== Ju))
           throw mT = TD, bV;
         a.flags |= 8192;
       }
@@ -18795,20 +18795,20 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
       ), a;
     }
     function Vo(a) {
-      if ((Jr & La) !== Bs && Yn !== 0)
-        return Yn & -Yn;
+      if ((Jr & La) !== Bs && Zn !== 0)
+        return Zn & -Zn;
       var l = Qe.T;
       return l !== null ? (l._updatedFibers || (l._updatedFibers = /* @__PURE__ */ new Set()), l._updatedFibers.add(a), a = Rm, a !== 0 ? a : Ns()) : Yt();
     }
     function Np() {
-      Hs === 0 && (Hs = (Yn & 536870912) === 0 || rr ? oe() : 536870912);
+      Hs === 0 && (Hs = (Zn & 536870912) === 0 || rr ? oe() : 536870912);
       var a = Ll.current;
       return a !== null && (a.flags |= 32), Hs;
     }
     function Mr(a, l, h) {
       if (Yb && console.error("useInsertionEffect must not schedule updates."), YD && (q_ = !0), (a === Wr && Hr === Nm || a.cancelPendingCommit !== null) && (Ra(a, 0), Io(
         a,
-        Yn,
+        Zn,
         Hs,
         !1
       )), wt(a, h), (Jr & La) !== 0 && a === Wr) {
@@ -18817,7 +18817,7 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
             case 0:
             case 11:
             case 15:
-              a = Vn && N(Vn) || "Unknown", x5.has(a) || (x5.add(a), l = N(l) || "Unknown", console.error(
+              a = qn && N(qn) || "Unknown", x5.has(a) || (x5.add(a), l = N(l) || "Unknown", console.error(
                 "Cannot update a component (`%s`) while rendering a different component (`%s`). To locate the bad setState() call inside `%s`, follow the stack trace as described in https://react.dev/link/setstate-in-render",
                 l,
                 a,
@@ -18832,7 +18832,7 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
       } else
         ns && nn(a, l, h), a_(l), a === Wr && ((Jr & La) === Bs && (fh |= h), Ci === Mm && Io(
           a,
-          Yn,
+          Zn,
           Hs,
           !1
         )), Ms(a);
@@ -19063,20 +19063,20 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
       return (Jr & (La | Cf)) === Bs ? (Gg(0), !1) : !0;
     }
     function Fg() {
-      if (Vn !== null) {
+      if (qn !== null) {
         if (Hr === ls)
-          var a = Vn.return;
+          var a = qn.return;
         else
-          a = Vn, Mg(), oy(a), Nb = null, vT = 0, a = Vn;
+          a = qn, Mg(), oy(a), Nb = null, vT = 0, a = qn;
         for (; a !== null; )
           Lc(a.alternate, a), a = a.return;
-        Vn = null;
+        qn = null;
       }
     }
     function Ra(a, l) {
       a.finishedWork = null, a.finishedLanes = 0;
       var h = a.timeoutHandle;
-      h !== oM && (a.timeoutHandle = oM, sse(h)), h = a.cancelPendingCommit, h !== null && (a.cancelPendingCommit = null, h()), Fg(), Wr = a, Vn = h = xl(a.current, null), Yn = l, Hr = ls, Ws = null, Rf = !1, $b = F(a, l), UD = !1, Ci = _f, Pm = Hs = FD = fh = dh = 0, ou = OT = null, U_ = !1, (l & 8) !== 0 && (l |= l & 32);
+      h !== oM && (a.timeoutHandle = oM, sse(h)), h = a.cancelPendingCommit, h !== null && (a.cancelPendingCommit = null, h()), Fg(), Wr = a, qn = h = xl(a.current, null), Zn = l, Hr = ls, Ws = null, Rf = !1, $b = F(a, l), UD = !1, Ci = _f, Pm = Hs = FD = fh = dh = 0, ou = OT = null, U_ = !1, (l & 8) !== 0 && (l |= l & 32);
       var w = a.entangledLanes;
       if (w !== 0)
         for (a = a.entanglements, w &= l; 0 < w; ) {
@@ -19087,7 +19087,7 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
     }
     function zc(a, l) {
       wn = null, Qe.H = ed, Qe.getCurrentStack = null, ts = !1, fo = null, l === P_ ? (l = NC(), Hr = _T) : l === bV ? (l = NC(), Hr = m5) : Hr = l === QV ? HD : l !== null && typeof l == "object" && typeof l.then == "function" ? Gb : CT, Ws = l;
-      var h = Vn;
+      var h = qn;
       if (h === null)
         Ci = ET, ur(
           a,
@@ -19099,7 +19099,7 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
             Dt !== null && typeof Dt.markComponentErrored == "function" && Dt.markComponentErrored(
               h,
               l,
-              Yn
+              Zn
             );
             break;
           case Nm:
@@ -19109,7 +19109,7 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
             Dt !== null && typeof Dt.markComponentSuspended == "function" && Dt.markComponentSuspended(
               h,
               l,
-              Yn
+              Zn
             );
         }
     }
@@ -19122,9 +19122,9 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
       return Qe.A = Yae, a;
     }
     function Vg() {
-      Ci = Mm, Rf || (Yn & 4194176) !== Yn && Ll.current !== null || ($b = !0), (dh & 134217727) === 0 && (fh & 134217727) === 0 || Wr === null || Io(
+      Ci = Mm, Rf || (Zn & 4194176) !== Zn && Ll.current !== null || ($b = !0), (dh & 134217727) === 0 && (fh & 134217727) === 0 || Wr === null || Io(
         Wr,
-        Yn,
+        Zn,
         Hs,
         !1
       );
@@ -19133,18 +19133,18 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
       var w = Jr;
       Jr |= La;
       var C = Pp(), I = Vy();
-      if (Wr !== a || Yn !== l) {
+      if (Wr !== a || Zn !== l) {
         if (ns) {
           var H = a.memoizedUpdaters;
-          0 < H.size && (uo(a, Yn), H.clear()), Sn(a, l);
+          0 < H.size && (uo(a, Zn), H.clear()), Sn(a, l);
         }
         AT = null, Ra(a, l);
       }
       we(l), l = !1, H = Ci;
       e: do
         try {
-          if (Hr !== ls && Vn !== null) {
-            var Y = Vn, ie = Ws;
+          if (Hr !== ls && qn !== null) {
+            var Y = qn, ie = Ws;
             switch (Hr) {
               case HD:
                 Fg(), H = H_;
@@ -19169,19 +19169,19 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
           zc(a, Ge);
         }
       while (!0);
-      return l && a.shellSuspendCounter++, Mg(), Jr = w, Qe.H = C, Qe.A = I, Be(), Vn === null && (Wr = null, Yn = 0, $v()), H;
+      return l && a.shellSuspendCounter++, Mg(), Jr = w, Qe.H = C, Qe.A = I, Be(), qn === null && (Wr = null, Zn = 0, $v()), H;
     }
     function kp() {
-      for (; Vn !== null; ) Lp(Vn);
+      for (; qn !== null; ) Lp(qn);
     }
     function e_(a, l) {
       var h = Jr;
       Jr |= La;
       var w = Pp(), C = Vy();
-      if (Wr !== a || Yn !== l) {
+      if (Wr !== a || Zn !== l) {
         if (ns) {
           var I = a.memoizedUpdaters;
-          0 < I.size && (uo(a, Yn), I.clear()), Sn(a, l);
+          0 < I.size && (uo(a, Zn), I.clear()), Sn(a, l);
         }
         AT = null, F_ = Al() + y5, Ra(a, l);
       } else
@@ -19192,8 +19192,8 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
       we(l);
       e: do
         try {
-          if (Hr !== ls && Vn !== null)
-            t: switch (l = Vn, I = Ws, Hr) {
+          if (Hr !== ls && qn !== null)
+            t: switch (l = qn, I = Ws, Hr) {
               case CT:
                 Hr = ls, Ws = null, nf(
                   a,
@@ -19227,19 +19227,19 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
                 break;
               case WD:
                 var H = null;
-                switch (Vn.tag) {
+                switch (qn.tag) {
                   case 26:
-                    H = Vn.memoizedState;
+                    H = qn.memoizedState;
                   case 5:
                   case 27:
-                    var Y = Vn;
+                    var Y = qn;
                     if (!H || ib(H)) {
                       Hr = ls, Ws = null;
                       var ie = Y.sibling;
-                      if (ie !== null) Vn = ie;
+                      if (ie !== null) qn = ie;
                       else {
                         var ue = Y.return;
-                        ue !== null ? (Vn = ue, Tl(ue)) : Vn = null;
+                        ue !== null ? (qn = ue, Tl(ue)) : qn = null;
                       }
                       break t;
                     }
@@ -19278,11 +19278,11 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
           zc(a, Ge);
         }
       while (!0);
-      return Mg(), Qe.H = w, Qe.A = C, Jr = h, Vn !== null ? (Dt !== null && typeof Dt.markRenderYielded == "function" && Dt.markRenderYielded(), _f) : (Be(), Wr = null, Yn = 0, $v(), Ci);
+      return Mg(), Qe.H = w, Qe.A = C, Jr = h, qn !== null ? (Dt !== null && typeof Dt.markRenderYielded == "function" && Dt.markRenderYielded(), _f) : (Be(), Wr = null, Zn = 0, $v(), Ci);
     }
     function t_() {
-      for (; Vn !== null && !Xc(); )
-        Lp(Vn);
+      for (; qn !== null && !Xc(); )
+        Lp(qn);
     }
     function Lp(a) {
       var l = a.alternate;
@@ -19298,11 +19298,11 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
         l,
         a,
         td
-      ), a.memoizedProps = a.pendingProps, l === null ? Tl(a) : Vn = l;
+      ), a.memoizedProps = a.pendingProps, l === null ? Tl(a) : qn = l;
     }
     function Bc(a) {
       var l = te(a, n_, a);
-      a.memoizedProps = a.pendingProps, l === null ? Tl(a) : Vn = l;
+      a.memoizedProps = a.pendingProps, l === null ? Tl(a) : qn = l;
     }
     function n_(a) {
       var l = a.alternate, h = (a.mode & Zo) !== Yr;
@@ -19315,7 +19315,7 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
             a.pendingProps,
             a.type,
             void 0,
-            Yn
+            Zn
           );
           break;
         case 11:
@@ -19325,13 +19325,13 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
             a.pendingProps,
             a.type.render,
             a.ref,
-            Yn
+            Zn
           );
           break;
         case 5:
           oy(a);
         default:
-          Lc(l, a), a = Vn = yx(a, td), l = _y(l, a, td);
+          Lc(l, a), a = qn = yx(a, td), l = _y(l, a, td);
       }
       return h && Kv(a), l;
     }
@@ -19344,23 +19344,23 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
           C,
           l,
           h,
-          Yn
+          Zn
         )) {
           Ci = ET, ur(
             a,
             Vi(h, a.current)
-          ), Vn = null;
+          ), qn = null;
           return;
         }
       } catch (I) {
-        if (C !== null) throw Vn = C, I;
+        if (C !== null) throw qn = C, I;
         Ci = ET, ur(
           a,
           Vi(h, a.current)
-        ), Vn = null;
+        ), qn = null;
         return;
       }
-      l.flags & 32768 ? (rr || w === CT ? a = !0 : $b || (Yn & 536870912) !== 0 ? a = !1 : (Rf = a = !0, (w === Nm || w === _T || w === Gb) && (w = Ll.current, w !== null && w.tag === 13 && (w.flags |= 16384))), ga(l, a)) : Tl(l);
+      l.flags & 32768 ? (rr || w === CT ? a = !0 : $b || (Zn & 536870912) !== 0 ? a = !1 : (Rf = a = !0, (w === Nm || w === _T || w === Gb) && (w = Ll.current, w !== null && w.tag === 13 && (w.flags |= 16384))), ga(l, a)) : Tl(l);
     }
     function Tl(a) {
       var l = a;
@@ -19380,14 +19380,14 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
           l,
           td
         ), (l.mode & Zo) !== Yr && Bw(l), h !== null) {
-          Vn = h;
+          qn = h;
           return;
         }
         if (l = l.sibling, l !== null) {
-          Vn = l;
+          qn = l;
           return;
         }
-        Vn = l = a;
+        qn = l = a;
       } while (l !== null);
       Ci === _f && (Ci = g5);
     }
@@ -19395,7 +19395,7 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
       do {
         var h = kc(a.alternate, a);
         if (h !== null) {
-          h.flags &= 32767, Vn = h;
+          h.flags &= 32767, qn = h;
           return;
         }
         if ((a.mode & Zo) !== Yr) {
@@ -19405,12 +19405,12 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
           a.actualDuration = h;
         }
         if (h = a.return, h !== null && (h.flags |= 32768, h.subtreeFlags = 0, h.deletions = null), !l && (a = a.sibling, a !== null)) {
-          Vn = a;
+          qn = a;
           return;
         }
-        Vn = a = h;
+        qn = a = h;
       } while (a !== null);
-      Ci = H_, Vn = null;
+      Ci = H_, qn = null;
     }
     function qy(a, l, h, w, C, I, H, Y, ie, ue) {
       var Ge = Qe.T, ct = Br.p;
@@ -19455,7 +19455,7 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
         I,
         H,
         Y
-      ), a === Wr && (Vn = Wr = null, Yn = 0), (ie.subtreeFlags & 10256) === 0 && (ie.flags & 10256) === 0 || V_ || (V_ = !0, qD = ue, GD = h, Hc(Xp, function() {
+      ), a === Wr && (qn = Wr = null, Zn = 0), (ie.subtreeFlags & 10256) === 0 && (ie.flags & 10256) === 0 || V_ || (V_ = !0, qD = ue, GD = h, Hc(Xp, function() {
         return Wc(), null;
       })), O_ = Ib(), h = (ie.flags & 15990) !== 0, (ie.subtreeFlags & 15990) !== 0 || h ? (h = Qe.T, Qe.T = null, I = Br.p, Br.p = rs, H = Jr, Jr |= Cf, XC(a, ie), KC(
         a,
@@ -19531,7 +19531,7 @@ Check the render method of \`` + H + "`."), H = 29, h = Error(
     function qg(a, l, h) {
       l = Vi(h, l), l = Tp(a.stateNode, l, 2), a = Mu(a, l, 2), a !== null && (wt(a, 2), Ms(a));
     }
-    function $n(a, l, h) {
+    function Yn(a, l, h) {
       if (Yb = !1, a.tag === 3)
         qg(a, a, h);
       else {
@@ -19591,7 +19591,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act`
-      ), Wr === a && (Yn & h) === h && (Ci === Mm || Ci === BD && (Yn & 62914560) === Yn && Al() - VD < v5 ? (Jr & La) === Bs && Ra(a, 0) : FD |= h, Pm === Yn && (Pm = 0)), Ms(a);
+      ), Wr === a && (Zn & h) === h && (Ci === Mm || Ci === BD && (Zn & 62914560) === Zn && Al() - VD < v5 ? (Jr & La) === Bs && Ra(a, 0) : FD |= h, Pm === Zn && (Pm = 0)), Ms(a);
     }
     function xx(a, l) {
       l === 0 && (l = Re()), a = Co(a, l), a !== null && (wt(a, l), Ms(a));
@@ -19724,7 +19724,7 @@ This ensures that you're testing the behavior the user would see in the browser.
               }
               I !== 0 && (h = !0, Cx(w, I));
             } else
-              I = Yn, I = q(
+              I = Zn, I = q(
                 w,
                 w === Wr ? I : 0
               ), (I & 3) === 0 || F(w, I) || (h = !0, Cx(w, I));
@@ -19749,7 +19749,7 @@ This ensures that you're testing the behavior the user would see in the browser.
         var H = 31 - $o(I), Y = 1 << H, ie = C[H];
         ie === -1 ? ((Y & h) === 0 || (Y & w) !== 0) && (C[H] = K(Y, l)) : ie <= l && (a.expiredLanes |= Y), I &= ~Y;
       }
-      if (l = Wr, h = Yn, h = q(
+      if (l = Wr, h = Zn, h = q(
         a,
         a === l ? h : 0
       ), w = a.callbackNode, h === 0 || a === l && Hr === Nm || a.cancelPendingCommit !== null)
@@ -19781,7 +19781,7 @@ This ensures that you're testing the behavior the user would see in the browser.
       var h = a.callbackNode;
       if (Wc() && a.callbackNode !== h)
         return null;
-      var w = Yn;
+      var w = Zn;
       return w = q(
         a,
         a === Wr ? w : 0
@@ -20225,7 +20225,7 @@ This ensures that you're testing the behavior the user would see in the browser.
             }
           else
             Cb ? cg(a, h) && (qt = "onCompositionEnd") : a === "keydown" && h.keyCode === iV && (qt = "onCompositionStart");
-          qt && (oV && h.locale !== "ko" && (Cb || qt !== "onCompositionStart" ? qt === "onCompositionEnd" && Cb && (In = qv()) : (un = Ge, $r = "value" in un ? un.value : un.textContent, Cb = !0)), At = $g(
+          qt && (oV && h.locale !== "ko" && (Cb || qt !== "onCompositionStart" ? qt === "onCompositionEnd" && Cb && (In = qv()) : (dn = Ge, $r = "value" in dn ? dn.value : dn.textContent, Cb = !0)), At = $g(
             ue,
             qt
           ), 0 < At.length && (qt = new nV(
@@ -22999,7 +22999,7 @@ Check the render method of %s.`,
       ));
     }
     typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ < "u" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart == "function" && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-    var Ti = PY(), sm = dt, Vx = Uf, rD = Symbol.for("react.element"), qu = Symbol.for("react.transitional.element"), Ol = Symbol.for("react.portal"), Gp = Symbol.for("react.fragment"), lm = Symbol.for("react.strict_mode"), Fn = Symbol.for("react.profiler"), qx = Symbol.for("react.provider"), $p = Symbol.for("react.consumer"), es = Symbol.for("react.context"), Yp = Symbol.for("react.forward_ref"), cm = Symbol.for("react.suspense"), hf = Symbol.for("react.suspense_list"), gf = Symbol.for("react.memo"), Zi = Symbol.for("react.lazy"), Gx = Symbol.for("react.offscreen"), iD = Symbol.for("react.memo_cache_sentinel"), g_ = Symbol.iterator, m_ = Symbol.for("react.client.reference"), Qe = sm.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, Rn = Object.assign, or = 0, cb, Xi, v_, ub, db, um, $x;
+    var Ti = PY(), sm = dt, Vx = Uf, rD = Symbol.for("react.element"), qu = Symbol.for("react.transitional.element"), Ol = Symbol.for("react.portal"), Gp = Symbol.for("react.fragment"), lm = Symbol.for("react.strict_mode"), Vn = Symbol.for("react.profiler"), qx = Symbol.for("react.provider"), $p = Symbol.for("react.consumer"), es = Symbol.for("react.context"), Yp = Symbol.for("react.forward_ref"), cm = Symbol.for("react.suspense"), hf = Symbol.for("react.suspense_list"), gf = Symbol.for("react.memo"), Zi = Symbol.for("react.lazy"), Gx = Symbol.for("react.offscreen"), iD = Symbol.for("react.memo_cache_sentinel"), g_ = Symbol.iterator, m_ = Symbol.for("react.client.reference"), Qe = sm.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, Rn = Object.assign, or = 0, cb, Xi, v_, ub, db, um, $x;
     z.__reactDisabledLog = !0;
     var fb, pb, dm = !1, Yx = new (typeof WeakMap == "function" ? WeakMap : Map)(), fo = null, ts = !1, Ki = Array.isArray, Br = Vx.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, oD = Object.freeze({
       pending: !1,
@@ -23806,7 +23806,7 @@ Check the render method of %s.`,
       } catch {
         lt = !1;
       }
-    var un = null, $r = null, ze = null, Ae = {
+    var dn = null, $r = null, ze = null, Ae = {
       eventPhase: 0,
       bubbles: 0,
       cancelable: 0,
@@ -24181,7 +24181,7 @@ Learn more about this warning here: https://react.dev/link/legacy-context`,
         try {
           l.componentDidMount();
         } catch (h) {
-          $n(a, a.return, h);
+          Yn(a, a.return, h);
         }
       }
     }, ED = SV["react-stack-bottom-frame"].bind(SV), EV = {
@@ -24189,7 +24189,7 @@ Learn more about this warning here: https://react.dev/link/legacy-context`,
         try {
           l.componentDidUpdate(h, w, C);
         } catch (I) {
-          $n(a, a.return, I);
+          Yn(a, a.return, I);
         }
       }
     }, CV = EV["react-stack-bottom-frame"].bind(EV), _V = {
@@ -24204,7 +24204,7 @@ Learn more about this warning here: https://react.dev/link/legacy-context`,
         try {
           h.componentWillUnmount();
         } catch (w) {
-          $n(a, l, w);
+          Yn(a, l, w);
         }
       }
     }, OV = RV["react-stack-bottom-frame"].bind(RV), AV = {
@@ -24217,7 +24217,7 @@ Learn more about this warning here: https://react.dev/link/legacy-context`,
         try {
           h();
         } catch (w) {
-          $n(a, l, w);
+          Yn(a, l, w);
         }
       }
     }, Uae = IV["react-stack-bottom-frame"].bind(IV), DV = {
@@ -24975,14 +24975,14 @@ Check the top-level render call using <` + w + ">.");
       var ST = Symbol.for;
       ST("selector.component"), ST("selector.has_pseudo_class"), ST("selector.role"), ST("selector.test_id"), ST("selector.text");
     }
-    var Zae = [], Xae = typeof WeakMap == "function" ? WeakMap : Map, Bs = 0, La = 2, Cf = 4, _f = 0, ET = 1, qb = 2, BD = 3, Mm = 4, g5 = 5, H_ = 6, Jr = Bs, Wr = null, Vn = null, Yn = 0, ls = 0, CT = 1, Nm = 2, _T = 3, m5 = 4, WD = 5, Gb = 6, RT = 7, HD = 8, Hr = ls, Ws = null, Rf = !1, $b = !1, UD = !1, td = 0, Ci = _f, dh = 0, fh = 0, FD = 0, Hs = 0, Pm = 0, OT = null, ou = null, U_ = !1, VD = 0, v5 = 300, F_ = 1 / 0, y5 = 500, AT = null, ph = null, V_ = !1, km = null, IT = 0, qD = 0, GD = null, Kae = 50, DT = 0, $D = null, YD = !1, q_ = !1, Qae = 50, Lm = 0, MT = null, Yb = !1, b5 = 0, Jae = 1, ese = 2, G_ = null, w5 = !1, x5 = /* @__PURE__ */ new Set(), tse = {}, $_ = null, Zb = null, ZD = !1, XD = !1, Y_ = !1, KD = !1, jm = 0, QD = {};
+    var Zae = [], Xae = typeof WeakMap == "function" ? WeakMap : Map, Bs = 0, La = 2, Cf = 4, _f = 0, ET = 1, qb = 2, BD = 3, Mm = 4, g5 = 5, H_ = 6, Jr = Bs, Wr = null, qn = null, Zn = 0, ls = 0, CT = 1, Nm = 2, _T = 3, m5 = 4, WD = 5, Gb = 6, RT = 7, HD = 8, Hr = ls, Ws = null, Rf = !1, $b = !1, UD = !1, td = 0, Ci = _f, dh = 0, fh = 0, FD = 0, Hs = 0, Pm = 0, OT = null, ou = null, U_ = !1, VD = 0, v5 = 300, F_ = 1 / 0, y5 = 500, AT = null, ph = null, V_ = !1, km = null, IT = 0, qD = 0, GD = null, Kae = 50, DT = 0, $D = null, YD = !1, q_ = !1, Qae = 50, Lm = 0, MT = null, Yb = !1, b5 = 0, Jae = 1, ese = 2, G_ = null, w5 = !1, x5 = /* @__PURE__ */ new Set(), tse = {}, $_ = null, Zb = null, ZD = !1, XD = !1, Y_ = !1, KD = !1, jm = 0, QD = {};
     (function() {
       for (var a = 0; a < mV.length; a++) {
         var l = mV[a], h = l.toLowerCase();
         l = l[0].toUpperCase() + l.slice(1), Ts(h, "on" + l);
       }
       Ts(dV, "onAnimationEnd"), Ts(fV, "onAnimationIteration"), Ts(pV, "onAnimationStart"), Ts("dblclick", "onDoubleClick"), Ts("focusin", "onFocus"), Ts("focusout", "onBlur"), Ts(Lae, "onTransitionRun"), Ts(jae, "onTransitionStart"), Ts(zae, "onTransitionCancel"), Ts(hV, "onTransitionEnd");
-    })(), ln("onMouseEnter", ["mouseout", "mouseover"]), ln("onMouseLeave", ["mouseout", "mouseover"]), ln("onPointerEnter", ["pointerout", "pointerover"]), ln("onPointerLeave", ["pointerout", "pointerover"]), Rt(
+    })(), cn("onMouseEnter", ["mouseout", "mouseover"]), cn("onMouseLeave", ["mouseout", "mouseover"]), cn("onPointerEnter", ["pointerout", "pointerover"]), cn("onPointerLeave", ["pointerout", "pointerover"]), Rt(
       "onChange",
       "change click focusin focusout input keydown keyup selectionchange".split(
         " "
@@ -30603,8 +30603,8 @@ const cv = {
     // Configure if windows can be maximized or not
     allowTopMenuButton: !0,
     // Configure if window view and thumbnail display menu are visible or not
-    allowWindowSideBar: !0,
-    // Configure if side bar menu is visible or not
+    allowWindowSideBar: !1,
+    // Configure if side bar menu is visible or not (default false; shown if table of contents exists)
     authNewWindowCenter: "parent",
     // Configure how to center a new window created by the authentication flow. Options: parent, screen
     sideBarPanel: "info",
@@ -33035,7 +33035,7 @@ function FZ(e) {
 function $h(e) {
   return So(e).windows || Ha;
 }
-function Gn(e, { windowId: t }) {
+function $n(e, { windowId: t }) {
   return $h(e)[t];
 }
 const ZO = ht(
@@ -33057,7 +33057,7 @@ function XO(e) {
 }
 function lu(e, { manifestId: t, windowId: n }) {
   const r = XO(e);
-  return r && r[t || n && (Gn(e, { windowId: n }) || Ha).manifestId];
+  return r && r[t || n && ($n(e, { windowId: n }) || Ha).manifestId];
 }
 function VZ(e) {
   return So(e).catalog || Ha;
@@ -33128,7 +33128,7 @@ const pu = ht(
   (e) => e && e.locale
 ), zW = ht(
   [
-    Gn,
+    $n,
     DE
   ],
   (e, t) => e && t[e.thumbnailNavigationId] && t[e.thumbnailNavigationId].position
@@ -33177,7 +33177,7 @@ const pu = ht(
 ), YZ = ht(
   [
     (e, { position: t }) => t,
-    Gn
+    $n
   ],
   (e, t) => {
     if (!t) return !1;
@@ -33477,7 +33477,7 @@ class _h {
       return typeof n == "string" ? { url: n } : this.iiifThumbnailUrl(n);
   }
 }
-function U7e(e, t = {}) {
+function V7e(e, t = {}) {
   return new _h(
     t,
     {
@@ -33706,7 +33706,7 @@ const hX = ht(
 ), Cd = ht(
   [
     $W,
-    Gn,
+    $n,
     (e, { sequenceId: t }) => t
   ],
   (e, t, n) => {
@@ -33719,7 +33719,7 @@ const hX = ht(
   }
 ), _v = ht(
   [
-    Gn,
+    $n,
     Cd
   ],
   (e, t) => {
@@ -33737,7 +33737,7 @@ const hX = ht(
     return n || null;
   }
 ), ME = ht(
-  [Gn, Cd, Or],
+  [$n, Cd, Or],
   (e, t, n) => {
     const r = e && e.viewingDirection || t && t.getViewingDirection() || n && n.getViewingDirection();
     return r || null;
@@ -33851,7 +33851,7 @@ function p0(e) {
   return !!(e && e !== "gallery");
 }
 const _d = ht(
-  [Xn, Gn],
+  [Xn, $n],
   ({ window: e }, t = {}) => ({ ...e, ...t })
 );
 function TX(e) {
@@ -33865,7 +33865,7 @@ const SX = ht(
   (e) => Object.values(e).filter((t) => t.maximized === !0).map((t) => t.id)
 ), Kh = ht(
   [
-    Gn,
+    $n,
     _d,
     YW,
     NE
@@ -33896,7 +33896,7 @@ const SX = ht(
 ), CX = ht(
   [
     PE,
-    Gn,
+    $n,
     (e) => Yh(e).length > 1
   ],
   (e, t, n) => e === "elastic" ? !0 : n && t && t.maximized === !1
@@ -33918,7 +33918,7 @@ const SX = ht(
 ), du = ht(
   [
     Cd,
-    Gn
+    $n
   ],
   (e, t) => {
     if (!e || !t) return;
@@ -33929,7 +33929,7 @@ const SX = ht(
     return (e.getCanvases() || []).find((o) => hn(o.id || o["@id"]) === r) || e.getCanvasByIndex(0);
   }
 ), hu = ht(
-  [Gn],
+  [$n],
   (e) => e && (e.visibleCanvases || e.canvasId && [e.canvasId]) || Mi
 ), gu = ht(
   [hu, Bo],
@@ -34095,7 +34095,7 @@ const SX = ht(
   )
 ), Ov = ht(
   [
-    Gn
+    $n
   ],
   ({ selectedAnnotationId: e }) => e
 ), Afe = ht(
@@ -34237,7 +34237,7 @@ const sA = ht(
     return Un(t.map((n) => n.resources || []));
   }
 ), oH = ht(
-  [Gn, zE],
+  [$n, zE],
   (e, t) => (t == null ? void 0 : t.selectedContentSearchAnnotationIds) || []
 ), aH = ht(
   [BE, (e, { annotationUri: t }) => t],
@@ -34888,7 +34888,7 @@ const gH = ht(
   getVisibleCanvasVideoResources: JW,
   getVisibleCanvases: gu,
   getVisibleNodeIds: uH,
-  getWindow: Gn,
+  getWindow: $n,
   getWindowConfig: _d,
   getWindowDraggability: CX,
   getWindowIds: Yh,
@@ -37381,11 +37381,11 @@ function ige(e) {
 }
 class xA {
   constructor() {
-    qn(this, "currentId", null);
-    qn(this, "clear", () => {
+    Gn(this, "currentId", null);
+    Gn(this, "clear", () => {
       this.currentId !== null && (clearTimeout(this.currentId), this.currentId = null);
     });
-    qn(this, "disposeEffect", () => this.clear);
+    Gn(this, "disposeEffect", () => this.clear);
   }
   static create() {
     return new xA();
@@ -39735,8 +39735,8 @@ const SR = {
   modeStorageKey: "mui-mode"
 }, {
   CssVarsProvider: Ime,
-  useColorScheme: F7e,
-  getInitColorSchemeScript: V7e
+  useColorScheme: q7e,
+  getInitColorSchemeScript: G7e
 } = Cse({
   themeId: cu,
   // @ts-ignore ignore module augmentation tests
@@ -40520,7 +40520,7 @@ function GH(e, t) {
 }
 class q1 {
   constructor() {
-    qn(this, "mountEffect", () => {
+    Gn(this, "mountEffect", () => {
       this.shouldMount && !this.didMount && this.ref.current !== null && (this.didMount = !0, this.mounted.resolve());
     });
     this.ref = {
@@ -44750,7 +44750,7 @@ AQ.propTypes = {
   // eslint-disable-line react/no-unused-prop-types
 };
 const Qye = (e, { windowId: t }) => ({
-  displayAll: Gn(e, { windowId: t }).highlightAllAnnotations,
+  displayAll: $n(e, { windowId: t }).highlightAllAnnotations,
   displayAllDisabled: rA(
     e,
     { windowId: t }
@@ -46613,14 +46613,14 @@ function zQ() {
         P === void 0 && (P = Zbe(x, i)), P !== null && typeof N == "string" && (N = P.createHTML(""));
       Va && Va(be), pn = be;
     }
-  }, Rt = Qn({}, [...wL, ...xL, ...zbe]), ln = Qn({}, [...TL, ...Bbe]), gn = function(be) {
+  }, Rt = Qn({}, [...wL, ...xL, ...zbe]), cn = Qn({}, [...TL, ...Bbe]), gn = function(be) {
     let it = M(be);
     (!it || !it.tagName) && (it = {
       namespaceURI: wt,
       tagName: "template"
     });
     const St = d1(be.tagName), mn = d1(it.tagName);
-    return ft[be.namespaceURI] ? be.namespaceURI === Re ? it.namespaceURI === We ? St === "svg" : it.namespaceURI === oe ? St === "svg" && (mn === "annotation-xml" || nn[mn]) : !!Rt[St] : be.namespaceURI === oe ? it.namespaceURI === We ? St === "math" : it.namespaceURI === Re ? St === "math" && Sn[mn] : !!ln[St] : be.namespaceURI === We ? it.namespaceURI === Re && !Sn[mn] || it.namespaceURI === oe && !nn[mn] ? !1 : !ln[St] && (Xt[St] || !Rt[St]) : !!(Yt === "application/xhtml+xml" && ft[be.namespaceURI]) : !1;
+    return ft[be.namespaceURI] ? be.namespaceURI === Re ? it.namespaceURI === We ? St === "svg" : it.namespaceURI === oe ? St === "svg" && (mn === "annotation-xml" || nn[mn]) : !!Rt[St] : be.namespaceURI === oe ? it.namespaceURI === We ? St === "math" : it.namespaceURI === Re ? St === "math" && Sn[mn] : !!cn[St] : be.namespaceURI === We ? it.namespaceURI === Re && !Sn[mn] || it.namespaceURI === oe && !nn[mn] ? !1 : !cn[St] && (Xt[St] || !Rt[St]) : !!(Yt === "application/xhtml+xml" && ft[be.namespaceURI]) : !1;
   }, Cn = function(be) {
     XT(t.removed, {
       element: be
@@ -46687,7 +46687,7 @@ function zQ() {
     );
   }, pr = function(be) {
     return be instanceof v && (typeof be.nodeName != "string" || typeof be.textContent != "string" || typeof be.removeChild != "function" || !(be.attributes instanceof m) || typeof be.removeAttribute != "function" || typeof be.setAttribute != "function" || typeof be.namespaceURI != "string" || typeof be.insertBefore != "function" || typeof be.hasChildNodes != "function");
-  }, cn = function(be) {
+  }, un = function(be) {
     return typeof u == "function" && be instanceof u;
   };
   function bn(yt, be, it) {
@@ -46703,7 +46703,7 @@ function zQ() {
     if (bn(V.uponSanitizeElement, be, {
       tagName: St,
       allowedTags: ae
-    }), be.hasChildNodes() && !cn(be.firstElementChild) && ja(/<[/\w]/g, be.innerHTML) && ja(/<[/\w]/g, be.textContent) || be.nodeType === eS.progressingInstruction || ye && be.nodeType === eS.comment && ja(/<[/\w]/g, be.data))
+    }), be.hasChildNodes() && !un(be.firstElementChild) && ja(/<[/\w]/g, be.innerHTML) && ja(/<[/\w]/g, be.textContent) || be.nodeType === eS.progressingInstruction || ye && be.nodeType === eS.comment && ja(/<[/\w]/g, be.data))
       return Cn(be), !0;
     if (!ae[St] || xe[St]) {
       if (!xe[St] && pt(St) && (de.tagNameCheck instanceof RegExp && ja(de.tagNameCheck, St) || de.tagNameCheck instanceof Function && de.tagNameCheck(St)))
@@ -46818,7 +46818,7 @@ function zQ() {
   };
   return t.sanitize = function(yt) {
     let be = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {}, it = null, St = null, mn = null, fr = null;
-    if (ot = !yt, ot && (yt = "<!-->"), typeof yt != "string" && !cn(yt))
+    if (ot = !yt, ot && (yt = "<!-->"), typeof yt != "string" && !un(yt))
       if (typeof yt.toString == "function") {
         if (yt = yt.toString(), typeof yt != "string")
           throw QT("dirty is not a string, aborting");
@@ -46884,7 +46884,7 @@ function zQ() {
   }, t;
 }
 var BQ = zQ();
-const dn = (e) => Un([e]).map(
+const sn = (e) => Un([e]).map(
   (t) => [
     cv.createGenerateClassNameOptions.productionPrefix,
     t
@@ -46915,7 +46915,7 @@ function us({
   return /* @__PURE__ */ R.jsx(
     t0e,
     {
-      className: [dn("third-party-html"), e.root].join(" "),
+      className: [sn("third-party-html"), e.root].join(" "),
       dangerouslySetInnerHTML: {
         // eslint-disable-line react/no-danger
         __html: BQ.sanitize(t, e0e[n])
@@ -46948,7 +46948,7 @@ function lw({
     if (!r || r === s) return;
     const u = o == null ? void 0 : o.current;
     if (!u) return;
-    const f = (x = t == null ? void 0 : t.current) == null ? void 0 : x.querySelector(`.${dn("scrollto-scrollable")}`);
+    const f = (x = t == null ? void 0 : t.current) == null ? void 0 : x.querySelector(`.${sn("scrollto-scrollable")}`);
     if (!f) return;
     const p = ((E = t == null ? void 0 : t.current) == null ? void 0 : E.getBoundingClientRect()) || {}, m = (u == null ? void 0 : u.getBoundingClientRect()) || {};
     if (!(m.top < p.top + n || m.bottom > p.bottom)) return;
@@ -49276,7 +49276,7 @@ const sU = CO((e, t) => {
         order: v === "left" ? -1 : null,
         width: B ? "100%" : void 0
       },
-      className: [dn(`companion-window-${v}`), s, v === "bottom" ? r.horizontal : r.vertical].join(" "),
+      className: [sn(`companion-window-${v}`), s, v === "bottom" ? r.horizontal : r.vertical].join(" "),
       square: !0,
       component: "aside",
       "aria-label": n || y,
@@ -49307,7 +49307,7 @@ const sU = CO((e, t) => {
               U0e,
               {
                 variant: "dense",
-                className: [dn("companion-window-header"), A.width < 370 ? "test" : null].join(" "),
+                className: [sn("companion-window-header"), A.width < 370 ? "test" : null].join(" "),
                 disableGutters: !0,
                 children: [
                   /* @__PURE__ */ R.jsx(F0e, { style: { padding: "12px 0" }, variant: "h3", children: y }),
@@ -49318,7 +49318,7 @@ const sU = CO((e, t) => {
                       sx: {
                         order: U || A.width < 370 ? "unset" : 1e3
                       },
-                      className: dn("companion-window-title-controls"),
+                      className: sn("companion-window-title-controls"),
                       children: E
                     }
                   )
@@ -49328,7 +49328,7 @@ const sU = CO((e, t) => {
             /* @__PURE__ */ R.jsx(
               q0e,
               {
-                className: dn("scrollto-scrollable"),
+                className: sn("scrollto-scrollable"),
                 elevation: 0,
                 children: te
               }
@@ -49400,7 +49400,7 @@ function YQ({
     ep,
     {
       title: i("annotations"),
-      paperClassName: dn("window-sidebar-annotation-panel"),
+      paperClassName: sn("window-sidebar-annotation-panel"),
       windowId: n,
       id: r,
       ref: o,
@@ -50348,7 +50348,7 @@ uw.propTypes = {
   label: c.string.isRequired
 };
 function tC({ defaultLabel: e = void 0, labelValuePairs: t }) {
-  return t.length === 0 ? null : /* @__PURE__ */ R.jsx("dl", { className: dn("label-value-metadata"), children: t.reduce((n, r, i) => n.concat([
+  return t.length === 0 ? null : /* @__PURE__ */ R.jsx("dl", { className: sn("label-value-metadata"), children: t.reduce((n, r, i) => n.concat([
     /* @__PURE__ */ R.jsx(Nt, { component: "dt", variant: "subtitle2", children: r.label || e }, `label-${i}`),
     /* @__PURE__ */ R.jsx(Nt, { style: { marginBottom: ".5em", marginLeft: "0px" }, component: "dd", variant: "body1", children: /* @__PURE__ */ R.jsx(us, { htmlString: r.values.join(", "), ruleSet: "iiif" }) }, `value-${i}`)
   ]), []) });
@@ -56823,7 +56823,7 @@ gJ.propTypes = {
   windowId: c.string
 };
 const yTe = (e, { companionWindowId: t, windowId: n }) => {
-  const { collectionPath: r } = Gn(e, { windowId: n }) || {}, i = r[r.length - 1];
+  const { collectionPath: r } = $n(e, { windowId: n }) || {}, i = r[r.length - 1];
   return {
     collectionLabel: Zh(e, { manifestId: i }),
     collectionPath: r
@@ -57127,7 +57127,7 @@ function OTe() {
   }(OL)), OL.exports;
 }
 var ATe = OTe();
-const Zn = /* @__PURE__ */ sr(ATe), ITe = ge("dl")(({ theme: e }) => ({
+const Fn = /* @__PURE__ */ sr(ATe), ITe = ge("dl")(({ theme: e }) => ({
   "& dd": {
     marginBottom: ".5em",
     marginLeft: "0"
@@ -57167,7 +57167,7 @@ function mJ({
             children: s("links")
           }
         ),
-        /* @__PURE__ */ R.jsxs(ITe, { className: Zn(dn("label-value-metadata")), children: [
+        /* @__PURE__ */ R.jsxs(ITe, { className: Fn(sn("label-value-metadata")), children: [
           e && /* @__PURE__ */ R.jsxs(R.Fragment, { children: [
             /* @__PURE__ */ R.jsx(Nt, { variant: "subtitle2", component: "dt", children: s("iiif_homepage") }),
             e.map((m) => /* @__PURE__ */ R.jsx(Nt, { variant: "body1", component: "dd", children: /* @__PURE__ */ R.jsx(Qm, { target: "_blank", rel: "noopener noreferrer", href: m.value, children: m.label || m.value }) }, m.value))
@@ -57247,7 +57247,7 @@ function vJ({
     {
       updateCompanionWindow: !1,
       title: f("aboutThisItem"),
-      paperClassName: dn("window-sidebar-info-panel"),
+      paperClassName: sn("window-sidebar-info-panel"),
       windowId: e,
       id: t,
       titleControls: u && /* @__PURE__ */ R.jsx(
@@ -57295,7 +57295,7 @@ vJ.propTypes = {
 const PTe = (e, { id: t, windowId: n }) => ({
   availableLocales: hX(e, { companionWindowId: t, windowId: n }),
   canvasIds: hu(e, { windowId: n }),
-  collectionPath: (Gn(e, { windowId: n }) || {}).collectionPath,
+  collectionPath: ($n(e, { windowId: n }) || {}).collectionPath,
   locale: pu(e, { companionWindowId: t }).locale || vs(e, { windowId: n }),
   showLocalePicker: _d(e, { windowId: n }).showLocalePicker
 }), kTe = (e, { windowId: t, id: n }) => ({
@@ -60637,7 +60637,7 @@ GJ.propTypes = {
   windowId: c.string.isRequired
 };
 const wEe = (e, { id: t, windowId: n }) => {
-  const r = Jf(e, { windowId: n }), i = Gn(e, { windowId: n }), { config: o } = e, s = pu(e, { companionWindowId: t }), u = i.collectionPath || [], f = u && u[u.length - 1], p = Cd(e, { windowId: n });
+  const r = Jf(e, { windowId: n }), i = $n(e, { windowId: n }), { config: o } = e, s = pu(e, { companionWindowId: t }), u = i.collectionPath || [], f = u && u[u.length - 1], p = Cd(e, { windowId: n });
   return {
     collection: f && Or(e, { manifestId: f }),
     config: o,
@@ -61085,13 +61085,13 @@ function ZJ({
     ep,
     {
       title: o("attributionTitle"),
-      paperClassName: dn("attribution-panel"),
+      paperClassName: sn("attribution-panel"),
       windowId: r,
       id: i,
       children: [
         /* @__PURE__ */ R.jsxs(nv, { children: [
           t && /* @__PURE__ */ R.jsx(tC, { labelValuePairs: t, defaultLabel: o("attribution") }),
-          n && n.length > 0 && /* @__PURE__ */ R.jsxs("dl", { className: dn("label-value-metadata"), children: [
+          n && n.length > 0 && /* @__PURE__ */ R.jsxs("dl", { className: sn("label-value-metadata"), children: [
             /* @__PURE__ */ R.jsx(Nt, { variant: "subtitle2", component: "dt", children: o("rights") }),
             n.map((u) => /* @__PURE__ */ R.jsx(Nt, { variant: "body1", component: "dd", children: /* @__PURE__ */ R.jsx(Qm, { target: "_blank", rel: "noopener noreferrer", href: u, children: u }) }, u.toString()))
           ] })
@@ -61813,7 +61813,7 @@ function eCe(e) {
       return;
     }
     ee(!1), je.current = !0, xe.current = !1, o && ke.current !== -1 && q ? En(pt, F[ke.current], "blur") : o && A && fe !== "" ? En(pt, fe, "blur", "freeSolo") : u && we(pt, j, "blur"), Xt(pt, "blur");
-  }, ln = (pt) => {
+  }, cn = (pt) => {
     const rt = pt.target.value;
     fe !== rt && (Le(rt), Ze(!1), J && J(pt, rt, "input")), rt === "" ? !v && !$ && Yt(pt, null, "clear") : Sn(pt);
   }, gn = (pt) => {
@@ -61841,7 +61841,7 @@ function eCe(e) {
     Be ? Xt(pt, "toggleInput") : Sn(pt);
   }, pr = (pt) => {
     pt.currentTarget.contains(pt.target) && pt.target.getAttribute("id") !== Te && pt.preventDefault();
-  }, cn = (pt) => {
+  }, un = (pt) => {
     pt.currentTarget.contains(pt.target) && (_e.current.focus(), me && je.current && _e.current.selectionEnd - _e.current.selectionStart === 0 && _e.current.select(), je.current = !1);
   }, bn = (pt) => {
     !x && (fe === "" || !Be) && io(pt);
@@ -61867,7 +61867,7 @@ function eCe(e) {
       ...pt,
       onKeyDown: lr(pt),
       onMouseDown: pr,
-      onClick: cn
+      onClick: un
     }),
     getInputLabelProps: () => ({
       id: `${Te}-label`,
@@ -61878,7 +61878,7 @@ function eCe(e) {
       value: fe,
       onBlur: Rt,
       onFocus: xt,
-      onChange: ln,
+      onChange: cn,
       onMouseDown: bn,
       // if open then this is handled imperatively so don't let react override
       // only have an opinion about this when closed
@@ -62566,24 +62566,24 @@ const sCe = (e) => {
   } = eCe({
     ...r,
     componentName: "Autocomplete"
-  }), ln = !O && !M && Xt && !Ue, gn = (!k || U === !0) && U !== !1, {
+  }), cn = !O && !M && Xt && !Ue, gn = (!k || U === !0) && U !== !1, {
     onMouseDown: Cn
   } = Re(), {
     ref: Qr,
     ...bi
-  } = Qt(), pr = te || ((rn) => rn.label ?? rn), cn = {
+  } = Qt(), pr = te || ((rn) => rn.label ?? rn), un = {
     ...r,
     disablePortal: z,
     expanded: Yt,
     focused: Lt,
     fullWidth: V,
     getOptionLabel: pr,
-    hasClearIcon: ln,
+    hasClearIcon: cn,
     hasPopupIcon: gn,
     inputFocused: pn === -1,
     popupOpen: En,
     size: Ze
-  }, bn = sCe(cn), wi = {
+  }, bn = sCe(un), wi = {
     slots: {
       paper: Z,
       popper: fe,
@@ -62598,19 +62598,19 @@ const sCe = (e) => {
   }, [la, pt] = tn("listbox", {
     elementType: mCe,
     externalForwardedProps: wi,
-    ownerState: cn,
+    ownerState: un,
     className: bn.listbox,
     additionalProps: bi,
     ref: Qr
   }), [rt, Et] = tn("paper", {
     elementType: Ui,
     externalForwardedProps: wi,
-    ownerState: cn,
+    ownerState: un,
     className: bn.paper
   }), [yt, be] = tn("popper", {
     elementType: eC,
     externalForwardedProps: wi,
-    ownerState: cn,
+    ownerState: un,
     className: bn.popper,
     additionalProps: {
       disablePortal: z,
@@ -62629,7 +62629,7 @@ const sCe = (e) => {
       disabled: M,
       ...ft(Vr)
     });
-    Oe ? it = Oe(Sn, rn, cn) : it = Sn.map((Vr, jr) => {
+    Oe ? it = Oe(Sn, rn, un) : it = Sn.map((Vr, jr) => {
       const {
         key: Ca,
         ...sl
@@ -62654,12 +62654,12 @@ const sCe = (e) => {
   const mn = ee || ((rn) => /* @__PURE__ */ R.jsxs("li", {
     children: [/* @__PURE__ */ R.jsx(vCe, {
       className: bn.groupLabel,
-      ownerState: cn,
+      ownerState: un,
       component: "div",
       children: rn.group
     }), /* @__PURE__ */ R.jsx(yCe, {
       className: bn.groupUl,
-      ownerState: cn,
+      ownerState: un,
       children: rn.children
     })]
   }, rn.key)), _n = Be || ((rn, Vr) => {
@@ -62683,13 +62683,13 @@ const sCe = (e) => {
       selected: jr["aria-selected"],
       index: Vr,
       inputValue: xt
-    }, cn);
+    }, un);
   }, Ni = wi.slotProps.clearIndicator, Pi = wi.slotProps.popupIndicator;
   return /* @__PURE__ */ R.jsxs(G.Fragment, {
     children: [/* @__PURE__ */ R.jsx(lCe, {
       ref: n,
       className: bt(bn.root, p),
-      ownerState: cn,
+      ownerState: un,
       ...oe(K),
       children: we({
         id: Ct,
@@ -62704,15 +62704,15 @@ const sCe = (e) => {
           onMouseDown: (rn) => {
             rn.target === rn.currentTarget && Cn(rn);
           },
-          ...(ln || gn) && {
+          ...(cn || gn) && {
             endAdornment: /* @__PURE__ */ R.jsxs(cCe, {
               className: bn.endAdornment,
-              ownerState: cn,
-              children: [ln ? /* @__PURE__ */ R.jsx(uCe, {
+              ownerState: un,
+              children: [cn ? /* @__PURE__ */ R.jsx(uCe, {
                 ...ot(),
                 "aria-label": x,
                 title: x,
-                ownerState: cn,
+                ownerState: un,
                 ...Ni,
                 className: bt(bn.clearIndicator, Ni == null ? void 0 : Ni.className),
                 children: m
@@ -62721,7 +62721,7 @@ const sCe = (e) => {
                 disabled: M,
                 "aria-label": En ? E : Ve,
                 title: En ? E : Ve,
-                ownerState: cn,
+                ownerState: un,
                 ...Pi,
                 className: bt(bn.popupIndicator, Pi == null ? void 0 : Pi.className),
                 children: Le
@@ -62744,11 +62744,11 @@ const sCe = (e) => {
         ...Et,
         children: [de && Rt.length === 0 ? /* @__PURE__ */ R.jsx(hCe, {
           className: bn.loading,
-          ownerState: cn,
+          ownerState: un,
           children: xe
         }) : null, Rt.length === 0 && !k && !de ? /* @__PURE__ */ R.jsx(gCe, {
           className: bn.noOptions,
-          ownerState: cn,
+          ownerState: un,
           role: "presentation",
           onMouseDown: (rn) => {
             rn.preventDefault();
@@ -64153,7 +64153,7 @@ const MCe = (e, { companionWindowId: t, windowId: n }) => {
     // the configured topBarSearchQuery from settings, skip auto-selecting
     // the first result on initial load.
     skipInitialSelect: (() => {
-      const u = Gn(e, { windowId: n }) || {}, f = uv(e, { companionWindowId: t, windowId: n }) || "";
+      const u = $n(e, { windowId: n }) || {}, f = uv(e, { companionWindowId: t, windowId: n }) || "";
       return t === `${n}-topbar` && !!u.topBarSearchQuery && String(f) === String(u.topBarSearchQuery);
     })(),
     selectedContentSearchAnnotation: oH(e, {
@@ -65512,7 +65512,7 @@ aee.propTypes = {
 const p_e = (e, { id: t, windowId: n }) => ({
   query: uv(e, { companionWindowId: t, windowId: n }),
   searchService: Cv(e, { windowId: n }),
-  suggestedSearches: Gn(e, { windowId: n }).suggestedSearches
+  suggestedSearches: $n(e, { windowId: n }).suggestedSearches
 }), h_e = (e, t) => ({
   fetchSearch: (n, r) => e(
     gv(t.windowId, t.id, n, r)
@@ -73210,7 +73210,7 @@ xte.propTypes = {
   windowId: c.string.isRequired
 };
 const KIe = (e, { id: t, windowId: n }) => {
-  const r = Gn(e, { windowId: n }), i = pu(e, { companionWindowId: t }), { collectionPath: o } = i, s = o || r.collectionPath, u = s && s[s.length - 1], f = s && s[s.length - 2], p = u && lu(e, { manifestId: u }), m = f && lu(e, { manifestId: f }), v = lu(e, { windowId: n });
+  const r = $n(e, { windowId: n }), i = pu(e, { companionWindowId: t }), { collectionPath: o } = i, s = o || r.collectionPath, u = s && s[s.length - 1], f = s && s[s.length - 2], p = u && lu(e, { manifestId: u }), m = f && lu(e, { manifestId: f }), v = lu(e, { windowId: n });
   return {
     canvasNavigation: e.config.canvasNavigation,
     collection: p && Or(e, { manifestId: p.id }),
@@ -78298,7 +78298,7 @@ const cke = (e) => ({
 }), uke = _t(
   Mt(cke),
   Ot("AppProviders")
-), dke = uke(sne), fke = Kf(() => Promise.resolve().then(() => O7e));
+), dke = uke(sne), fke = Kf(() => Promise.resolve().then(() => I7e));
 function lne({ dndManager: e = void 0, plugins: t = [] }) {
   const n = IY();
   return /* @__PURE__ */ R.jsx(Tte, { plugins: t, children: /* @__PURE__ */ R.jsx(dke, { dndManager: e, children: /* @__PURE__ */ R.jsx(og.Provider, { value: n, children: /* @__PURE__ */ R.jsx(
@@ -78734,7 +78734,7 @@ function xLe(e) {
     n[r - 1] = arguments[r];
   return yLe(pF.apply(void 0, [e].concat(n)));
 }
-function sn(e) {
+function ln(e) {
   e === void 0 && (e = xne);
   for (var t = arguments.length, n = new Array(t > 1 ? t - 1 : 0), r = 1; r < t; r++)
     n[r - 1] = arguments[r];
@@ -81515,7 +81515,7 @@ function eze(e, t, { success: n, degraded: r, failure: i }) {
   return fetch(e, t).then((o) => o.json().then((s) => o.status === 401 ? (r || n)({ json: s, response: o }) : o.ok ? n({ json: s, response: o }) : i({ error: o.statusText, json: s, response: o })).catch((s) => i({ error: s, response: o }))).catch((o) => i({ error: o }));
 }
 function* RI(e, t, { success: n, degraded: r, failure: i }) {
-  const { preprocessors: o = [], postprocessors: s = [] } = yield sn(KZ);
+  const { preprocessors: o = [], postprocessors: s = [] } = yield ln(KZ);
   try {
     const u = o.reduce((p, m) => m(e, p) || p, t);
     let f = yield Tr(eze, e, u, { degraded: r, failure: i, success: n });
@@ -81581,7 +81581,7 @@ function* EF({ manifestId: e }) {
 function* J7(e) {
   const t = e && e.__jsonld ? e : { ...e, options: {} }, n = Zt.getServices(t).filter((i) => i.getProfile().match(/http:\/\/iiif.io\/api\/auth\//));
   if (n.length === 0) return;
-  const r = yield sn(HE);
+  const r = yield ln(HE);
   if (r)
     for (let i = 0; i < n.length; i += 1) {
       const o = n[i], s = Zt.getService(o, "http://iiif.io/api/auth/1/token") || Zt.getService(o, "http://iiif.io/api/auth/0/token"), u = s && r[s.id];
@@ -81590,7 +81590,7 @@ function* J7(e) {
 }
 function* yre({ imageResource: e, infoId: t, windowId: n }) {
   let r = e;
-  r || (r = yield sn(OX, { infoId: t }));
+  r || (r = yield ln(OX, { infoId: t }));
   const i = {
     degraded: ({
       json: o,
@@ -81636,10 +81636,10 @@ function* rze({ manifestId: e, manifestJson: t }) {
     return;
   }
   if (!e) return;
-  (yield sn(XO) || {})[e] || (yield* EF({ manifestId: e }));
+  (yield ln(XO) || {})[e] || (yield* EF({ manifestId: e }));
 }
 function* OI(...e) {
-  const t = yield sn(XO);
+  const t = yield ln(XO);
   for (let n = 0; n < e.length; n += 1) {
     const r = e[n];
     t[r] || (yield Tr(EF, { manifestId: r }));
@@ -81664,10 +81664,10 @@ function* MB(e) {
   e.manifest ? yield Tn(AA(r, e.manifest)) : yield Tr(OI, r, ...t || []);
   const i = n || e.window && e.window.id;
   if (i) {
-    const o = yield sn(Jf, { windowId: i });
-    if (!!(o && o.nodes && o.nodes.length > 0)) {
-      const u = yield sn(rw, { position: "left", windowId: i }), f = u && u[0];
-      f ? yield Tn(ng(i, f, { content: "canvas", position: "left" })) : yield Tn(OA(i, { content: "canvas", position: "left" })), yield Tn(xd(i, { sideBarOpen: !0, sideBarPanel: "canvas" }));
+    const o = typeof window < "u" && (typeof window.innerWidth == "number" && window.innerWidth <= 991 || typeof window.matchMedia == "function" && window.matchMedia("(max-width: 991px)").matches), s = yield ln(Jf, { windowId: i });
+    if (!!(s && s.nodes && s.nodes.length > 0) && !o) {
+      const f = yield ln(rw, { position: "left", windowId: i }), p = f && f[0];
+      p ? yield Tn(ng(i, p, { content: "canvas", position: "left" })) : yield Tn(OA(i, { content: "canvas", position: "left" })), yield Tn(xd(i, { sideBarOpen: !0, sideBarPanel: "canvas" }));
     } else
       yield Tn(xd(i, { sideBarOpen: !1 }));
   }
@@ -81676,13 +81676,13 @@ function* MB(e) {
 function* oze(e) {
   const t = e.id;
   if (!e || !e.payload || !e.payload.sequenceId) return;
-  const n = yield sn(Bo, { windowId: t });
+  const n = yield ln(Bo, { windowId: t });
   if (!n || !n[0] || !n[0].id) return;
   const r = yield Tr(ro, t, n[0].id);
   yield Tn(r);
 }
 function* aze({ manifestId: e, windowId: t }) {
-  const n = yield sn(Or, { manifestId: e });
+  const n = yield ln(Or, { manifestId: e });
   if (n) {
     const r = n.getProperty("partOf"), i = Array.isArray(r) ? r[0] : r;
     i && i.id && (yield Tn(xd(t, { collectionPath: [i.id] })));
@@ -81707,9 +81707,9 @@ function* lze(e) {
   }
   if (typeof o == "number")
     try {
-      const s = yield sn(Yh);
+      const s = yield ln(Yh);
       if (!(Array.isArray(s) && s.length > 1)) {
-        const u = yield sn(B1), f = yield sn(Or, { manifestId: r });
+        const u = yield ln(B1), f = yield ln(Or, { manifestId: r });
         if (f) {
           const p = u(f), m = p && p.canvasAt(o);
           if (m) {
@@ -81725,7 +81725,7 @@ function* lze(e) {
     const s = yield Tr(ro, i, t, null, { preserveViewport: !!e.payload });
     yield Tn(s);
   } else {
-    const s = yield sn(B1), u = yield sn(Or, { manifestId: r });
+    const s = yield ln(B1), u = yield ln(Or, { manifestId: r });
     if (u) {
       const f = s(u), p = f.startCanvas || f.canvasAt(n || 0) || f.canvasAt(0);
       if (p) {
@@ -81737,10 +81737,10 @@ function* lze(e) {
 }
 function* cze(e) {
   if (!e.window) return;
-  const { id: t, defaultSearchQuery: n, topBarSearchQuery: r } = e.window, i = yield sn(Cv, { windowId: t });
+  const { id: t, defaultSearchQuery: n, topBarSearchQuery: r } = e.window, i = yield ln(Cv, { windowId: t });
   if (i) {
     if (n) {
-      const s = (yield sn(rw, { position: "left", windowId: t }))[0];
+      const s = (yield ln(rw, { position: "left", windowId: t }))[0];
       if (s) {
         const u = `${i.id}?q=${n}`;
         yield Tn(gv(t, s, u, n));
@@ -81767,23 +81767,23 @@ function* dze({
   visibleCanvases: n
 }) {
   var u;
-  const r = yield sn(iA, { windowId: t });
+  const r = yield ln(iA, { windowId: t });
   let i = Object.keys(r || {});
   try {
-    const f = yield sn(Gn, { windowId: t }), p = `${t}-topbar`;
+    const f = yield ln($n, { windowId: t }), p = `${t}-topbar`;
     f != null && f.topBarSearchQuery && ((u = r[p]) == null ? void 0 : u.query) === f.topBarSearchQuery && (i = i.filter((m) => m !== p));
   } catch {
   }
-  const o = yield sn(Ov, { windowId: t });
+  const o = yield ln(Ov, { windowId: t });
   if (o) {
-    const f = yield sn(lA, { annotationId: o, windowId: t });
+    const f = yield ln(lA, { annotationId: o, windowId: t });
     if (f) {
       const p = hn(f.id || f["@id"]);
       if ((n || []).some((v) => hn(v) === p))
         return;
     }
   }
-  const s = yield sn(
+  const s = yield ln(
     uze,
     {
       canvasIds: n,
@@ -81801,46 +81801,46 @@ function* dze({
 }
 function* fze({ pan: e, windowId: t }) {
   if (!e) return;
-  const n = yield sn(JO), {
+  const n = yield ln(JO), {
     x: r,
     y: i,
     width: o,
     height: s
   } = n[t] || {}, {
     viewportPosition: { width: u, height: f }
-  } = yield sn(jo);
+  } = yield ln(jo);
   yield Tn(LH({
     x: r + o / 2 - u / 2,
     y: i + s / 2 - f / 2
   }));
 }
 function* pze({ windowId: e }) {
-  const { canvasId: t } = yield sn(Gn, { windowId: e }), n = yield sn(KW, { canvasId: t, windowId: e });
+  const { canvasId: t } = yield ln($n, { windowId: e }), n = yield ln(KW, { canvasId: t, windowId: e });
   yield Tn(xd(e, { visibleCanvases: (n || []).map((r) => r.id) }));
 }
 function* hze({ companionWindowId: e, windowId: t }) {
-  const { switchCanvasOnSearch: n } = yield sn(_d, { windowId: t });
+  const { switchCanvasOnSearch: n } = yield ln(_d, { windowId: t });
   if (!n) return;
   try {
-    const s = yield sn(Gn, { windowId: t }), u = yield sn(uv, { companionWindowId: e, windowId: t });
+    const s = yield ln($n, { windowId: t }), u = yield ln(uv, { companionWindowId: e, windowId: t });
     if (e === `${t}-topbar` && (s != null && s.topBarSearchQuery) && String(u) === String(s.topBarSearchQuery))
       return;
   } catch {
   }
-  let r = yield sn(
+  let r = yield ln(
     sA,
     { companionWindowId: e, windowId: t }
   );
   if (!r || r.length === 0) {
-    const s = yield sn(aA, { companionWindowId: e, windowId: t });
+    const s = yield ln(aA, { companionWindowId: e, windowId: t });
     s && s.length > 0 && Array.isArray(s[0].annotations) && s[0].annotations[0] && (r = [{ id: s[0].annotations[0] }]);
   }
   if (!r || r.length === 0) return;
   const i = r[0];
   yield Tn(rg(t, i.id)), yield Tn(MA(t, e, [i.id]));
-  const o = yield sn(lA, { annotationId: i.id, windowId: t });
+  const o = yield ln(lA, { annotationId: i.id, windowId: t });
   if (o) {
-    const { canvasId: s } = yield sn(Gn, { windowId: t });
+    const { canvasId: s } = yield ln($n, { windowId: t });
     if (hn(s) !== hn(o.id)) {
       const u = yield Tr(ro, t, o.id);
       yield Tn(u);
@@ -81848,16 +81848,16 @@ function* hze({ companionWindowId: e, windowId: t }) {
   }
 }
 function* gze({ annotationId: e, windowId: t }) {
-  const n = yield sn(lA, { annotationId: e, windowId: t });
+  const n = yield ln(lA, { annotationId: e, windowId: t });
   if (!n) return;
-  const { canvasId: r } = yield sn(Gn, { windowId: t });
+  const { canvasId: r } = yield ln($n, { windowId: t });
   if (hn(r) === hn(n.id)) return;
   const i = yield Tr(ro, t, n.id);
   yield Tn(i);
 }
 function* mze({ windowId: e }) {
   try {
-    const t = yield sn(_v, { windowId: e }), n = String((Number.isFinite(t) ? t : 0) + 1);
+    const t = yield ln(_v, { windowId: e }), n = String((Number.isFinite(t) ? t : 0) + 1);
     if (typeof window < "u" && (window != null && window.history) && (window != null && window.location)) {
       const r = new URL(window.location.href), i = new URLSearchParams(r.search);
       i.set("pageNum", n), r.search = i.toString(), window.history.replaceState(window.history.state, "", r.toString());
@@ -81875,10 +81875,10 @@ function* e9({ query: e }) {
   }
 }
 function* vze({ visibleCanvases: e, windowId: t }) {
-  const n = yield sn(Bo, { windowId: t }), r = yield sn(kE), i = (e || []).map((u) => hn(u)), o = (n || []).filter((u) => {
+  const n = yield ln(Bo, { windowId: t }), r = yield ln(kE), i = (e || []).map((u) => hn(u)), o = (n || []).filter((u) => {
     const f = hn(u.id || u["@id"]);
     return i.some((p) => p === f);
-  }), s = yield sn(wo);
+  }), s = yield ln(wo);
   yield ia(o.map((u) => {
     const f = s(u);
     return ia(f ? (f.iiifImageResources || []).map((p) => {
@@ -81888,22 +81888,22 @@ function* vze({ visibleCanvases: e, windowId: t }) {
   }));
 }
 function* yze(e, t) {
-  const n = yield sn(Or, { manifestId: e });
+  const n = yield ln(Or, { manifestId: e });
   n && n.isCollection() && (yield Tn(KE(e, [], t)));
 }
 function* bze(e) {
-  const { manifestId: t } = e, n = yield sn($h);
-  if (n) {
-    for (const [r, i] of Object.entries(n))
-      if (i && i.manifestId === t) {
-        const o = yield sn(Jf, { windowId: r });
-        if (!!(o && o.nodes && o.nodes.length > 0)) {
-          const u = yield sn(rw, { position: "left", windowId: r }), f = u && u[0];
-          f ? yield Tn(ng(r, f, { content: "canvas", position: "left" })) : yield Tn(OA(r, { content: "canvas", position: "left" })), yield Tn(xd(r, { sideBarOpen: !0, sideBarPanel: "canvas" }));
-        } else
-          yield Tn(xd(r, { sideBarOpen: !1 }));
-      }
-  }
+  const { manifestId: t } = e, n = yield ln($h);
+  if (!n) return;
+  const r = typeof window < "u" && (typeof window.innerWidth == "number" && window.innerWidth <= 991 || typeof window.matchMedia == "function" && window.matchMedia("(max-width: 991px)").matches);
+  for (const [i, o] of Object.entries(n))
+    if (o && o.manifestId === t) {
+      const s = yield ln(Jf, { windowId: i });
+      if (!!(s && s.nodes && s.nodes.length > 0) && !r) {
+        const f = yield ln(rw, { position: "left", windowId: i }), p = f && f[0];
+        p ? yield Tn(ng(i, p, { content: "canvas", position: "left" })) : yield Tn(OA(i, { content: "canvas", position: "left" })), yield Tn(xd(i, { sideBarOpen: !0, sideBarPanel: "canvas" }));
+      } else
+        yield Tn(xd(i, { sideBarOpen: !1 }));
+    }
 }
 function* wze() {
   yield ia([
@@ -81960,9 +81960,9 @@ function* Eze() {
   ]);
 }
 function* Cze({ canvasId: e, windowId: t }) {
-  const n = yield sn(Rd, { canvasId: e, windowId: t });
+  const n = yield ln(Rd, { canvasId: e, windowId: t });
   if (!n) return;
-  const r = yield sn(nA), o = (yield sn(wo))(n);
+  const r = yield ln(nA), o = (yield ln(wo))(n);
   if (o)
     return yield ia([
       // IIIF v2
@@ -81984,9 +81984,9 @@ function* Oze({ tokenServiceId: e }) {
   yield kne(2e3), yield Tr(bre, { serviceId: e });
 }
 function* bre({ serviceId: e }) {
-  const t = yield sn($h), n = yield ia(
-    Object.keys(t).map((f) => sn(gu, { windowId: f }))
-  ), r = yield sn(wo), i = Un(Un(n).map((f) => r(f).imageServiceIds)), o = yield sn(kE), s = (f) => Zt.getServices(f).some((m) => {
+  const t = yield ln($h), n = yield ia(
+    Object.keys(t).map((f) => ln(gu, { windowId: f }))
+  ), r = yield ln(wo), i = Un(Un(n).map((f) => r(f).imageServiceIds)), o = yield ln(kE), s = (f) => Zt.getServices(f).some((m) => {
     const v = Zt.getService(m, "http://iiif.io/api/auth/1/token") || Zt.getService(m, "http://iiif.io/api/auth/0/token");
     return v && v.id === e;
   }), u = Object.values(o).filter(
@@ -81995,7 +81995,7 @@ function* bre({ serviceId: e }) {
   yield ia(u.map(({ id: f }) => i.includes(f) ? Tr(yre, { infoId: f }) : Tn({ infoId: f, type: Ne.REMOVE_INFO_RESPONSE })));
 }
 function* Aze({ infoJson: e, windowId: t }) {
-  const n = yield sn(UE), { auth: { serviceProfiles: r = [] } = {} } = yield sn(Xn), i = r.filter((u) => u.external || u.kiosk), o = Zt.getServices(e).filter((u) => !n[u.id]).find((u) => i.some((f) => f.profile === u.getProfile()));
+  const n = yield ln(UE), { auth: { serviceProfiles: r = [] } = {} } = yield ln(Xn), i = r.filter((u) => u.external || u.kiosk), o = Zt.getServices(e).filter((u) => !n[u.id]).find((u) => i.some((f) => f.profile === u.getProfile()));
   if (!o) return;
   const s = i.find(
     (u) => u.profile === o.getProfile()
@@ -82015,11 +82015,11 @@ function* Ize({ infoJson: e, windowId: t, tokenServiceId: n }) {
     return u && u.id === n;
   });
   if (!r) return;
-  const o = (yield sn(HE))[n];
+  const o = (yield ln(HE))[n];
   o && o.success && (yield Tn(UH(n, r.id)));
 }
 function* Dze({ serviceId: e }) {
-  const t = yield sn(HE), n = yield sn(UE), r = t[e];
+  const t = yield ln(HE), n = yield ln(UE), r = t[e];
   if (!r) return;
   const i = n[r.authId];
   i && (r.success ? yield Tn(FH({
@@ -83811,20 +83811,20 @@ var i5e = 1e3 / 30, QR = {
 }, Az, o5e = (Az = class extends dt.PureComponent {
   constructor() {
     super(...arguments);
-    qn(this, "rootElement", dt.createRef());
-    qn(this, "listenersBound", !1);
-    qn(this, "onMouseDown", (t) => {
+    Gn(this, "rootElement", dt.createRef());
+    Gn(this, "listenersBound", !1);
+    Gn(this, "onMouseDown", (t) => {
       !j9(t) && t.button !== 0 || (t.preventDefault(), this.bindListeners());
     });
-    qn(this, "onMouseUp", (t) => {
+    Gn(this, "onMouseUp", (t) => {
       this.unbindListeners();
       const n = this.calculateRelativePercentage(t);
       this.props.onRelease(n);
     });
-    qn(this, "onMouseMove", (t) => {
+    Gn(this, "onMouseMove", (t) => {
       t.preventDefault(), this.throttledUpdatePercentage(t);
     });
-    qn(this, "throttledUpdatePercentage", e5e((t) => {
+    Gn(this, "throttledUpdatePercentage", e5e((t) => {
       const n = this.calculateRelativePercentage(t);
       n !== this.props.splitPercentage && this.props.onChange(n);
     }, i5e));
@@ -83834,7 +83834,7 @@ var i5e = 1e3 / 30, QR = {
     return /* @__PURE__ */ dt.createElement(
       "div",
       {
-        className: Zn("mosaic-split", {
+        className: Fn("mosaic-split", {
           "-row": t === "row",
           "-column": t === "column"
         }),
@@ -83871,7 +83871,7 @@ var i5e = 1e3 / 30, QR = {
     const f = jh.getRelativeSplitPercentage(i, u, r);
     return oUe(f, n, 100 - n);
   }
-}, qn(Az, "defaultProps", {
+}, Gn(Az, "defaultProps", {
   onChange: () => {
   },
   onRelease: () => {
@@ -83945,7 +83945,7 @@ function mO(e, t) {
 var Iz, l5e = (Iz = class extends dt.PureComponent {
   constructor() {
     super(...arguments);
-    qn(this, "onResize", (t, n, r) => {
+    Gn(this, "onResize", (t, n, r) => {
       this.context.mosaicActions.updateTree(
         [
           {
@@ -83993,7 +83993,7 @@ var Iz, l5e = (Iz = class extends dt.PureComponent {
       }
     ) : null;
   }
-}, qn(Iz, "contextType", Od), Iz);
+}, Gn(Iz, "contextType", Od), Iz);
 function c5e(e) {
   return e !== null;
 }
@@ -84008,7 +84008,7 @@ var ko;
     return /* @__PURE__ */ G.createElement(
       "span",
       {
-        className: Zn(i, n(s, r), `${s}-icon-${o}`)
+        className: Fn(i, n(s, r), `${s}-icon-${o}`)
       }
     );
   };
@@ -84024,13 +84024,13 @@ var ko;
 var Dz, u5e = (Dz = class extends dt.PureComponent {
   constructor() {
     super(...arguments);
-    qn(this, "replace", () => Promise.resolve(this.props.createNode()).then((t) => this.context.mosaicActions.replaceWith([], t)).catch(OF));
+    Gn(this, "replace", () => Promise.resolve(this.props.createNode()).then((t) => this.context.mosaicActions.replaceWith([], t)).catch(OF));
   }
   render() {
     return /* @__PURE__ */ dt.createElement(
       "div",
       {
-        className: Zn(
+        className: Fn(
           "mosaic-zero-state",
           ko.getClasses(this.context.blueprintNamespace, "NON_IDEAL_STATE")
         )
@@ -84040,7 +84040,7 @@ var Dz, u5e = (Dz = class extends dt.PureComponent {
       /* @__PURE__ */ dt.createElement("div", null, this.props.createNode && /* @__PURE__ */ dt.createElement(
         "button",
         {
-          className: Zn(
+          className: Fn(
             ko.getClasses(this.context.blueprintNamespace, "BUTTON"),
             ko.getIconClass(this.context.blueprintNamespace, "ADD")
           ),
@@ -84051,7 +84051,7 @@ var Dz, u5e = (Dz = class extends dt.PureComponent {
     );
   }
   // Swallow rejections (i.e. on user cancel)
-}, qn(Dz, "contextType", Od), Dz), E0 = {
+}, Gn(Dz, "contextType", Od), Dz), E0 = {
   TOP: "top",
   BOTTOM: "bottom",
   LEFT: "left",
@@ -84074,7 +84074,7 @@ function die({ path: e, position: t }) {
       ref: (s) => {
         o(s);
       },
-      className: Zn("drop-target", t, {
+      className: Fn("drop-target", t, {
         "drop-target-hover": r && i === n
       })
     }
@@ -84090,7 +84090,7 @@ var fie = dt.memo(() => {
   return /* @__PURE__ */ dt.createElement(
     "div",
     {
-      className: Zn("drop-target-container", {
+      className: Fn("drop-target-container", {
         "-dragging": t
       })
     },
@@ -84354,19 +84354,19 @@ function fz(e) {
 var Mz, w5e = (Mz = class extends dt.PureComponent {
   constructor() {
     super(...arguments);
-    qn(this, "state", {
+    Gn(this, "state", {
       currentNode: null,
       lastInitialValue: null,
       mosaicId: this.props.mosaicId ?? Ba()
     });
-    qn(this, "updateRoot", (t, n = !1) => {
+    Gn(this, "updateRoot", (t, n = !1) => {
       const r = this.getRoot() || {};
       this.replaceRoot(vO(r, t), n);
     });
-    qn(this, "replaceRoot", (t, n = !1) => {
+    Gn(this, "replaceRoot", (t, n = !1) => {
       this.props.onChange(t), !n && this.props.onRelease && this.props.onRelease(t), fz(this.props) && this.setState({ currentNode: t });
     });
-    qn(this, "actions", {
+    Gn(this, "actions", {
       updateTree: this.updateRoot,
       remove: (t) => {
         t.length === 0 ? this.replaceRoot(null) : this.updateRoot([yO(this.getRoot(), t)]);
@@ -84383,7 +84383,7 @@ var Mz, w5e = (Mz = class extends dt.PureComponent {
         }
       ])
     });
-    qn(this, "childContext", {
+    Gn(this, "childContext", {
       mosaicActions: this.actions,
       mosaicId: this.state.mosaicId,
       blueprintNamespace: this.props.blueprintNamespace
@@ -84399,7 +84399,7 @@ var Mz, w5e = (Mz = class extends dt.PureComponent {
   }
   render() {
     const { className: t } = this.props;
-    return /* @__PURE__ */ dt.createElement(Od.Provider, { value: this.childContext }, /* @__PURE__ */ dt.createElement("div", { className: Zn(t, "mosaic mosaic-drop-target") }, this.renderTree(), /* @__PURE__ */ dt.createElement(fie, null)));
+    return /* @__PURE__ */ dt.createElement(Od.Provider, { value: this.childContext }, /* @__PURE__ */ dt.createElement("div", { className: Fn(t, "mosaic mosaic-drop-target") }, this.renderTree(), /* @__PURE__ */ dt.createElement(fie, null)));
   }
   getRoot() {
     return fz(this.props) ? this.state.currentNode : this.props.value;
@@ -84422,7 +84422,7 @@ var Mz, w5e = (Mz = class extends dt.PureComponent {
         );
     }
   }
-}, qn(Mz, "defaultProps", {
+}, Gn(Mz, "defaultProps", {
   onChange: () => {
   },
   zeroStateView: /* @__PURE__ */ dt.createElement(u5e, null),
@@ -84453,7 +84453,7 @@ var Mz, w5e = (Mz = class extends dt.PureComponent {
     {
       title: e,
       onClick: n,
-      className: Zn(
+      className: Fn(
         "mosaic-default-control",
         ko.getClasses(i, "BUTTON", "MINIMAL"),
         t
@@ -84467,7 +84467,7 @@ var Mz, w5e = (Mz = class extends dt.PureComponent {
       zI,
       {
         title: "Expand",
-        className: Zn(
+        className: Fn(
           "expand-button",
           ko.getIconClass(this.context.blueprintNamespace, "MAXIMIZE")
         ),
@@ -84480,13 +84480,13 @@ var Mz, w5e = (Mz = class extends dt.PureComponent {
       e.expand(this.context.mosaicWindowActions.getPath()), this.props.onClick && this.props.onClick();
     };
   }
-}, qn(Nz, "contextType", bw), Nz), Pz, gie = (Pz = class extends dt.PureComponent {
+}, Gn(Nz, "contextType", bw), Nz), Pz, gie = (Pz = class extends dt.PureComponent {
   render() {
     return /* @__PURE__ */ dt.createElement(Od.Consumer, null, ({ mosaicActions: e, blueprintNamespace: t }) => /* @__PURE__ */ dt.createElement(
       zI,
       {
         title: "Close Window",
-        className: Zn("close-button", ko.getIconClass(t, "CROSS")),
+        className: Fn("close-button", ko.getIconClass(t, "CROSS")),
         onClick: this.createRemove(e)
       }
     ));
@@ -84496,10 +84496,10 @@ var Mz, w5e = (Mz = class extends dt.PureComponent {
       e.remove(this.context.mosaicWindowActions.getPath()), this.props.onClick && this.props.onClick();
     };
   }
-}, qn(Pz, "contextType", bw), Pz), kz, x5e = (kz = class extends dt.PureComponent {
+}, Gn(Pz, "contextType", bw), Pz), kz, x5e = (kz = class extends dt.PureComponent {
   constructor() {
     super(...arguments);
-    qn(this, "replace", () => {
+    Gn(this, "replace", () => {
       this.context.mosaicWindowActions.replaceWithNew().then(() => {
         this.props.onClick && this.props.onClick();
       }).catch(OF);
@@ -84510,7 +84510,7 @@ var Mz, w5e = (Mz = class extends dt.PureComponent {
       zI,
       {
         title: "Replace Window",
-        className: Zn(
+        className: Fn(
           "replace-button",
           ko.getIconClass(this.context.blueprintNamespace, "EXCHANGE")
         ),
@@ -84518,10 +84518,10 @@ var Mz, w5e = (Mz = class extends dt.PureComponent {
       }
     );
   }
-}, qn(kz, "contextType", bw), kz), Lz, T5e = (Lz = class extends dt.PureComponent {
+}, Gn(kz, "contextType", bw), kz), Lz, T5e = (Lz = class extends dt.PureComponent {
   constructor() {
     super(...arguments);
-    qn(this, "split", () => {
+    Gn(this, "split", () => {
       this.context.mosaicWindowActions.split().then(() => {
         this.props.onClick && this.props.onClick();
       }).catch(OF);
@@ -84532,7 +84532,7 @@ var Mz, w5e = (Mz = class extends dt.PureComponent {
       zI,
       {
         title: "Split Window",
-        className: Zn(
+        className: Fn(
           "split-button",
           ko.getIconClass(this.context.blueprintNamespace, "ADD_COLUMN_RIGHT")
         ),
@@ -84540,7 +84540,7 @@ var Mz, w5e = (Mz = class extends dt.PureComponent {
       }
     );
   }
-}, qn(Lz, "contextType", bw), Lz), S5e = dt.Children.toArray([
+}, Gn(Lz, "contextType", bw), Lz), S5e = dt.Children.toArray([
   /* @__PURE__ */ dt.createElement(x5e, null),
   /* @__PURE__ */ dt.createElement(T5e, null),
   /* @__PURE__ */ dt.createElement(hie, null),
@@ -84552,15 +84552,15 @@ var Mz, w5e = (Mz = class extends dt.PureComponent {
 }, i1, _5e = (i1 = class extends dt.Component {
   constructor() {
     super(...arguments);
-    qn(this, "state", {
+    Gn(this, "state", {
       additionalControlsOpen: !1
     });
-    qn(this, "rootElement", null);
-    qn(this, "renderDropTarget", (t) => {
+    Gn(this, "rootElement", null);
+    Gn(this, "renderDropTarget", (t) => {
       const { path: n } = this.props;
       return /* @__PURE__ */ dt.createElement(die, { position: t, path: n, key: t });
     });
-    qn(this, "split", (...t) => {
+    Gn(this, "split", (...t) => {
       this.checkCreateNode();
       const { createNode: n, path: r } = this.props, { mosaicActions: i } = this.context, o = i.getRoot(), s = this.rootElement.offsetWidth > this.rootElement.offsetHeight ? "row" : "column";
       return Promise.resolve(n(...t)).then(
@@ -84571,22 +84571,22 @@ var Mz, w5e = (Mz = class extends dt.PureComponent {
         })
       );
     });
-    qn(this, "swap", (...t) => {
+    Gn(this, "swap", (...t) => {
       this.checkCreateNode();
       const { mosaicActions: n } = this.context, { createNode: r, path: i } = this.props;
       return Promise.resolve(r(...t)).then((o) => n.replaceWith(i, o));
     });
-    qn(this, "setAdditionalControlsOpen", (t) => {
+    Gn(this, "setAdditionalControlsOpen", (t) => {
       var r, i;
       const n = t === "toggle" ? !this.state.additionalControlsOpen : t;
       this.setState({ additionalControlsOpen: n }), (i = (r = this.props).onAdditionalControlsToggle) == null || i.call(r, n);
     });
-    qn(this, "getPath", () => this.props.path);
-    qn(this, "connectDragSource", (t) => {
+    Gn(this, "getPath", () => this.props.path);
+    Gn(this, "connectDragSource", (t) => {
       const { connectDragSource: n } = this.props;
       return n(t);
     });
-    qn(this, "childContext", {
+    Gn(this, "childContext", {
       // @ts-ignore
       blueprintNamespace: this.context.blueprintNamespace,
       mosaicWindowActions: {
@@ -84613,7 +84613,7 @@ var Mz, w5e = (Mz = class extends dt.PureComponent {
       /* @__PURE__ */ dt.createElement(
         "div",
         {
-          className: Zn("mosaic-window mosaic-drop-target", t, {
+          className: Fn("mosaic-window mosaic-drop-target", t, {
             "drop-target-hover": n && u === this.context.mosaicId,
             "additional-controls-open": this.state.additionalControlsOpen
           }),
@@ -84646,16 +84646,16 @@ var Mz, w5e = (Mz = class extends dt.PureComponent {
     const { title: t, draggable: n, additionalControls: r, additionalControlButtonText: i, path: o, renderToolbar: s } = this.props, { additionalControlsOpen: u } = this.state, f = this.getToolbarControls(), p = n && o.length > 0, m = p ? this.props.connectDragSource : (x) => x;
     if (s) {
       const x = m(s(this.props, n));
-      return /* @__PURE__ */ dt.createElement("div", { className: Zn("mosaic-window-toolbar", { draggable: p }) }, x);
+      return /* @__PURE__ */ dt.createElement("div", { className: Fn("mosaic-window-toolbar", { draggable: p }) }, x);
     }
     const v = m(
       /* @__PURE__ */ dt.createElement("div", { title: t, className: "mosaic-window-title" }, t)
     ), y = !ZVe(r);
-    return /* @__PURE__ */ dt.createElement("div", { className: Zn("mosaic-window-toolbar", { draggable: p }) }, v, /* @__PURE__ */ dt.createElement("div", { className: Zn("mosaic-window-controls", ko.getClasses("BUTTON_GROUP")) }, y && /* @__PURE__ */ dt.createElement(
+    return /* @__PURE__ */ dt.createElement("div", { className: Fn("mosaic-window-toolbar", { draggable: p }) }, v, /* @__PURE__ */ dt.createElement("div", { className: Fn("mosaic-window-controls", ko.getClasses("BUTTON_GROUP")) }, y && /* @__PURE__ */ dt.createElement(
       "button",
       {
         onClick: () => this.setAdditionalControlsOpen(!u),
-        className: Zn(
+        className: Fn(
           ko.getClasses(this.context.blueprintNamespace, "BUTTON", "MINIMAL"),
           ko.getIconClass(this.context.blueprintNamespace, "MORE"),
           {
@@ -84670,12 +84670,12 @@ var Mz, w5e = (Mz = class extends dt.PureComponent {
     if (this.props.createNode == null)
       throw new Error("Operation invalid unless `createNode` is defined");
   }
-}, qn(i1, "defaultProps", {
+}, Gn(i1, "defaultProps", {
   additionalControlButtonText: "More",
   draggable: !0,
   renderPreview: ({ title: t }) => /* @__PURE__ */ dt.createElement("div", { className: "mosaic-preview" }, /* @__PURE__ */ dt.createElement("div", { className: "mosaic-window-toolbar" }, /* @__PURE__ */ dt.createElement("div", { className: "mosaic-window-title" }, t)), /* @__PURE__ */ dt.createElement("div", { className: "mosaic-window-body" }, /* @__PURE__ */ dt.createElement("h4", null, t), /* @__PURE__ */ dt.createElement(ko.Icon, { className: "default-preview-icon", size: "large", icon: "APPLICATION" }))),
   renderToolbar: null
-}), qn(i1, "contextType", Od), i1);
+}), Gn(i1, "contextType", Od), i1);
 function R5e(e) {
   const { mosaicActions: t, mosaicId: n } = oa(Od), [, r, i] = QMe({
     type: EE.WINDOW,
@@ -86058,7 +86058,7 @@ function xie({
       disableGutters: !0,
       onMouseDown: f,
       ownerState: z,
-      className: Zn(dn("window-top-bar")),
+      className: Fn(sn("window-top-bar")),
       variant: "dense",
       children: [
         U && /* @__PURE__ */ R.jsxs(o4e, { children: [
@@ -86068,17 +86068,17 @@ function xie({
               Rr,
               {
                 "aria-label": P ? "Hide header options" : "Show header options",
-                className: dn("window-menu-btn"),
+                className: sn("window-menu-btn"),
                 onClick: () => N((V) => !V),
                 children: /* @__PURE__ */ R.jsx(Wt, { name: P ? "chevron-up" : "chevron-down", size: 16 })
               }
             ),
-            p && /* @__PURE__ */ R.jsx(HB, { className: dn("window-menu-btn") }),
+            p && /* @__PURE__ */ R.jsx(HB, { className: sn("window-menu-btn") }),
             s && /* @__PURE__ */ R.jsx(
               Rr,
               {
                 "aria-label": A("closeWindow"),
-                className: Zn(dn("window-close"), dn("window-menu-btn")),
+                className: Fn(sn("window-close"), sn("window-menu-btn")),
                 onClick: e,
                 children: /* @__PURE__ */ R.jsx(Wt, { name: "x-lg", size: 16 })
               }
@@ -86091,7 +86091,7 @@ function xie({
             {
               "aria-label": A("toggleWindowSideBar"),
               onClick: n,
-              className: dn("window-menu-btn"),
+              className: Fn(sn("window-menu-btn"), "mirador-window-sidebar-toggle-btn"),
               children: /* @__PURE__ */ R.jsx(Wt, { name: "list", size: 16 })
             }
           ),
@@ -86128,7 +86128,7 @@ function xie({
             ) }),
             /* @__PURE__ */ R.jsx(j5e, { windowId: t }),
             /* @__PURE__ */ R.jsx(B5e, { windowId: t }),
-            p && !U && /* @__PURE__ */ R.jsx(HB, { className: dn("window-menu-btn") })
+            p && !U && /* @__PURE__ */ R.jsx(HB, { className: sn("window-menu-btn") })
           ] })
         ] })
       ]
@@ -86159,32 +86159,32 @@ xie.propTypes = {
   showSearchUnavailable: c.bool,
   hideWindowTitle: c.bool
 };
-const f4e = (e, { windowId: t }) => {
+const f4e = () => typeof window < "u" && (typeof window.innerWidth == "number" && window.innerWidth <= 991 || typeof window.matchMedia == "function" && window.matchMedia("(max-width: 991px)").matches), p4e = (e, { windowId: t }) => {
   const n = _d(e, { windowId: t }), r = !!(n.hideWindowTitle || n.showWindowTitle === !1 || n.windowTitle === !1), i = Cv(e, { windowId: t }), o = YS(e, { windowId: t }), s = o && !o.missing && !o.isFetching && !o.error, u = Jf(e, { windowId: t }), f = !!(u && u.nodes && u.nodes.length > 0);
   return {
     allowClose: n.allowClose,
     allowFullscreen: n.allowFullscreen,
     allowMaximize: n.allowMaximize,
     allowTopMenuButton: n.allowTopMenuButton,
-    allowWindowSideBar: n.allowWindowSideBar !== !1 && f,
+    allowWindowSideBar: !!(f && !f4e()),
     focused: XW(e, { windowId: t }),
     maximized: n.maximized,
     hideWindowTitle: r,
     hasSearchService: !!i,
     showSearchUnavailable: s && !i
   };
-}, p4e = (e, { windowId: t }) => ({
+}, h4e = (e, { windowId: t }) => ({
   focusWindow: () => e(YE(t)),
   maximizeWindow: () => e(LK(t)),
   minimizeWindow: () => e(jK(t)),
   removeWindow: () => e(DH(t)),
   toggleWindowSideBar: () => e(BK(t))
-}), h4e = _t(
-  Mt(f4e, p4e),
+}), g4e = _t(
+  Mt(p4e, h4e),
   Ot("WindowTopBar")
-), g4e = h4e(xie);
+), m4e = g4e(xie);
 var V9 = {};
-function m4e(e, t, n) {
+function v4e(e, t, n) {
   const r = t.getBoundingClientRect(), i = n && n.getBoundingClientRect(), o = rl(t);
   let s;
   if (t.fakeTransform)
@@ -86204,7 +86204,7 @@ function Tie(e) {
   return typeof e == "function" ? e() : e;
 }
 function e1(e, t, n) {
-  const r = Tie(n), i = m4e(e, t, r);
+  const r = Tie(n), i = v4e(e, t, r);
   i && (t.style.webkitTransform = i, t.style.transform = i);
 }
 const YF = /* @__PURE__ */ G.forwardRef(function(t, n) {
@@ -86406,17 +86406,17 @@ V9.NODE_ENV !== "production" && (YF.propTypes = {
     exit: c.number
   })])
 });
-function v4e(e) {
+function y4e(e) {
   return zt("MuiDrawer", e);
 }
 Ht("MuiDrawer", ["root", "docked", "paper", "anchorLeft", "anchorRight", "anchorTop", "anchorBottom", "paperAnchorLeft", "paperAnchorRight", "paperAnchorTop", "paperAnchorBottom", "paperAnchorDockedLeft", "paperAnchorDockedRight", "paperAnchorDockedTop", "paperAnchorDockedBottom", "modal"]);
-var y4e = {};
+var b4e = {};
 const Sie = (e, t) => {
   const {
     ownerState: n
   } = e;
   return [t.root, (n.variant === "permanent" || n.variant === "persistent") && t.docked, t.modal];
-}, b4e = (e) => {
+}, w4e = (e) => {
   const {
     classes: t,
     anchor: n,
@@ -86427,8 +86427,8 @@ const Sie = (e, t) => {
     modal: ["modal"],
     paper: ["paper", `paperAnchor${Je(n)}`, r !== "temporary" && `paperAnchorDocked${Je(n)}`]
   };
-  return Bt(i, v4e, t);
-}, w4e = ge(UA, {
+  return Bt(i, y4e, t);
+}, x4e = ge(UA, {
   name: "MuiDrawer",
   slot: "Root",
   overridesResolver: Sie
@@ -86436,7 +86436,7 @@ const Sie = (e, t) => {
   theme: e
 }) => ({
   zIndex: (e.vars || e).zIndex.drawer
-}))), x4e = ge("div", {
+}))), T4e = ge("div", {
   shouldForwardProp: sa,
   name: "MuiDrawer",
   slot: "Docked",
@@ -86444,7 +86444,7 @@ const Sie = (e, t) => {
   overridesResolver: Sie
 })({
   flex: "0 0 auto"
-}), T4e = ge(Ui, {
+}), S4e = ge(Ui, {
   name: "MuiDrawer",
   slot: "Paper",
   overridesResolver: (e, t) => {
@@ -86543,13 +86543,13 @@ const Sie = (e, t) => {
   top: "down",
   bottom: "up"
 };
-function S4e(e) {
+function E4e(e) {
   return ["left", "right"].includes(e);
 }
-function E4e({
+function C4e({
   direction: e
 }, t) {
-  return e === "rtl" && S4e(t) ? Eie[t] : t;
+  return e === "rtl" && E4e(t) ? Eie[t] : t;
 }
 const ZF = /* @__PURE__ */ G.forwardRef(function(t, n) {
   const r = Vt({
@@ -86584,7 +86584,7 @@ const ZF = /* @__PURE__ */ G.forwardRef(function(t, n) {
   G.useEffect(() => {
     U.current = !0;
   }, []);
-  const k = E4e({
+  const k = C4e({
     direction: o ? "rtl" : "ltr"
   }, u), $ = {
     ...r,
@@ -86593,7 +86593,7 @@ const ZF = /* @__PURE__ */ G.forwardRef(function(t, n) {
     open: _,
     variant: N,
     ...W
-  }, Q = b4e($), re = {
+  }, Q = w4e($), re = {
     slots: {
       transition: M,
       ...z
@@ -86611,7 +86611,7 @@ const ZF = /* @__PURE__ */ G.forwardRef(function(t, n) {
     }
   }, [te, J] = tn("root", {
     ref: n,
-    elementType: w4e,
+    elementType: x4e,
     className: bt(Q.root, Q.modal, m),
     shouldForwardComponentProp: !0,
     ownerState: $,
@@ -86632,7 +86632,7 @@ const ZF = /* @__PURE__ */ G.forwardRef(function(t, n) {
       }
     }
   }), [ne, se] = tn("paper", {
-    elementType: T4e,
+    elementType: S4e,
     shouldForwardComponentProp: !0,
     className: bt(Q.paper, O.className),
     ownerState: $,
@@ -86642,7 +86642,7 @@ const ZF = /* @__PURE__ */ G.forwardRef(function(t, n) {
       square: !0
     }
   }), [ce, he] = tn("docked", {
-    elementType: x4e,
+    elementType: T4e,
     ref: n,
     className: bt(Q.root, Q.docked, m),
     ownerState: $,
@@ -86680,7 +86680,7 @@ const ZF = /* @__PURE__ */ G.forwardRef(function(t, n) {
     children: Te
   });
 });
-y4e.NODE_ENV !== "production" && (ZF.propTypes = {
+b4e.NODE_ENV !== "production" && (ZF.propTypes = {
   // ┌────────────────────────────── Warning ──────────────────────────────┐
   // │ These PropTypes are generated from the TypeScript type definitions. │
   // │    To update them, edit the d.ts file and run `pnpm proptypes`.     │
@@ -86790,13 +86790,13 @@ y4e.NODE_ENV !== "production" && (ZF.propTypes = {
    */
   variant: c.oneOf(["permanent", "persistent", "temporary"])
 });
-function C4e(e) {
+function _4e(e) {
   return (1 + Math.sin(Math.PI * e - Math.PI / 2)) / 2;
 }
-function _4e(e, t, n, r = {}, i = () => {
+function R4e(e, t, n, r = {}, i = () => {
 }) {
   const {
-    ease: o = C4e,
+    ease: o = _4e,
     duration: s = 300
     // standard
   } = r;
@@ -86822,8 +86822,8 @@ function _4e(e, t, n, r = {}, i = () => {
   };
   return f === n ? (i(new Error("Element already at target position")), m) : (requestAnimationFrame(v), m);
 }
-var R4e = {};
-const O4e = {
+var O4e = {};
+const A4e = {
   width: 99,
   height: 99,
   position: "absolute",
@@ -86848,25 +86848,25 @@ function Cie(e) {
   }, [t]), G.useEffect(() => {
     o(), t(r.current);
   }, [t]), /* @__PURE__ */ R.jsx("div", {
-    style: O4e,
+    style: A4e,
     ...n,
     ref: i
   });
 }
-R4e.NODE_ENV !== "production" && (Cie.propTypes = {
+O4e.NODE_ENV !== "production" && (Cie.propTypes = {
   onChange: c.func.isRequired
 });
-const A4e = bs(/* @__PURE__ */ R.jsx("path", {
+const I4e = bs(/* @__PURE__ */ R.jsx("path", {
   d: "M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"
-}), "KeyboardArrowLeft"), I4e = bs(/* @__PURE__ */ R.jsx("path", {
+}), "KeyboardArrowLeft"), D4e = bs(/* @__PURE__ */ R.jsx("path", {
   d: "M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"
 }), "KeyboardArrowRight");
-function D4e(e) {
+function M4e(e) {
   return zt("MuiTabScrollButton", e);
 }
-const M4e = Ht("MuiTabScrollButton", ["root", "vertical", "horizontal", "disabled"]);
-var N4e = {};
-const P4e = (e) => {
+const N4e = Ht("MuiTabScrollButton", ["root", "vertical", "horizontal", "disabled"]);
+var P4e = {};
+const k4e = (e) => {
   const {
     classes: t,
     orientation: n,
@@ -86874,8 +86874,8 @@ const P4e = (e) => {
   } = e;
   return Bt({
     root: ["root", n, r && "disabled"]
-  }, D4e, t);
-}, k4e = ge(gs, {
+  }, M4e, t);
+}, L4e = ge(gs, {
   name: "MuiTabScrollButton",
   slot: "Root",
   overridesResolver: (e, t) => {
@@ -86888,7 +86888,7 @@ const P4e = (e) => {
   width: 40,
   flexShrink: 0,
   opacity: 0.8,
-  [`&.${M4e.disabled}`]: {
+  [`&.${N4e.disabled}`]: {
     opacity: 0
   },
   variants: [{
@@ -86918,7 +86918,7 @@ const P4e = (e) => {
   } = r, v = tg(), y = {
     isRtl: v,
     ...r
-  }, x = P4e(y), E = o.StartScrollButtonIcon ?? A4e, T = o.EndScrollButtonIcon ?? I4e, _ = Hi({
+  }, x = k4e(y), E = o.StartScrollButtonIcon ?? I4e, T = o.EndScrollButtonIcon ?? D4e, _ = Hi({
     elementType: E,
     externalSlotProps: s.startScrollButtonIcon,
     additionalProps: {
@@ -86933,7 +86933,7 @@ const P4e = (e) => {
     },
     ownerState: y
   });
-  return /* @__PURE__ */ R.jsx(k4e, {
+  return /* @__PURE__ */ R.jsx(L4e, {
     component: "div",
     className: bt(x.root, i),
     ref: n,
@@ -86954,7 +86954,7 @@ const P4e = (e) => {
     })
   });
 });
-N4e.NODE_ENV !== "production" && (_ie.propTypes = {
+P4e.NODE_ENV !== "production" && (_ie.propTypes = {
   // ┌────────────────────────────── Warning ──────────────────────────────┐
   // │ These PropTypes are generated from the TypeScript type definitions. │
   // │    To update them, edit the d.ts file and run `pnpm proptypes`.     │
@@ -87010,7 +87010,7 @@ N4e.NODE_ENV !== "production" && (_ie.propTypes = {
    */
   sx: c.oneOfType([c.arrayOf(c.oneOfType([c.func, c.object, c.bool])), c.func, c.object])
 });
-function L4e(e) {
+function j4e(e) {
   return zt("MuiTabs", e);
 }
 const gz = Ht("MuiTabs", ["root", "vertical", "list", "flexContainer", "flexContainerVertical", "centered", "scroller", "fixed", "scrollableX", "scrollableY", "hideScrollbar", "scrollButtons", "scrollButtonsHideMobile", "indicator"]);
@@ -87031,7 +87031,7 @@ const q9 = (e, t) => e === t ? e.firstChild : t && t.nextElementSibling ? t.next
       return;
     }
   }
-}, j4e = (e) => {
+}, z4e = (e) => {
   const {
     vertical: t,
     fixed: n,
@@ -87050,8 +87050,8 @@ const q9 = (e, t) => e === t ? e.firstChild : t && t.nextElementSibling ? t.next
     scrollButtons: ["scrollButtons", u && "scrollButtonsHideMobile"],
     scrollableX: [i && "scrollableX"],
     hideScrollbar: [r && "hideScrollbar"]
-  }, L4e, f);
-}, z4e = ge("div", {
+  }, j4e, f);
+}, B4e = ge("div", {
   name: "MuiTabs",
   slot: "Root",
   overridesResolver: (e, t) => {
@@ -87091,7 +87091,7 @@ const q9 = (e, t) => e === t ? e.firstChild : t && t.nextElementSibling ? t.next
       }
     }
   }]
-}))), B4e = ge("div", {
+}))), W4e = ge("div", {
   name: "MuiTabs",
   slot: "Scroller",
   overridesResolver: (e, t) => {
@@ -87143,7 +87143,7 @@ const q9 = (e, t) => e === t ? e.firstChild : t && t.nextElementSibling ? t.next
       overflowX: "hidden"
     }
   }]
-}), W4e = ge("div", {
+}), H4e = ge("div", {
   name: "MuiTabs",
   slot: "List",
   overridesResolver: (e, t) => {
@@ -87169,7 +87169,7 @@ const q9 = (e, t) => e === t ? e.firstChild : t && t.nextElementSibling ? t.next
       justifyContent: "center"
     }
   }]
-}), H4e = ge("span", {
+}), U4e = ge("span", {
   name: "MuiTabs",
   slot: "Indicator",
   overridesResolver: (e, t) => t.indicator
@@ -87205,7 +87205,7 @@ const q9 = (e, t) => e === t ? e.firstChild : t && t.nextElementSibling ? t.next
       right: 0
     }
   }]
-}))), U4e = ge(Cie)({
+}))), F4e = ge(Cie)({
   overflowX: "auto",
   overflowY: "hidden",
   // Hide dimensionless scrollbar on macOS
@@ -87265,7 +87265,7 @@ const Rie = /* @__PURE__ */ G.forwardRef(function(t, n) {
     scrollableY: Q && re,
     centered: p && !Q,
     scrollButtonsHideMobile: !x
-  }, ae = j4e(he), me = Hi({
+  }, ae = z4e(he), me = Hi({
     elementType: P.StartScrollButtonIcon,
     externalSlotProps: N.startScrollButtonIcon,
     ownerState: he
@@ -87301,30 +87301,30 @@ const Rie = /* @__PURE__ */ G.forwardRef(function(t, n) {
         right: gn.right
       };
     }
-    let ln;
+    let cn;
     if (xt && U !== !1) {
       const gn = Z.current.children;
       if (gn.length > 0) {
         const Cn = gn[Ve.get(U)];
         y0.NODE_ENV !== "production" && (Cn || console.error(["MUI: The `value` provided to the Tabs component is invalid.", `None of the Tabs' children match with "${U}".`, Ve.keys ? `You can provide one of the following values: ${Array.from(Ve.keys()).join(", ")}.` : null].join(`
-`))), ln = Cn ? Cn.getBoundingClientRect() : null, y0.NODE_ENV !== "production" && y0.NODE_ENV !== "test" && !Y9 && ln && ln.width === 0 && ln.height === 0 && // if the whole Tabs component is hidden, don't warn
+`))), cn = Cn ? Cn.getBoundingClientRect() : null, y0.NODE_ENV !== "production" && y0.NODE_ENV !== "test" && !Y9 && cn && cn.width === 0 && cn.height === 0 && // if the whole Tabs component is hidden, don't warn
         Rt.clientWidth !== 0 && (Rt = null, console.error(["MUI: The `value` provided to the Tabs component is invalid.", `The Tab with this \`value\` ("${U}") is not part of the document layout.`, "Make sure the tab item is present in the document or that it's not `display: none`."].join(`
 `)), Y9 = !0);
       }
     }
     return {
       tabsMeta: Rt,
-      tabMeta: ln
+      tabMeta: cn
     };
   }, Ue = Sr(() => {
     const {
       tabsMeta: xt,
       tabMeta: Rt
     } = Le();
-    let ln = 0, gn;
-    re ? (gn = "top", Rt && xt && (ln = Rt.top - xt.top + xt.scrollTop)) : (gn = o ? "right" : "left", Rt && xt && (ln = (o ? -1 : 1) * (Rt[gn] - xt[gn] + xt.scrollLeft)));
+    let cn = 0, gn;
+    re ? (gn = "top", Rt && xt && (cn = Rt.top - xt.top + xt.scrollTop)) : (gn = o ? "right" : "left", Rt && xt && (cn = (o ? -1 : 1) * (Rt[gn] - xt[gn] + xt.scrollLeft)));
     const Cn = {
-      [gn]: ln,
+      [gn]: cn,
       // May be wrong until the font is loaded.
       [ce]: Rt ? Rt[ce] : 0
     };
@@ -87337,7 +87337,7 @@ const Rie = /* @__PURE__ */ G.forwardRef(function(t, n) {
   }), ee = (xt, {
     animation: Rt = !0
   } = {}) => {
-    Rt ? _4e(te, j.current, xt, {
+    Rt ? R4e(te, j.current, xt, {
       duration: i.transitions.duration.standard
     }) : j.current[te] = xt;
   }, we = (xt) => {
@@ -87346,9 +87346,9 @@ const Rie = /* @__PURE__ */ G.forwardRef(function(t, n) {
   }, Be = () => {
     const xt = j.current[se];
     let Rt = 0;
-    const ln = Array.from(Z.current.children);
-    for (let gn = 0; gn < ln.length; gn += 1) {
-      const Cn = ln[gn];
+    const cn = Array.from(Z.current.children);
+    for (let gn = 0; gn < cn.length; gn += 1) {
+      const Cn = cn[gn];
       if (Rt + Cn[se] > xt) {
         gn === 0 && (Rt = xt);
         break;
@@ -87365,7 +87365,7 @@ const Rie = /* @__PURE__ */ G.forwardRef(function(t, n) {
     ...q
   }] = tn("scrollbar", {
     className: bt(ae.scrollableX, ae.hideScrollbar),
-    elementType: U4e,
+    elementType: F4e,
     shouldForwardComponentProp: !0,
     externalForwardedProps: fe,
     ownerState: he
@@ -87396,13 +87396,13 @@ const Rie = /* @__PURE__ */ G.forwardRef(function(t, n) {
       ...q,
       onChange: F
     }) : null;
-    const ln = Q && (A === "auto" && (_e || Ce) || A === !0);
-    return xt.scrollButtonStart = ln ? /* @__PURE__ */ R.jsx(K, {
+    const cn = Q && (A === "auto" && (_e || Ce) || A === !0);
+    return xt.scrollButtonStart = cn ? /* @__PURE__ */ R.jsx(K, {
       direction: o ? "right" : "left",
       onClick: Oe,
       disabled: !_e,
       ...oe
-    }) : null, xt.scrollButtonEnd = ln ? /* @__PURE__ */ R.jsx(K, {
+    }) : null, xt.scrollButtonEnd = cn ? /* @__PURE__ */ R.jsx(K, {
       direction: o ? "left" : "right",
       onClick: Ye,
       disabled: !Ce,
@@ -87411,16 +87411,16 @@ const Rie = /* @__PURE__ */ G.forwardRef(function(t, n) {
   }, We = Sr((xt) => {
     const {
       tabsMeta: Rt,
-      tabMeta: ln
+      tabMeta: cn
     } = Le();
-    if (!(!ln || !Rt)) {
-      if (ln[J] < Rt[J]) {
-        const gn = Rt[te] + (ln[J] - Rt[J]);
+    if (!(!cn || !Rt)) {
+      if (cn[J] < Rt[J]) {
+        const gn = Rt[te] + (cn[J] - Rt[J]);
         ee(gn, {
           animation: xt
         });
-      } else if (ln[ne] > Rt[ne]) {
-        const gn = Rt[te] + (ln[ne] - Rt[ne]);
+      } else if (cn[ne] > Rt[ne]) {
+        const gn = Rt[te] + (cn[ne] - Rt[ne]);
         ee(gn, {
           animation: xt
         });
@@ -87434,7 +87434,7 @@ const Rie = /* @__PURE__ */ G.forwardRef(function(t, n) {
       j.current && Ue();
     });
     let Rt;
-    const ln = (Qr) => {
+    const cn = (Qr) => {
       Qr.forEach((bi) => {
         bi.removedNodes.forEach((io) => {
           Rt == null || Rt.unobserve(io);
@@ -87447,7 +87447,7 @@ const Rie = /* @__PURE__ */ G.forwardRef(function(t, n) {
     let Cn;
     return typeof ResizeObserver < "u" && (Rt = new ResizeObserver(xt), Array.from(Z.current.children).forEach((Qr) => {
       Rt.observe(Qr);
-    })), typeof MutationObserver < "u" && (Cn = new MutationObserver(ln), Cn.observe(Z.current, {
+    })), typeof MutationObserver < "u" && (Cn = new MutationObserver(cn), Cn.observe(Z.current, {
       childList: !0
     })), () => {
       xt.clear(), gn.removeEventListener("resize", xt), Cn == null || Cn.disconnect(), Rt == null || Rt.disconnect();
@@ -87455,15 +87455,15 @@ const Rie = /* @__PURE__ */ G.forwardRef(function(t, n) {
   }, [Ue, wt]), G.useEffect(() => {
     const xt = Array.from(Z.current.children), Rt = xt.length;
     if (typeof IntersectionObserver < "u" && Rt > 0 && Q && A !== !1) {
-      const ln = xt[0], gn = xt[Rt - 1], Cn = {
+      const cn = xt[0], gn = xt[Rt - 1], Cn = {
         root: j.current,
         threshold: 0.99
-      }, Qr = (cn) => {
-        Me(!cn[0].isIntersecting);
+      }, Qr = (un) => {
+        Me(!un[0].isIntersecting);
       }, bi = new IntersectionObserver(Qr, Cn);
-      bi.observe(ln);
-      const io = (cn) => {
-        He(!cn[0].isIntersecting);
+      bi.observe(cn);
+      const io = (un) => {
+        He(!un[0].isIntersecting);
       }, pr = new IntersectionObserver(io, Cn);
       return pr.observe(gn), () => {
         bi.disconnect(), pr.disconnect();
@@ -87481,7 +87481,7 @@ const Rie = /* @__PURE__ */ G.forwardRef(function(t, n) {
   }), [Ue, wt]);
   const [ot, ft] = tn("indicator", {
     className: bt(ae.indicator, z.className),
-    elementType: H4e,
+    elementType: U4e,
     externalForwardedProps: fe,
     ownerState: he,
     additionalProps: {
@@ -87498,11 +87498,11 @@ const Rie = /* @__PURE__ */ G.forwardRef(function(t, n) {
 `));
     const Rt = xt.props.value === void 0 ? nn : xt.props.value;
     Ve.set(Rt, nn);
-    const ln = Rt === U;
+    const cn = Rt === U;
     return nn += 1, /* @__PURE__ */ G.cloneElement(xt, {
       fullWidth: k === "fullWidth",
-      indicator: ln && !Te && Qt,
-      selected: ln,
+      indicator: cn && !Te && Qt,
+      selected: cn,
       selectionFollowsFocus: M,
       onChange: T,
       textColor: W,
@@ -87512,16 +87512,16 @@ const Rie = /* @__PURE__ */ G.forwardRef(function(t, n) {
       } : {}
     });
   }), Xt = (xt) => {
-    const Rt = Z.current, ln = Di(Rt).activeElement;
-    if (ln.getAttribute("role") !== "tab")
+    const Rt = Z.current, cn = Di(Rt).activeElement;
+    if (cn.getAttribute("role") !== "tab")
       return;
     let Cn = _ === "horizontal" ? "ArrowLeft" : "ArrowUp", Qr = _ === "horizontal" ? "ArrowRight" : "ArrowDown";
     switch (_ === "horizontal" && o && (Cn = "ArrowRight", Qr = "ArrowLeft"), xt.key) {
       case Cn:
-        xt.preventDefault(), t1(Rt, ln, G9);
+        xt.preventDefault(), t1(Rt, cn, G9);
         break;
       case Qr:
-        xt.preventDefault(), t1(Rt, ln, q9);
+        xt.preventDefault(), t1(Rt, cn, q9);
         break;
       case "Home":
         xt.preventDefault(), t1(Rt, null, q9);
@@ -87533,7 +87533,7 @@ const Rie = /* @__PURE__ */ G.forwardRef(function(t, n) {
   }, Yt = Re(), [Ct, En] = tn("root", {
     ref: n,
     className: bt(ae.root, v),
-    elementType: z4e,
+    elementType: B4e,
     externalForwardedProps: {
       ...fe,
       ...$,
@@ -87543,7 +87543,7 @@ const Rie = /* @__PURE__ */ G.forwardRef(function(t, n) {
   }), [Lt, pn] = tn("scroller", {
     ref: j,
     className: ae.scroller,
-    elementType: B4e,
+    elementType: W4e,
     externalForwardedProps: fe,
     ownerState: he,
     additionalProps: {
@@ -87555,14 +87555,14 @@ const Rie = /* @__PURE__ */ G.forwardRef(function(t, n) {
   }), [Pt, lr] = tn("list", {
     ref: Z,
     className: bt(ae.list, ae.flexContainer),
-    elementType: W4e,
+    elementType: H4e,
     externalForwardedProps: fe,
     ownerState: he,
     getSlotProps: (xt) => ({
       ...xt,
       onKeyDown: (Rt) => {
-        var ln;
-        Xt(Rt), (ln = xt.onKeyDown) == null || ln.call(xt, Rt);
+        var cn;
+        Xt(Rt), (cn = xt.onKeyDown) == null || cn.call(xt, Rt);
       }
     })
   });
@@ -87746,12 +87746,12 @@ y0.NODE_ENV !== "production" && (Rie.propTypes = {
    */
   visibleScrollbar: c.bool
 });
-function F4e(e) {
+function V4e(e) {
   return zt("MuiTab", e);
 }
 const Gl = Ht("MuiTab", ["root", "labelIcon", "textColorInherit", "textColorPrimary", "textColorSecondary", "selected", "disabled", "fullWidth", "wrapped", "iconWrapper", "icon"]);
-var V4e = {};
-const q4e = (e) => {
+var q4e = {};
+const G4e = (e) => {
   const {
     classes: t,
     textColor: n,
@@ -87765,8 +87765,8 @@ const q4e = (e) => {
     root: ["root", o && s && "labelIcon", `textColor${Je(n)}`, r && "fullWidth", i && "wrapped", u && "selected", f && "disabled"],
     icon: ["iconWrapper", "icon"]
   };
-  return Bt(p, F4e, t);
-}, G4e = ge(gs, {
+  return Bt(p, V4e, t);
+}, $4e = ge(gs, {
   name: "MuiTab",
   slot: "Root",
   overridesResolver: (e, t) => {
@@ -87953,14 +87953,14 @@ const q4e = (e) => {
     fullWidth: u,
     textColor: O,
     wrapped: M
-  }, z = q4e(N), B = f && v && /* @__PURE__ */ G.isValidElement(f) ? /* @__PURE__ */ G.cloneElement(f, {
+  }, z = G4e(N), B = f && v && /* @__PURE__ */ G.isValidElement(f) ? /* @__PURE__ */ G.cloneElement(f, {
     className: bt(z.icon, f.props.className)
   }) : f, W = (k) => {
     !T && y && y(k, A), x && x(k);
   }, U = (k) => {
     _ && !T && y && y(k, A), E && E(k);
   };
-  return /* @__PURE__ */ R.jsxs(G4e, {
+  return /* @__PURE__ */ R.jsxs($4e, {
     focusRipple: !s,
     className: bt(z.root, i),
     ref: n,
@@ -87979,7 +87979,7 @@ const q4e = (e) => {
     }), m]
   });
 });
-V4e.NODE_ENV !== "production" && (Oie.propTypes = {
+q4e.NODE_ENV !== "production" && (Oie.propTypes = {
   // ┌────────────────────────────── Warning ──────────────────────────────┐
   // │ These PropTypes are generated from the TypeScript type definitions. │
   // │    To update them, edit the d.ts file and run `pnpm proptypes`.     │
@@ -88055,14 +88055,14 @@ V4e.NODE_ENV !== "production" && (Oie.propTypes = {
    */
   wrapped: c.bool
 });
-const $4e = ge(Rie, { name: "WindowSideBarButtons", slot: "root" })({
+const Y4e = ge(Rie, { name: "WindowSideBarButtons", slot: "root" })({
   "& .MuiTabs-flexContainer": {
     flexDirection: "column"
   },
   "&.MuiTabs-indicator": {
     display: "none"
   }
-}), Y4e = ge(Oie, { name: "WindowSideBarButtons", slot: "button" })(({ theme: e }) => ({
+}), Z4e = ge(Oie, { name: "WindowSideBarButtons", slot: "button" })(({ theme: e }) => ({
   "&.Mui-selected": {
     borderRight: "none !important"
   },
@@ -88094,7 +88094,7 @@ const $4e = ge(Rie, { name: "WindowSideBarButtons", slot: "root" })({
 function Km({ value: e, ...t }) {
   const { t: n } = jt();
   return /* @__PURE__ */ R.jsx(Mv, { title: n("openCompanionWindow", { context: e }), children: /* @__PURE__ */ R.jsx(
-    Y4e,
+    Z4e,
     {
       ...t,
       value: e,
@@ -88120,7 +88120,7 @@ function Aie({
     e(v);
   };
   return /* @__PURE__ */ R.jsxs(
-    $4e,
+    Y4e,
     {
       value: u === "closed" ? !1 : u,
       onChange: p,
@@ -88189,7 +88189,7 @@ Aie.propTypes = {
   // eslint-disable-line react/forbid-prop-types
   sideBarPanel: c.string
 };
-const Z4e = (e, { windowId: t }) => ({
+const X4e = (e, { windowId: t }) => ({
   addCompanionWindow: (n) => e(
     AH(t, { content: n, position: "left" })
   )
@@ -88197,33 +88197,33 @@ const Z4e = (e, { windowId: t }) => ({
 function Z9(e, t) {
   return e && e.some((n) => t(n).imageResources.length > 1);
 }
-function X4e(e, t) {
+function K4e(e, t) {
   return e && e.some((n) => {
     const r = t(n);
     return r.annotationListUris.length > 0 || r.canvasAnnotationPages.length > 0;
   });
 }
-const K4e = (e, { windowId: t }) => ({
+const Q4e = (e, { windowId: t }) => ({
   hasAnnotations: rA(
     e,
     { windowId: t }
   ).length > 0,
-  hasAnyAnnotations: X4e(Bo(e, { windowId: t }), wo()),
+  hasAnyAnnotations: K4e(Bo(e, { windowId: t }), wo()),
   hasAnyLayers: Z9(Bo(e, { windowId: t }), wo()),
   hasCurrentLayers: Z9(gu(e, { windowId: t }), wo()),
   panels: _d(e, { windowId: t }).panels,
   sideBarPanel: ($Z(e, { position: "left", windowId: t })[0] || {}).content
-}), Q4e = _t(
-  Mt(K4e, Z4e),
+}), J4e = _t(
+  Mt(Q4e, X4e),
   Ot("WindowSideBarButtons")
-), Y7e = Q4e(Aie), J4e = 1e8, e3e = J4e + 2;
+), X7e = J4e(Aie), e3e = 1e8, t3e = e3e + 2;
 ge(ZF, { name: "WindowSideBar", slot: "root" })(() => ({
   border: "none !important",
   borderRadius: "0 7px 7px 0",
   boxShadow: "0px 10px 15px -3px rgba(0,0,0,0.1)",
   flexShrink: 0,
   order: -1e3,
-  zIndex: e3e
+  zIndex: t3e
 }));
 ge("nav", { name: "WindowSideBar", slot: "nav" })({
   border: "none !important",
@@ -88240,15 +88240,15 @@ Iie.propTypes = {
   sideBarOpen: c.bool,
   windowId: c.string.isRequired
 };
-const t3e = (e, { windowId: t }) => ({
+const n3e = (e, { windowId: t }) => ({
   direction: iw(e),
-  sideBarOpen: (Gn(e, { windowId: t }) || {}).sideBarOpen,
-  sideBarPanel: (Gn(e, { windowId: t }) || {}).sideBarPanel
-}), n3e = _t(
-  Mt(t3e, null),
+  sideBarOpen: ($n(e, { windowId: t }) || {}).sideBarOpen,
+  sideBarPanel: ($n(e, { windowId: t }) || {}).sideBarPanel
+}), r3e = _t(
+  Mt(n3e, null),
   Ot("WindowSideBar")
-), r3e = n3e(Iie);
-var i3e = {};
+), i3e = r3e(Iie);
+var o3e = {};
 const BI = Ose({
   createStyledComponent: ge("div", {
     name: "MuiStack",
@@ -88260,7 +88260,7 @@ const BI = Ose({
     name: "MuiStack"
   })
 });
-i3e.NODE_ENV !== "production" && (BI.propTypes = {
+o3e.NODE_ENV !== "production" && (BI.propTypes = {
   // ┌────────────────────────────── Warning ──────────────────────────────┐
   // │ These PropTypes are generated from the TypeScript type definitions. │
   // │    To update them, edit the d.ts file and run `pnpm proptypes`.     │
@@ -88304,12 +88304,12 @@ i3e.NODE_ENV !== "production" && (BI.propTypes = {
    */
   useFlexGap: c.bool
 });
-const o3e = ge("pre", { name: "ErrorContent", slot: "stacktrace" })({
+const a3e = ge("pre", { name: "ErrorContent", slot: "stacktrace" })({
   overflowY: "scroll"
-}), a3e = ge("pre", { name: "ErrorContent", slot: "metadata" })({
+}), s3e = ge("pre", { name: "ErrorContent", slot: "metadata" })({
   height: "100px",
   overflowY: "scroll"
-}), s3e = ge(zA, { name: "ErrorContent", slot: "accordion" })({
+}), l3e = ge(zA, { name: "ErrorContent", slot: "accordion" })({
   backgroundColor: "inherit",
   color: "inherit",
   margin: 0
@@ -88331,11 +88331,11 @@ function Die({
   };
   return /* @__PURE__ */ R.jsxs(wU, { elevation: 6, variant: "filled", severity: "error", children: [
     i("errorDialogTitle"),
-    n && /* @__PURE__ */ R.jsxs(s3e, { elevation: 2, square: !0, children: [
+    n && /* @__PURE__ */ R.jsxs(l3e, { elevation: 2, square: !0, children: [
       /* @__PURE__ */ R.jsx(WA, { sx: { marginInlineStart: "-1rem" }, expandIcon: /* @__PURE__ */ R.jsx(Wt, { name: "chevron-down", size: 16, style: { color: "#fff" } }), children: i("jsError", { message: e.message, name: e.name }) }),
       /* @__PURE__ */ R.jsx(BA, { children: /* @__PURE__ */ R.jsxs(BI, { children: [
-        /* @__PURE__ */ R.jsx(o3e, { children: i("jsStack", { stack: e.stack }) }),
-        t && /* @__PURE__ */ R.jsx(a3e, { children: JSON.stringify(t, null, 2) })
+        /* @__PURE__ */ R.jsx(a3e, { children: i("jsStack", { stack: e.stack }) }),
+        t && /* @__PURE__ */ R.jsx(s3e, { children: JSON.stringify(t, null, 2) })
       ] }) })
     ] }),
     /* @__PURE__ */ R.jsx(Wo, { ...o })
@@ -88348,18 +88348,18 @@ Die.propTypes = {
   // eslint-disable-line react/forbid-prop-types
   showJsError: c.bool
 };
-const l3e = (e, { companionWindowId: t, windowId: n }) => ({
+const c3e = (e, { companionWindowId: t, windowId: n }) => ({
   metadata: {
     companionWindow: t && pu(e, { companionWindowId: t }),
     manifest: lu(e, { windowId: n }),
     viewer: ZO(e, { windowId: n }),
-    window: Gn(e, { windowId: n })
+    window: $n(e, { windowId: n })
   },
   showJsError: Xn(e).window.showJsError
-}), c3e = _t(
-  Mt(l3e),
+}), u3e = _t(
+  Mt(c3e),
   Ot("ErrorContent")
-), UB = c3e(Die);
+), UB = u3e(Die);
 function Mie({
   content: e = null,
   id: t,
@@ -88381,18 +88381,24 @@ Mie.propTypes = {
   id: c.string.isRequired,
   windowId: c.string.isRequired
 };
-const u3e = (e, { id: t }) => ({
+const d3e = (e, { id: t }) => ({
   content: pu(e, { companionWindowId: t }).content,
   id: t
-}), d3e = _t(
-  Mt(u3e),
+}), f3e = _t(
+  Mt(d3e),
   Ot("CompanionWindowFactory")
-), f3e = d3e(Mie), p3e = 1e8, FB = p3e + 1, h3e = ge("div", { name: "CompanionArea", slot: "root" })(({ ownerState: e, theme: t }) => ({
+), p3e = f3e(Mie), h3e = 1e8, FB = h3e + 1, g3e = ge("div", { name: "CompanionArea", slot: "root" })(({ ownerState: e, theme: t }) => ({
   display: "flex",
   minHeight: 0,
   position: "relative",
   zIndex: FB,
   ...e.position === "left" && {
+    "@media (max-width: 991px)": {
+      display: "none !important",
+      width: "0 !important",
+      minWidth: "0 !important",
+      maxWidth: "0 !important"
+    },
     [t.breakpoints.down("sm")]: {
       bottom: 0,
       left: 0,
@@ -88407,7 +88413,7 @@ const u3e = (e, { id: t }) => ({
     flexDirection: "column",
     width: "100%"
   }
-})), g3e = ge("div", { name: "CompanionArea", slot: "container" })(({ ownerState: e, theme: t }) => ({
+})), m3e = ge("div", { name: "CompanionArea", slot: "container" })(({ ownerState: e, theme: t }) => ({
   display: e != null && e.companionAreaOpen ? "flex" : "none",
   position: "relative",
   zIndex: FB,
@@ -88417,6 +88423,12 @@ const u3e = (e, { id: t }) => ({
   },
   ...(e == null ? void 0 : e.position) === "left" && (e == null ? void 0 : e.companionWindowIds) && e.companionWindowIds.length > 0 && {
     minWidth: "235px",
+    "@media (max-width: 991px)": {
+      display: "none !important",
+      width: "0 !important",
+      minWidth: "0 !important",
+      maxWidth: "0 !important"
+    },
     [t.breakpoints.down("sm")]: {
       maxWidth: "100%",
       minWidth: "100%",
@@ -88448,13 +88460,13 @@ function Nie({
       default:
         return x;
     }
-  })(), v = Zn(p, dn(`companion-area-${s}`), t), y = arguments[0];
-  return /* @__PURE__ */ R.jsx(h3e, { ownerState: y, className: v, children: /* @__PURE__ */ R.jsx(YF, { in: i, direction: m, children: /* @__PURE__ */ R.jsx(
-    g3e,
+  })(), v = Fn(p, sn(`companion-area-${s}`), t), y = arguments[0];
+  return /* @__PURE__ */ R.jsx(g3e, { ownerState: y, className: v, children: /* @__PURE__ */ R.jsx(YF, { in: i, direction: m, children: /* @__PURE__ */ R.jsx(
+    m3e,
     {
       ownerState: y,
-      className: `${dn("companion-windows")}`,
-      children: r.map((x) => /* @__PURE__ */ R.jsx(f3e, { id: x, windowId: f }, x))
+      className: `${sn("companion-windows")}`,
+      children: r.map((x) => /* @__PURE__ */ R.jsx(p3e, { id: x, windowId: f }, x))
     }
   ) }) });
 }
@@ -88469,35 +88481,35 @@ Nie.propTypes = {
   sideBarOpen: c.bool,
   windowId: c.string.isRequired
 };
-const m3e = (e, { windowId: t, position: n }) => ({
+const v3e = (e, { windowId: t, position: n }) => ({
   companionAreaOpen: YZ(e, { position: n, windowId: t }),
   companionWindowIds: rw(e, { position: n, windowId: t }),
   direction: iw(e),
-  sideBarOpen: (Gn(e, { windowId: t }) || {}).sideBarOpen
-}), v3e = {
+  sideBarOpen: ($n(e, { windowId: t }) || {}).sideBarOpen
+}), y3e = {
   setCompanionAreaOpen: zK
-}, y3e = _t(
-  Mt(m3e, v3e),
+}, b3e = _t(
+  Mt(v3e, y3e),
   Ot("CompanionArea")
-), VS = y3e(Nie);
-function b3e(e) {
+), VS = b3e(Nie);
+function w3e(e) {
   return zt("MuiDialogContent", e);
 }
 Ht("MuiDialogContent", ["root", "dividers"]);
-function w3e(e) {
+function x3e(e) {
   return zt("MuiDialogTitle", e);
 }
-const x3e = Ht("MuiDialogTitle", ["root"]);
-var T3e = {};
-const S3e = (e) => {
+const T3e = Ht("MuiDialogTitle", ["root"]);
+var S3e = {};
+const E3e = (e) => {
   const {
     classes: t,
     dividers: n
   } = e;
   return Bt({
     root: ["root", n && "dividers"]
-  }, b3e, t);
-}, E3e = ge("div", {
+  }, w3e, t);
+}, C3e = ge("div", {
   name: "MuiDialogContent",
   slot: "Root",
   overridesResolver: (e, t) => {
@@ -88528,7 +88540,7 @@ const S3e = (e) => {
       ownerState: t
     }) => !t.dividers,
     style: {
-      [`.${x3e.root} + &`]: {
+      [`.${T3e.root} + &`]: {
         paddingTop: 0
       }
     }
@@ -88544,15 +88556,15 @@ const S3e = (e) => {
   } = r, u = {
     ...r,
     dividers: o
-  }, f = S3e(u);
-  return /* @__PURE__ */ R.jsx(E3e, {
+  }, f = E3e(u);
+  return /* @__PURE__ */ R.jsx(C3e, {
     className: bt(f.root, i),
     ownerState: u,
     ref: n,
     ...s
   });
 });
-T3e.NODE_ENV !== "production" && (WI.propTypes = {
+S3e.NODE_ENV !== "production" && (WI.propTypes = {
   // ┌────────────────────────────── Warning ──────────────────────────────┐
   // │ These PropTypes are generated from the TypeScript type definitions. │
   // │    To update them, edit the d.ts file and run `pnpm proptypes`.     │
@@ -88582,7 +88594,7 @@ T3e.NODE_ENV !== "production" && (WI.propTypes = {
 const X9 = (e) => {
   let t;
   return e < 1 ? t = 5.11916 * e ** 2 : t = 4.5 * Math.log(e + 1) + 2, (t / 100).toFixed(2);
-}, C3e = ge(WI, { name: "ScrollIndicatedDialogContent", slot: "root" })(({ ownerState: e, theme: t }) => {
+}, _3e = ge(WI, { name: "ScrollIndicatedDialogContent", slot: "root" })(({ ownerState: e, theme: t }) => {
   const n = t.palette.mode === "dark" ? {
     backgroundImage: `linear-gradient(${Xs(
       "#fff",
@@ -88601,7 +88613,7 @@ const X9 = (e) => {
 function mC({ classes: e = {}, className: t = "", ...n }) {
   const r = [t, e.shadowScrollDialog].join(" ");
   return /* @__PURE__ */ R.jsx(
-    C3e,
+    _3e,
     {
       className: r,
       ...n
@@ -88614,14 +88626,14 @@ mC.propTypes = {
   }),
   className: c.string
 };
-const _3e = ge(mC)(() => ({
+const R3e = ge(mC)(() => ({
   padding: (e) => e.spacing(1)
-})), R3e = ge("div")(() => ({
+})), O3e = ge("div")(() => ({
   "& .MuiPaper-root": {
     background: "transparent"
   },
   padding: (e) => e.spacing(2)
-})), O3e = ge("div")(() => ({
+})), A3e = ge("div")(() => ({
   padding: (e) => e.spacing(2),
   paddingTop: 0
 })), Pie = ({ onClose: e, container: t }) => /* @__PURE__ */ R.jsxs(
@@ -88695,7 +88707,7 @@ function kie({
           /* @__PURE__ */ R.jsx(Oh, { component: "div", variant: "overline", children: E(o ? "multipartCollection" : "collection") }),
           /* @__PURE__ */ R.jsx(Oh, { component: "div", variant: "h3", children: /* @__PURE__ */ R.jsx(ud, { resource: s }) })
         ] }),
-        /* @__PURE__ */ R.jsxs(_3e, { children: [
+        /* @__PURE__ */ R.jsxs(R3e, { children: [
           t && /* @__PURE__ */ R.jsx(
             Z5,
             {
@@ -88704,7 +88716,7 @@ function kie({
               children: /* @__PURE__ */ R.jsx(ud, { resource: t })
             }
           ),
-          /* @__PURE__ */ R.jsxs(R3e, { children: [
+          /* @__PURE__ */ R.jsxs(O3e, { children: [
             /* @__PURE__ */ R.jsx(dJ, { manifestId: s.id }),
             /* @__PURE__ */ R.jsxs(
               uw,
@@ -88721,7 +88733,7 @@ function kie({
               }
             )
           ] }),
-          /* @__PURE__ */ R.jsxs(O3e, { children: [
+          /* @__PURE__ */ R.jsxs(A3e, { children: [
             s.getTotalCollections() > 0 && /* @__PURE__ */ R.jsx(X5, { clickable: !0, color: U === "collections" ? "primary" : "default", onClick: () => _("collections"), label: E("totalCollections", { count: s.getTotalCollections() }) }),
             s.getTotalManifests() > 0 && /* @__PURE__ */ R.jsx(X5, { clickable: !0, color: U === "manifests" ? "primary" : "default", onClick: () => _("manifests"), label: E("totalManifests", { count: s.getTotalManifests() }) })
           ] }),
@@ -88770,14 +88782,14 @@ kie.propTypes = {
   updateWindow: c.func.isRequired,
   windowId: c.string
 };
-const A3e = {
+const I3e = {
   addWindow: ZE,
   hideCollectionDialog: HK,
   setWorkspaceAddVisibility: IA,
   showCollectionDialog: KE,
   updateWindow: xd
-}, I3e = (e, { windowId: t }) => {
-  const { collectionPath: n, collectionManifestId: r } = Gn(e, { windowId: t }), i = lu(e, { manifestId: r }), o = n && n[n.length - 1], s = o && lu(e, { manifestId: o });
+}, D3e = (e, { windowId: t }) => {
+  const { collectionPath: n, collectionManifestId: r } = $n(e, { windowId: t }), i = lu(e, { manifestId: r }), o = n && n[n.length - 1], s = o && lu(e, { manifestId: o });
   return {
     collection: s && Or(e, { manifestId: s.id }),
     collectionPath: n,
@@ -88789,14 +88801,14 @@ const A3e = {
     ready: i && !!i.json,
     windowId: t
   };
-}, D3e = _t(
-  Mt(I3e, A3e),
+}, M3e = _t(
+  Mt(D3e, I3e),
   Ot("CollectionDialog")
-), M3e = D3e(kie), N3e = Kf(() => Promise.resolve().then(() => $8e)), Lie = Kf(() => Promise.resolve().then(() => uae)), jie = Kf(() => Promise.resolve().then(() => a7e)), zie = Kf(() => Promise.resolve().then(() => E7e)), P3e = Kf(() => Promise.resolve().then(() => w7e)), k3e = Kf(() => Promise.resolve().then(() => p7e));
+), N3e = M3e(kie), P3e = Kf(() => Promise.resolve().then(() => Z8e)), Lie = Kf(() => Promise.resolve().then(() => uae)), jie = Kf(() => Promise.resolve().then(() => l7e)), zie = Kf(() => Promise.resolve().then(() => _7e)), k3e = Kf(() => Promise.resolve().then(() => T7e)), L3e = Kf(() => Promise.resolve().then(() => g7e));
 Lie.displayName = "GalleryView";
 jie.displayName = "SelectCollection";
 zie.displayName = "WindowViewer";
-const L3e = ge("div", { name: "PrimaryWindow", slot: "root" })(() => ({
+const j3e = ge("div", { name: "PrimaryWindow", slot: "root" })(() => ({
   display: "flex",
   flex: 1,
   position: "relative"
@@ -88819,17 +88831,17 @@ const L3e = ge("div", { name: "PrimaryWindow", slot: "root" })(() => ({
     windowId: s
   }
 ) : i.length > 0 ? /* @__PURE__ */ R.jsx(
-  P3e,
+  k3e,
   {
     windowId: s
   }
 ) : e.length > 0 ? /* @__PURE__ */ R.jsx(
-  N3e,
+  P3e,
   {
     windowId: s
   }
 ) : r.length > 0 ? /* @__PURE__ */ R.jsx(
-  k3e,
+  L3e,
   {
     windowId: s
   }
@@ -88872,10 +88884,10 @@ function Wie({
     view: f,
     windowId: p
   };
-  return /* @__PURE__ */ R.jsxs(L3e, { "data-testid": "test-window", className: Zn(dn("primary-window"), n), children: [
-    /* @__PURE__ */ R.jsx(r3e, { windowId: p }),
+  return /* @__PURE__ */ R.jsxs(j3e, { "data-testid": "test-window", className: Fn(sn("primary-window"), n), children: [
+    /* @__PURE__ */ R.jsx(i3e, { windowId: p }),
     /* @__PURE__ */ R.jsx(VS, { windowId: p, position: "left" }),
-    i && /* @__PURE__ */ R.jsx(M3e, { windowId: p }),
+    i && /* @__PURE__ */ R.jsx(N3e, { windowId: p }),
     /* @__PURE__ */ R.jsx(XB, { fallback: /* @__PURE__ */ R.jsx("div", {}), children: t || /* @__PURE__ */ R.jsx(Bie, { ...m }) })
   ] });
 }
@@ -88894,19 +88906,19 @@ Wie.propTypes = {
   view: c.string,
   windowId: c.string.isRequired
 };
-const j3e = (e, { windowId: t }) => {
+const z3e = (e, { windowId: t }) => {
   const n = Or(e, { windowId: t });
   return {
     audioResources: tH(e, { windowId: t }) || [],
     isCollection: n && n.isCollection(),
-    isCollectionDialogVisible: Gn(e, { windowId: t }).collectionDialogOn,
+    isCollectionDialogVisible: $n(e, { windowId: t }).collectionDialogOn,
     textResources: QW(e, { windowId: t }) || [],
     videoResources: JW(e, { windowId: t }) || []
   };
-}, z3e = _t(
-  Mt(j3e, null),
+}, B3e = _t(
+  Mt(z3e, null),
   Ot("PrimaryWindow")
-), B3e = z3e(Wie), W3e = ge(Rr)(() => ({
+), W3e = B3e(Wie), H3e = ge(Rr)(() => ({
   marginLeft: "auto"
 }));
 function Hie({
@@ -88926,7 +88938,7 @@ function Hie({
       component: "section",
       elevation: 1,
       id: s,
-      className: Zn(dn("placeholder-window")),
+      className: Fn(sn("placeholder-window")),
       sx: {
         backgroundColor: "shades.dark",
         borderRadius: 0,
@@ -88943,7 +88955,7 @@ function Hie({
           cw,
           {
             disableGutters: !0,
-            className: Zn(dn("window-top-bar")),
+            className: Fn(sn("window-top-bar")),
             sx: {
               backgroundColor: "shades.main",
               borderTop: "2px solid transparent",
@@ -88957,6 +88969,7 @@ function Hie({
                 Rr,
                 {
                   "aria-label": u("toggleWindowSideBar"),
+                  className: Fn(sn("window-menu-btn"), "mirador-window-sidebar-toggle-btn"),
                   disabled: !0,
                   children: /* @__PURE__ */ R.jsx(Wt, { name: "list", size: 16 })
                 }
@@ -88976,10 +88989,10 @@ function Hie({
                 }
               ),
               e && o && /* @__PURE__ */ R.jsx(
-                W3e,
+                H3e,
                 {
                   "aria-label": u("closeWindow"),
-                  className: Zn(dn("window-close")),
+                  className: Fn(sn("window-close")),
                   onClick: o,
                   TooltipProps: {
                     tabIndex: n ? 0 : -1
@@ -89004,18 +89017,18 @@ Hie.propTypes = {
   removeWindow: c.func,
   windowId: c.string.isRequired
 };
-const H3e = (e, { windowId: t }) => {
+const U3e = () => typeof window < "u" && (typeof window.innerWidth == "number" && window.innerWidth <= 991 || typeof window.matchMedia == "function" && window.matchMedia("(max-width: 991px)").matches), F3e = (e, { windowId: t }) => {
   const n = _d(e, { windowId: t }), r = Jf(e, { windowId: t }), i = !!(r && r.nodes && r.nodes.length > 0);
   return {
     allowClose: n.allowClose,
-    allowWindowSideBar: n.allowWindowSideBar !== !1 && i
+    allowWindowSideBar: !!(i && !U3e())
   };
-}, U3e = (e, { windowId: t }) => ({
+}, V3e = (e, { windowId: t }) => ({
   removeWindow: () => e(DH(t))
-}), F3e = _t(
-  Mt(H3e, U3e),
+}), q3e = _t(
+  Mt(F3e, V3e),
   Ot("MinimalWindow")
-), Uie = F3e(Hie), V3e = {
+), Uie = q3e(Hie), G3e = {
   "aria-hidden": !0,
   frameBorder: 0,
   height: 1,
@@ -89033,7 +89046,7 @@ function Fie({ handleReceiveMessage: e = void 0, ...t }) {
   /* @__PURE__ */ R.jsx(
     "iframe",
     {
-      ...V3e,
+      ...G3e,
       ...t
     }
   );
@@ -89093,20 +89106,20 @@ qie.propTypes = {
   onClose: c.func.isRequired,
   url: c.string.isRequired
 };
-function q3e(e) {
+function $3e(e) {
   return zt("MuiDialogActions", e);
 }
 Ht("MuiDialogActions", ["root", "spacing"]);
-var G3e = {};
-const $3e = (e) => {
+var Y3e = {};
+const Z3e = (e) => {
   const {
     classes: t,
     disableSpacing: n
   } = e;
   return Bt({
     root: ["root", !n && "spacing"]
-  }, q3e, t);
-}, Y3e = ge("div", {
+  }, $3e, t);
+}, X3e = ge("div", {
   name: "MuiDialogActions",
   slot: "Root",
   overridesResolver: (e, t) => {
@@ -89142,15 +89155,15 @@ const $3e = (e) => {
   } = r, u = {
     ...r,
     disableSpacing: o
-  }, f = $3e(u);
-  return /* @__PURE__ */ R.jsx(Y3e, {
+  }, f = Z3e(u);
+  return /* @__PURE__ */ R.jsx(X3e, {
     className: bt(f.root, i),
     ownerState: u,
     ref: n,
     ...s
   });
 });
-G3e.NODE_ENV !== "production" && (XF.propTypes = {
+Y3e.NODE_ENV !== "production" && (XF.propTypes = {
   // ┌────────────────────────────── Warning ──────────────────────────────┐
   // │ These PropTypes are generated from the TypeScript type definitions. │
   // │    To update them, edit the d.ts file and run `pnpm proptypes`.     │
@@ -89177,13 +89190,13 @@ G3e.NODE_ENV !== "production" && (XF.propTypes = {
    */
   sx: c.oneOfType([c.arrayOf(c.oneOfType([c.func, c.object, c.bool])), c.func, c.object])
 });
-const Z3e = ge("div")(({ theme: e }) => ({
+const K3e = ge("div")(({ theme: e }) => ({
   "&:hover": {
     backgroundColor: e.palette.secondary.main
   },
   alignItems: "center",
   display: "flex"
-})), X3e = ge("span")(({ theme: e }) => ({
+})), Q3e = ge("span")(({ theme: e }) => ({
   marginLeft: e.spacing(2.5)
 }));
 function Gie({
@@ -89224,7 +89237,7 @@ function Gie({
       square: !0,
       elevation: 4,
       color: "secondary",
-      children: /* @__PURE__ */ R.jsxs(Z3e, { children: [
+      children: /* @__PURE__ */ R.jsxs(K3e, { children: [
         i || /* @__PURE__ */ R.jsx(Wt, { name: "lock", size: 16, style: { marginInlineEnd: "12px" } }),
         /* @__PURE__ */ R.jsx(Nt, { component: "h3", variant: "body1", color: "inherit", children: s ? /* @__PURE__ */ R.jsx(us, { htmlString: o, ruleSet: s }) : o }),
         /* @__PURE__ */ R.jsx(Wo, { ...y }),
@@ -89259,7 +89272,7 @@ function Gie({
               i || /* @__PURE__ */ R.jsx(Wt, { name: "lock", size: 16, style: { marginInlineEnd: "12px" } }),
               /* @__PURE__ */ R.jsx(Nt, { sx: { paddingBlockEnd: 1, paddingBlockStart: 1 }, component: "h3", variant: "body1", color: "inherit", children: s ? /* @__PURE__ */ R.jsx(us, { htmlString: o, ruleSet: s }) : o }),
               /* @__PURE__ */ R.jsx(Wo, { ...y }),
-              /* @__PURE__ */ R.jsx(X3e, { children: !x && /* @__PURE__ */ R.jsx(Nt, { variant: "button", color: "inherit", children: t || v("continue") }) })
+              /* @__PURE__ */ R.jsx(Q3e, { children: !x && /* @__PURE__ */ R.jsx(Nt, { variant: "button", color: "inherit", children: t || v("continue") }) })
             ]
           }
         ),
@@ -89305,9 +89318,9 @@ Gie.propTypes = {
   ruleSet: c.string,
   status: c.string
 };
-const K3e = _t(
+const J3e = _t(
   Ot("WindowAuthenticationBar")
-), mz = K3e(Gie);
+), mz = J3e(Gie);
 function $ie({
   accessTokenServiceId: e = void 0,
   authServiceId: t = void 0,
@@ -89400,7 +89413,7 @@ $ie.propTypes = {
   status: c.oneOf(["logout", "ok", "token", "cookie", "failed", null]),
   windowId: c.string.isRequired
 };
-const Q3e = (e, { windowId: t }) => {
+const eqe = (e, { windowId: t }) => {
   const r = qX(e, { windowId: t })[0], i = r && (Zt.getService(r, "http://iiif.io/api/auth/1/token") || Zt.getService(r, "http://iiif.io/api/auth/0/token")), o = r && (Zt.getService(r, "http://iiif.io/api/auth/1/logout") || Zt.getService(r, "http://iiif.io/api/auth/0/logout")), s = UE(e), u = r && s[r.id], f = HE(e), p = i && f[i.id];
   let m = null;
   u ? u.isFetching ? u.windowId === t && (m = "cookie") : p && p.isFetching ? u.windowId === t && (m = "token") : u.ok ? m = "ok" : u.ok === !1 && (m = "failed") : m = null;
@@ -89422,21 +89435,21 @@ const Q3e = (e, { windowId: t }) => {
     profile: y,
     status: m
   };
-}, J3e = {
+}, tqe = {
   handleAuthInteraction: HH,
   resetAuthenticationState: FH,
   resolveAccessTokenRequest: iQ,
   resolveAuthenticationRequest: DA
-}, eqe = _t(
-  Mt(Q3e, J3e),
+}, nqe = _t(
+  Mt(eqe, tqe),
   Ot("IIIFAuthentication")
-), tqe = eqe($ie), nqe = Kf(() => Promise.resolve().then(() => uae)), rqe = ge(pie)({
+), rqe = nqe($ie), iqe = Kf(() => Promise.resolve().then(() => uae)), oqe = ge(pie)({
   height: "100%",
   "& .mosaic-preview": { boxShadow: "none" },
   "& .mosaic-tile": { boxShadow: "none" },
   "& .mosaic-window": { boxShadow: "none", borderRadius: "4px", overflow: "hidden" },
   "& .mosaic-window-toolbar": { display: "none !important" }
-}), HI = { display: "flex", flex: "1", flexDirection: "row", minHeight: 0 }, Yie = { display: "flex", flex: "1", flexDirection: "column", minHeight: 0 }, iqe = 700, oqe = 768, aqe = 74, sqe = 65, lqe = ge(Ui, { name: "Window", slot: "root" })(({ ownerState: e, theme: t }) => {
+}), HI = { display: "flex", flex: "1", flexDirection: "row", minHeight: 0 }, Yie = { display: "flex", flex: "1", flexDirection: "column", minHeight: 0 }, aqe = 700, sqe = 768, lqe = 74, cqe = 65, uqe = ge(Ui, { name: "Window", slot: "root" })(({ ownerState: e, theme: t }) => {
   var n;
   return {
     ...Yie,
@@ -89452,22 +89465,22 @@ const Q3e = (e, { windowId: t }) => {
       zIndex: t.zIndex.modal - 1
     }
   };
-}), cqe = ge("div", { name: "Window", slot: "row" })(() => ({ ...HI })), uqe = ge("div", { name: "Window", slot: "column" })(() => ({
+}), dqe = ge("div", { name: "Window", slot: "row" })(() => ({ ...HI })), fqe = ge("div", { name: "Window", slot: "column" })(() => ({
   ...Yie,
   position: "relative"
   // anchor for floating menu
-})), K9 = ge(B3e, { name: "Window", slot: "primary" })(() => ({
+})), K9 = ge(W3e, { name: "Window", slot: "primary" })(() => ({
   ...HI,
   height: "100%",
   position: "relative"
-})), dqe = ge(VS, { name: "Window", slot: "bottom" })(() => ({
+})), pqe = ge(VS, { name: "Window", slot: "bottom" })(() => ({
   ...HI,
   flex: "0",
   flexBasis: "auto"
-})), fqe = ge("div", { name: "Window", slot: "right" })(() => ({
+})), hqe = ge("div", { name: "Window", slot: "right" })(() => ({
   ...HI,
   flex: "0 1 auto"
-})), pqe = ({ children: e, ...t }) => {
+})), gqe = ({ children: e, ...t }) => {
   const { mosaicWindowActions: n } = oa(bw);
   return n.connectDragSource(/* @__PURE__ */ R.jsx("nav", { ...t, children: e }));
 };
@@ -89483,7 +89496,7 @@ function Zie({
   workspaceType: u = null,
   manifestError: f = null
 }) {
-  const { t: p } = jt(), m = V0(`(min-width:${oqe}px)`), v = arguments[0], y = ci(({ error: he }) => /* @__PURE__ */ R.jsx(Uie, { windowId: s, children: /* @__PURE__ */ R.jsx(UB, { error: he, windowId: s }) }), [s]), x = en(null), [E, T] = yn(() => {
+  const { t: p } = jt(), m = V0(`(min-width:${sqe}px)`), v = arguments[0], y = ci(({ error: he }) => /* @__PURE__ */ R.jsx(Uie, { windowId: s, children: /* @__PURE__ */ R.jsx(UB, { error: he, windowId: s }) }), [s]), x = en(null), [E, T] = yn(() => {
     const he = localStorage.getItem("splitPercentage");
     return he ? Number(JSON.parse(he)) : 0;
   }), [_, O] = yn(0), [A, M] = yn(0), [P, N] = yn(() => {
@@ -89525,7 +89538,7 @@ function Zie({
       } else P === "both" && E > 0 && (localStorage.setItem("galleryLastSplit", JSON.stringify(E)), B(E));
       N(he);
     }
-  }, k = Math.max(120, Math.round(A * _ / 100 - 24)), V = A > 0 && A <= iqe, $ = V ? "both" : P, Q = V ? "column" : "row", re = V ? Math.min(45, Math.max(20, _)) : _, te = V ? m ? sqe : aqe : E, J = V ? "DISABLED" : { minimumPaneSizePercentage: re }, ne = en(null);
+  }, k = Math.max(120, Math.round(A * _ / 100 - 24)), V = A > 0 && A <= aqe, $ = V ? "both" : P, Q = V ? "column" : "row", re = V ? Math.min(45, Math.max(20, _)) : _, te = V ? m ? cqe : lqe : E, J = V ? "DISABLED" : { minimumPaneSizePercentage: re }, ne = en(null);
   ne.current = U, fn(() => {
     const he = (ae) => {
       var pe;
@@ -89545,7 +89558,7 @@ function Zie({
       }
     ),
     b: /* @__PURE__ */ R.jsx(
-      nqe,
+      iqe,
       {
         windowId: s,
         controlWidth: k,
@@ -89574,7 +89587,7 @@ function Zie({
     };
     return window.addEventListener("keydown", ae, { passive: !1 }), () => window.removeEventListener("keydown", ae);
   }, [P, V]), /* @__PURE__ */ R.jsx(VF, { FallbackComponent: y, children: /* @__PURE__ */ R.jsxs(
-    lqe,
+    uqe,
     {
       ref: x,
       onFocus: e,
@@ -89582,25 +89595,25 @@ function Zie({
       component: "section",
       elevation: 1,
       id: s,
-      className: dn("window"),
+      className: sn("window"),
       "aria-label": p("window", { label: t }),
       children: [
         /* @__PURE__ */ R.jsx(
-          g4e,
+          m4e,
           {
-            component: u === "mosaic" && o ? pqe : void 0,
+            component: u === "mosaic" && o ? gqe : void 0,
             windowId: s,
             windowDraggable: o,
             viewMode: $,
             onChangeViewMode: V ? void 0 : (he) => U(he)
           }
         ),
-        /* @__PURE__ */ R.jsx(tqe, { windowId: s }),
+        /* @__PURE__ */ R.jsx(rqe, { windowId: s }),
         f && /* @__PURE__ */ R.jsx(UB, { error: { stack: f }, windowId: s }),
-        /* @__PURE__ */ R.jsxs(cqe, { children: [
-          /* @__PURE__ */ R.jsxs(uqe, { children: [
+        /* @__PURE__ */ R.jsxs(dqe, { children: [
+          /* @__PURE__ */ R.jsxs(fqe, { children: [
             $ === "both" && /* @__PURE__ */ R.jsx(
-              rqe,
+              oqe,
               {
                 renderTile: (he) => se[he],
                 initialValue: {
@@ -89624,9 +89637,9 @@ function Zie({
               },
               "gallery"
             ),
-            /* @__PURE__ */ R.jsx(dqe, { windowId: s, position: "bottom" })
+            /* @__PURE__ */ R.jsx(pqe, { windowId: s, position: "bottom" })
           ] }),
-          /* @__PURE__ */ R.jsxs(fqe, { children: [
+          /* @__PURE__ */ R.jsxs(hqe, { children: [
             /* @__PURE__ */ R.jsx(VS, { windowId: s, position: "right" }),
             /* @__PURE__ */ R.jsx(VS, { windowId: s, position: "far-right" })
           ] })
@@ -89649,22 +89662,22 @@ Zie.propTypes = {
   windowId: c.string.isRequired,
   workspaceType: c.string
 };
-const hqe = (e, { windowId: t }) => ({
+const mqe = (e, { windowId: t }) => ({
   isFetching: YS(e, { windowId: t }).isFetching,
   label: Zh(e, { windowId: t }),
   manifestError: tX(e, { windowId: t }),
-  maximized: (Gn(e, { windowId: t }) || {}).maximized,
-  sideBarOpen: (Gn(e, { windowId: t }) || {}).sideBarOpen,
+  maximized: ($n(e, { windowId: t }) || {}).maximized,
+  sideBarOpen: ($n(e, { windowId: t }) || {}).sideBarOpen,
   thumbnailNavigationPosition: zW(e, { windowId: t }),
   view: Kh(e, { windowId: t }),
   windowDraggable: CX(e, { windowId: t }),
   workspaceType: PE(e)
-}), gqe = (e, { windowId: t }) => ({
+}), vqe = (e, { windowId: t }) => ({
   focusWindow: () => e(YE(t))
-}), mqe = _t(
-  Mt(hqe, gqe),
+}), yqe = _t(
+  Mt(mqe, vqe),
   Ot("Window")
-), wO = mqe(Zie), vqe = ge(iU, { shouldForwardProp: (e) => e !== "focused" })(({ focused: e, theme: t }) => ({
+), wO = yqe(Zie), bqe = ge(iU, { shouldForwardProp: (e) => e !== "focused" })(({ focused: e, theme: t }) => ({
   zIndex: e ? t.zIndex.modal - 1 : "auto"
 }));
 function Xie({
@@ -89679,7 +89692,7 @@ function Xie({
 }) {
   const u = o.width / 2, f = o.height / 2;
   return /* @__PURE__ */ R.jsx(
-    vqe,
+    bqe,
     {
       focused: n,
       className: n ? e.focused : void 0,
@@ -89704,8 +89717,8 @@ function Xie({
           y: x.y - f
         });
       },
-      dragHandleClassName: dn("window-top-bar"),
-      cancel: `.${dn("window-menu-btn")}`,
+      dragHandleClassName: sn("window-top-bar"),
+      cancel: `.${sn("window-menu-btn")}`,
       children: /* @__PURE__ */ R.jsx(
         wO,
         {
@@ -89736,26 +89749,26 @@ Xie.propTypes = {
   workspace: c.object.isRequired
   // eslint-disable-line react/forbid-prop-types
 };
-const yqe = (e, { windowId: t }) => ({
+const wqe = (e, { windowId: t }) => ({
   companionWindowDimensions: ZZ(e, { windowId: t }),
   focused: XW(e, { windowId: t }),
   layout: JO(e)[t],
   workspace: jo(e)
-}), bqe = (e, t) => ({
+}), xqe = (e, t) => ({
   focusWindow: () => e(YE(t.windowId)),
   updateElasticWindowLayout: (n, r) => {
     e(
       VH(n, r)
     );
   }
-}), wqe = _t(
-  Mt(yqe, bqe)
+}), Tqe = _t(
+  Mt(wqe, xqe)
   // further HOC go here
-), xqe = wqe(Xie), Tqe = ge("div", { name: "WorkspaceElastic", slot: "root" })({
+), Sqe = Tqe(Xie), Eqe = ge("div", { name: "WorkspaceElastic", slot: "root" })({
   height: "100%",
   position: "relative",
   width: "100%"
-}), Sqe = ge(iU)({
+}), Cqe = ge(iU)({
   boxSizing: "border-box",
   margin: 0,
   position: "absolute",
@@ -89773,7 +89786,7 @@ function Kie({
   setWorkspaceViewportPosition: r
 }) {
   const { viewportPosition: i } = e, o = e.width / 2, s = e.height / 2;
-  return /* @__PURE__ */ R.jsxs(Tqe, { children: [
+  return /* @__PURE__ */ R.jsxs(Eqe, { children: [
     /* @__PURE__ */ R.jsx(
       Uze,
       {
@@ -89785,7 +89798,7 @@ function Kie({
       }
     ),
     /* @__PURE__ */ R.jsx(
-      Sqe,
+      Cqe,
       {
         size: {
           height: e.height,
@@ -89808,11 +89821,11 @@ function Kie({
         onDragStop: (u, f) => {
           r({ x: -1 * f.x - o, y: -1 * f.y - s });
         },
-        cancel: `.${dn("window")}`,
-        className: dn("workspace"),
+        cancel: `.${sn("window")}`,
+        className: sn("workspace"),
         disableDragging: !e.draggingEnabled,
         children: Object.keys(t).map((u) => /* @__PURE__ */ R.jsx(
-          xqe,
+          Sqe,
           {
             windowId: u
           },
@@ -89830,8 +89843,8 @@ Kie.propTypes = {
   workspace: c.object.isRequired
   // eslint-disable-line react/forbid-prop-types
 };
-var O1 = { exports: {} }, Eqe = O1.exports, Q9;
-function Cqe() {
+var O1 = { exports: {} }, _qe = O1.exports, Q9;
+function Rqe() {
   return Q9 || (Q9 = 1, function(e) {
     //! openseadragon 5.0.1
     //! Built on 2024-12-09
@@ -91051,7 +91064,7 @@ function Cqe() {
       }
     }(t), function(n, r) {
       e.exports ? e.exports = r() : n.OpenSeadragon = r();
-    }(Eqe, function() {
+    }(_qe, function() {
       return t;
     }), function(n) {
       class r {
@@ -102232,7 +102245,7 @@ function Cqe() {
     }(t);
   }(O1)), O1.exports;
 }
-var Qie = Cqe();
+var Qie = Rqe();
 const C0 = /* @__PURE__ */ sr(Qie);
 function J9(e) {
   if (!e) return {};
@@ -102242,7 +102255,7 @@ function J9(e) {
   let o = null;
   return r && r.startsWith("xywh=") ? o = r.replace("xywh=", "").split(",").map((s) => parseInt(s, 10)) : Array.isArray(e.fragmentSelector) && e.fragmentSelector.length === 4 && (o = e.fragmentSelector), { canvasId: i, rect: o };
 }
-function _qe({
+function Oqe({
   viewer: e,
   searchAnnotations: t = [],
   currentCanvasId: n,
@@ -102294,15 +102307,15 @@ function _qe({
     });
   }, [t, n, e, r]), null;
 }
-const Rqe = ge("div")({
+const Aqe = ge("div")({
   alignItems: "center",
   display: "flex",
   width: "100%"
-}), Oqe = ge("audio")({
+}), Iqe = ge("audio")({
   width: "100%"
 });
 function Jie({ audioOptions: e = {}, audioResources: t = [], captions: n = [] }) {
-  return /* @__PURE__ */ R.jsx(Rqe, { children: /* @__PURE__ */ R.jsxs(Oqe, { ...e, children: [
+  return /* @__PURE__ */ R.jsx(Aqe, { children: /* @__PURE__ */ R.jsxs(Iqe, { ...e, children: [
     t.map((r) => /* @__PURE__ */ R.jsx(Y5, { children: /* @__PURE__ */ R.jsx("source", { src: r.id, type: r.getFormat() }) }, r.id)),
     n.map((r) => /* @__PURE__ */ R.jsx(Y5, { children: /* @__PURE__ */ R.jsx("track", { src: r.id, label: r.getDefaultLabel(), srcLang: r.getProperty("language") }) }, r.id))
   ] }) });
@@ -102315,12 +102328,12 @@ Jie.propTypes = {
   captions: c.arrayOf(c.object)
   // eslint-disable-line react/forbid-prop-types
 };
-const eoe = ({ PluginComponents: e = [], ...t }) => /* @__PURE__ */ R.jsx("div", { className: dn("background-plugin-area"), style: { display: "none" }, children: /* @__PURE__ */ R.jsx(Wo, { PluginComponents: e, ...t }) });
+const eoe = ({ PluginComponents: e = [], ...t }) => /* @__PURE__ */ R.jsx("div", { className: sn("background-plugin-area"), style: { display: "none" }, children: /* @__PURE__ */ R.jsx(Wo, { PluginComponents: e, ...t }) });
 eoe.propTypes = {
   PluginComponents: c.array
   // eslint-disable-line react/forbid-prop-types
 };
-function Aqe(e) {
+function Dqe(e) {
   return /* @__PURE__ */ R.jsxs(Ea, { viewBox: "0 0 60 55", ...e, children: [
     /* @__PURE__ */ R.jsx("rect", { width: "18", height: "55" }),
     /* @__PURE__ */ R.jsx("rect", { width: "18", height: "55", transform: "translate(42)" }),
@@ -102339,7 +102352,7 @@ function toe({ variant: e = "default", ...t }) {
         target: "_blank",
         rel: "noopener",
         size: "large",
-        children: /* @__PURE__ */ R.jsx(Aqe, { "aria-label": n("aboutMirador"), titleAccess: n("aboutMirador"), fontSize: "large" })
+        children: /* @__PURE__ */ R.jsx(Dqe, { "aria-label": n("aboutMirador"), titleAccess: n("aboutMirador"), fontSize: "large" })
       }
     ) })
   ] });
@@ -102354,7 +102367,7 @@ const UI = ge(QB, { name: "WorkspaceDialog", slot: "root" })(({ theme: e, varian
       padding: 0
     }
   }
-})), Iqe = ge((e) => /* @__PURE__ */ R.jsx(Wt, { name: "palette", size: 24, ...e }), { name: "ThemeIcon", slot: "icon" })(({ theme: e }) => ({
+})), Mqe = ge((e) => /* @__PURE__ */ R.jsx(Wt, { name: "palette", size: 24, ...e }), { name: "ThemeIcon", slot: "icon" })(({ theme: e }) => ({
   color: "#BDBDBD"
 }));
 function noe({
@@ -102377,7 +102390,7 @@ function noe({
         selected: u === n,
         value: u,
         children: [
-          /* @__PURE__ */ R.jsx(Lse, { children: /* @__PURE__ */ R.jsx(Iqe, { ownerState: { value: u } }) }),
+          /* @__PURE__ */ R.jsx(Lse, { children: /* @__PURE__ */ R.jsx(Mqe, { ownerState: { value: u } }) }),
           /* @__PURE__ */ R.jsx(jse, { children: o(u) })
         ]
       },
@@ -102392,22 +102405,22 @@ noe.propTypes = {
   setSelectedTheme: c.func.isRequired,
   themeIds: c.arrayOf(c.string)
 };
-function Dqe(e) {
+function Nqe(e) {
   return zt("MuiDialog", e);
 }
 const vz = Ht("MuiDialog", ["root", "scrollPaper", "scrollBody", "container", "paper", "paperScrollPaper", "paperScrollBody", "paperWidthFalse", "paperWidthXs", "paperWidthSm", "paperWidthMd", "paperWidthLg", "paperWidthXl", "paperFullWidth", "paperFullScreen"]);
-var Mqe = {};
+var Pqe = {};
 const KF = /* @__PURE__ */ G.createContext({});
-Mqe.NODE_ENV !== "production" && (KF.displayName = "DialogContext");
-var Nqe = {};
-const Pqe = ge(HA, {
+Pqe.NODE_ENV !== "production" && (KF.displayName = "DialogContext");
+var kqe = {};
+const Lqe = ge(HA, {
   name: "MuiDialog",
   slot: "Backdrop",
   overrides: (e, t) => t.backdrop
 })({
   // Improve scrollable dialog support.
   zIndex: -1
-}), kqe = (e) => {
+}), jqe = (e) => {
   const {
     classes: t,
     scroll: n,
@@ -102419,8 +102432,8 @@ const Pqe = ge(HA, {
     container: ["container", `scroll${Je(n)}`],
     paper: ["paper", `paperScroll${Je(n)}`, `paperWidth${Je(String(r))}`, i && "paperFullWidth", o && "paperFullScreen"]
   };
-  return Bt(s, Dqe, t);
-}, Lqe = ge(UA, {
+  return Bt(s, Nqe, t);
+}, zqe = ge(UA, {
   name: "MuiDialog",
   slot: "Root",
   overridesResolver: (e, t) => t.root
@@ -102429,7 +102442,7 @@ const Pqe = ge(HA, {
     // Use !important to override the Modal inline-style.
     position: "absolute !important"
   }
-}), jqe = ge("div", {
+}), Bqe = ge("div", {
   name: "MuiDialog",
   slot: "Container",
   overridesResolver: (e, t) => {
@@ -102471,7 +102484,7 @@ const Pqe = ge(HA, {
       }
     }
   }]
-}), zqe = ge(Ui, {
+}), Wqe = ge(Ui, {
   name: "MuiDialog",
   slot: "Paper",
   overridesResolver: (e, t) => {
@@ -102602,7 +102615,7 @@ const Pqe = ge(HA, {
     fullWidth: T,
     maxWidth: _,
     scroll: B
-  }, te = kqe(re), J = G.useRef(), ne = (tt) => {
+  }, te = jqe(re), J = G.useRef(), ne = (tt) => {
     J.current = tt.target === tt.currentTarget;
   }, se = (tt) => {
     A && A(tt), J.current && (J.current = null, O && O(tt), M && M(tt, "backdropClick"));
@@ -102620,25 +102633,25 @@ const Pqe = ge(HA, {
     slots: ae,
     slotProps: me
   }, [Te, de] = tn("root", {
-    elementType: Lqe,
+    elementType: zqe,
     shouldForwardComponentProp: !0,
     externalForwardedProps: pe,
     ownerState: re,
     className: bt(te.root, y),
     ref: n
   }), [xe, je] = tn("backdrop", {
-    elementType: Pqe,
+    elementType: Lqe,
     shouldForwardComponentProp: !0,
     externalForwardedProps: pe,
     ownerState: re
   }), [_e, Me] = tn("paper", {
-    elementType: zqe,
+    elementType: Wqe,
     shouldForwardComponentProp: !0,
     externalForwardedProps: pe,
     ownerState: re,
     className: bt(te.paper, z.className)
   }), [Ce, He] = tn("container", {
-    elementType: jqe,
+    elementType: Bqe,
     externalForwardedProps: pe,
     ownerState: re,
     className: bt(te.container)
@@ -102693,7 +102706,7 @@ const Pqe = ge(HA, {
     })
   });
 });
-Nqe.NODE_ENV !== "production" && (roe.propTypes = {
+kqe.NODE_ENV !== "production" && (roe.propTypes = {
   // ┌────────────────────────────── Warning ──────────────────────────────┐
   // │ These PropTypes are generated from the TypeScript type definitions. │
   // │    To update them, edit the d.ts file and run `pnpm proptypes`.     │
@@ -102856,15 +102869,15 @@ Nqe.NODE_ENV !== "production" && (roe.propTypes = {
    */
   TransitionProps: c.object
 });
-var Bqe = {};
-const Wqe = (e) => {
+var Hqe = {};
+const Uqe = (e) => {
   const {
     classes: t
   } = e;
   return Bt({
     root: ["root"]
-  }, w3e, t);
-}, Hqe = ge(Nt, {
+  }, x3e, t);
+}, Fqe = ge(Nt, {
   name: "MuiDialogTitle",
   slot: "Root",
   overridesResolver: (e, t) => t.root
@@ -102879,10 +102892,10 @@ const Wqe = (e) => {
     className: i,
     id: o,
     ...s
-  } = r, u = r, f = Wqe(u), {
+  } = r, u = r, f = Uqe(u), {
     titleId: p = o
   } = G.useContext(KF);
-  return /* @__PURE__ */ R.jsx(Hqe, {
+  return /* @__PURE__ */ R.jsx(Fqe, {
     component: "h2",
     className: bt(f.root, i),
     ownerState: u,
@@ -102892,7 +102905,7 @@ const Wqe = (e) => {
     ...s
   });
 });
-Bqe.NODE_ENV !== "production" && (vC.propTypes = {
+Hqe.NODE_ENV !== "production" && (vC.propTypes = {
   // ┌────────────────────────────── Warning ──────────────────────────────┐
   // │ These PropTypes are generated from the TypeScript type definitions. │
   // │    To update them, edit the d.ts file and run `pnpm proptypes`.     │
@@ -102963,7 +102976,7 @@ bz == null || nY == null ? (VB = yz, qB = function(t) {
   }, eY);
   return [n, r];
 });
-function Uqe(e) {
+function Vqe(e) {
   let t, n, r, i, o, s, u;
   const f = typeof document < "u" && document.attachEvent;
   if (!f) {
@@ -103083,7 +103096,7 @@ class ooe extends MY {
       const r = n.ownerDocument.defaultView.ResizeObserver;
       r != null ? (this._resizeObserver = new r(() => {
         this._timeoutId = setTimeout(this._onResize, 0);
-      }), this._resizeObserver.observe(n)) : (this._detectElementResize = Uqe(t), this._detectElementResize.addResizeListener(n, this._onResize)), this._onResize();
+      }), this._resizeObserver.observe(n)) : (this._detectElementResize = Vqe(t), this._detectElementResize.addResizeListener(n, this._onResize)), this._onResize();
     }
   }
   componentWillUnmount() {
@@ -103122,19 +103135,19 @@ class ooe extends MY {
 var rY = Number.isNaN || function(t) {
   return typeof t == "number" && t !== t;
 };
-function Fqe(e, t) {
+function qqe(e, t) {
   return !!(e === t || rY(e) && rY(t));
 }
-function Vqe(e, t) {
+function Gqe(e, t) {
   if (e.length !== t.length)
     return !1;
   for (var n = 0; n < e.length; n++)
-    if (!Fqe(e[n], t[n]))
+    if (!qqe(e[n], t[n]))
       return !1;
   return !0;
 }
 function N0(e, t) {
-  t === void 0 && (t = Vqe);
+  t === void 0 && (t = Gqe);
   var n, r = [], i, o = !1;
   function s() {
     for (var u = [], f = 0; f < arguments.length; f++)
@@ -103143,7 +103156,7 @@ function N0(e, t) {
   }
   return s;
 }
-var ww = {}, qqe = typeof performance == "object" && typeof performance.now == "function", iY = qqe ? function() {
+var ww = {}, $qe = typeof performance == "object" && typeof performance.now == "function", iY = $qe ? function() {
   return performance.now();
 } : function() {
   return Date.now();
@@ -103179,14 +103192,14 @@ function TO(e) {
   }
   return f0;
 }
-var Gqe = 150, $qe = function(t) {
+var Yqe = 150, Zqe = function(t) {
   var n = t.columnIndex;
   t.data;
   var r = t.rowIndex;
   return r + ":" + n;
 }, A1 = null, I1 = null, D1 = null;
 ww.NODE_ENV !== "production" && typeof window < "u" && typeof window.WeakSet < "u" && (A1 = /* @__PURE__ */ new WeakSet(), I1 = /* @__PURE__ */ new WeakSet(), D1 = /* @__PURE__ */ new WeakSet());
-function Yqe(e) {
+function Xqe(e) {
   var t, n = e.getColumnOffset, r = e.getColumnStartIndexForOffset, i = e.getColumnStopIndexForStartIndex, o = e.getColumnWidth, s = e.getEstimatedTotalHeight, u = e.getEstimatedTotalWidth, f = e.getOffsetForColumnAndAlignment, p = e.getOffsetForRowAndAlignment, m = e.getRowHeight, v = e.getRowOffset, y = e.getRowStartIndexForOffset, x = e.getRowStopIndexForStartIndex, E = e.initInstanceProps, T = e.shouldResetStyleCacheOnItemSizeChange, _ = e.validateProps;
   return t = /* @__PURE__ */ function(O) {
     NA(A, O);
@@ -103267,7 +103280,7 @@ function Yqe(e) {
         var B = N.props.outerRef;
         N._outerRef = z, typeof B == "function" ? B(z) : B != null && typeof B == "object" && B.hasOwnProperty("current") && (B.current = z);
       }, N._resetIsScrollingDebounced = function() {
-        N._resetIsScrollingTimeoutId !== null && xO(N._resetIsScrollingTimeoutId), N._resetIsScrollingTimeoutId = aoe(N._resetIsScrolling, Gqe);
+        N._resetIsScrollingTimeoutId !== null && xO(N._resetIsScrollingTimeoutId), N._resetIsScrollingTimeoutId = aoe(N._resetIsScrolling, Yqe);
       }, N._resetIsScrolling = function() {
         N._resetIsScrollingTimeoutId = null, N.setState({
           isScrolling: !1
@@ -103277,7 +103290,7 @@ function Yqe(e) {
       }, N;
     }
     A.getDerivedStateFromProps = function(N, z) {
-      return Zqe(N, z), _(N), null;
+      return Kqe(N, z), _(N), null;
     };
     var M = A.prototype;
     return M.scrollTo = function(N) {
@@ -103331,7 +103344,7 @@ function Yqe(e) {
     }, M.componentWillUnmount = function() {
       this._resetIsScrollingTimeoutId !== null && xO(this._resetIsScrollingTimeoutId);
     }, M.render = function() {
-      var N = this.props, z = N.children, B = N.className, W = N.columnCount, U = N.direction, k = N.height, V = N.innerRef, $ = N.innerElementType, Q = N.innerTagName, re = N.itemData, te = N.itemKey, J = te === void 0 ? $qe : te, ne = N.outerElementType, se = N.outerTagName, ce = N.rowCount, he = N.style, ae = N.useIsScrolling, me = N.width, pe = this.state.isScrolling, Te = this._getHorizontalRangeToRender(), de = Te[0], xe = Te[1], je = this._getVerticalRangeToRender(), _e = je[0], Me = je[1], Ce = [];
+      var N = this.props, z = N.children, B = N.className, W = N.columnCount, U = N.direction, k = N.height, V = N.innerRef, $ = N.innerElementType, Q = N.innerTagName, re = N.itemData, te = N.itemKey, J = te === void 0 ? Zqe : te, ne = N.outerElementType, se = N.outerTagName, ce = N.rowCount, he = N.style, ae = N.useIsScrolling, me = N.width, pe = this.state.isScrolling, Te = this._getHorizontalRangeToRender(), de = Te[0], xe = Te[1], je = this._getVerticalRangeToRender(), _e = je[0], Me = je[1], Ce = [];
       if (W > 0 && ce)
         for (var He = _e; He <= Me; He++)
           for (var Fe = de; Fe <= xe; Fe++)
@@ -103399,7 +103412,7 @@ function Yqe(e) {
     useIsScrolling: !1
   }, t;
 }
-var Zqe = function(t, n) {
+var Kqe = function(t, n) {
   var r = t.children, i = t.direction, o = t.height, s = t.innerTagName, u = t.outerTagName, f = t.overscanColumnsCount, p = t.overscanCount, m = t.overscanRowsCount, v = t.width, y = n.instance;
   if (ww.NODE_ENV !== "production") {
     if (typeof p == "number" && A1 && !A1.has(y) && (A1.add(y), console.warn("The overscanCount prop has been deprecated. Please use the overscanColumnCount and overscanRowCount props instead.")), (typeof f == "number" || typeof m == "number") && I1 && !I1.has(y) && (I1.add(y), console.warn("The overscanColumnsCount and overscanRowsCount props have been deprecated. Please use the overscanColumnCount and overscanRowCount props instead.")), (s != null || u != null) && D1 && !D1.has(y) && (D1.add(y), console.warn("The innerTagName and outerTagName props have been deprecated. Please use the innerElementType and outerElementType props instead.")), r == null)
@@ -103454,7 +103467,7 @@ var Zqe = function(t, n) {
   var o, s;
   t === "column" ? (o = r.columnMetadataMap, s = r.lastMeasuredColumnIndex) : (o = r.rowMetadataMap, s = r.lastMeasuredRowIndex);
   var u = s > 0 ? o[s].offset : 0;
-  return u >= i ? coe(t, n, r, s, 0, i) : Xqe(t, n, r, Math.max(0, s), i);
+  return u >= i ? coe(t, n, r, s, 0, i) : Qqe(t, n, r, Math.max(0, s), i);
 }, coe = function(t, n, r, i, o, s) {
   for (; o <= i; ) {
     var u = o + Math.floor((i - o) / 2), f = Bf(t, n, u, r).offset;
@@ -103463,7 +103476,7 @@ var Zqe = function(t, n) {
     f < s ? o = u + 1 : f > s && (i = u - 1);
   }
   return o > 0 ? o - 1 : 0;
-}, Xqe = function(t, n, r, i, o) {
+}, Qqe = function(t, n, r, i, o) {
   for (var s = t === "column" ? n.columnCount : n.rowCount, u = 1; i < s && Bf(t, n, i, r).offset < o; )
     i += u, u *= 2;
   return coe(t, n, r, Math.min(i, s - 1), Math.floor(i / 2), o);
@@ -103480,7 +103493,7 @@ var Zqe = function(t, n) {
     default:
       return o >= y && o <= v ? o : y > v || o < y ? y : v;
   }
-}, Kqe = /* @__PURE__ */ Yqe({
+}, Jqe = /* @__PURE__ */ Xqe({
   getColumnOffset: function(t, n, r) {
     return Bf("column", t, n, r).offset;
   },
@@ -103551,11 +103564,11 @@ var Zqe = function(t, n) {
         throw Error('An invalid "rowHeight" prop has been specified. Value should be a function. ' + ('"' + (r === null ? "null" : typeof r) + '" was specified.'));
     }
   }
-}), Qqe = 150, Jqe = function(t, n) {
+}), e2e = 150, t2e = function(t, n) {
   return t;
 }, M1 = null, N1 = null;
 ww.NODE_ENV !== "production" && typeof window < "u" && typeof window.WeakSet < "u" && (M1 = /* @__PURE__ */ new WeakSet(), N1 = /* @__PURE__ */ new WeakSet());
-function e2e(e) {
+function n2e(e) {
   var t, n = e.getItemOffset, r = e.getEstimatedTotalSize, i = e.getItemSize, o = e.getOffsetForIndexAndAlignment, s = e.getStartIndexForOffset, u = e.getStopIndexForStartIndex, f = e.initInstanceProps, p = e.shouldResetStyleCacheOnItemSizeChange, m = e.validateProps;
   return t = /* @__PURE__ */ function(v) {
     NA(y, v);
@@ -103637,7 +103650,7 @@ function e2e(e) {
         var O = T.props.outerRef;
         T._outerRef = _, typeof O == "function" ? O(_) : O != null && typeof O == "object" && O.hasOwnProperty("current") && (O.current = _);
       }, T._resetIsScrollingDebounced = function() {
-        T._resetIsScrollingTimeoutId !== null && xO(T._resetIsScrollingTimeoutId), T._resetIsScrollingTimeoutId = aoe(T._resetIsScrolling, Qqe);
+        T._resetIsScrollingTimeoutId !== null && xO(T._resetIsScrollingTimeoutId), T._resetIsScrollingTimeoutId = aoe(T._resetIsScrolling, e2e);
       }, T._resetIsScrolling = function() {
         T._resetIsScrollingTimeoutId = null, T.setState({
           isScrolling: !1
@@ -103647,7 +103660,7 @@ function e2e(e) {
       }, T;
     }
     y.getDerivedStateFromProps = function(T, _) {
-      return t2e(T, _), m(T), null;
+      return r2e(T, _), m(T), null;
     };
     var x = y.prototype;
     return x.scrollTo = function(T) {
@@ -103702,7 +103715,7 @@ function e2e(e) {
     }, x.componentWillUnmount = function() {
       this._resetIsScrollingTimeoutId !== null && xO(this._resetIsScrollingTimeoutId);
     }, x.render = function() {
-      var T = this.props, _ = T.children, O = T.className, A = T.direction, M = T.height, P = T.innerRef, N = T.innerElementType, z = T.innerTagName, B = T.itemCount, W = T.itemData, U = T.itemKey, k = U === void 0 ? Jqe : U, V = T.layout, $ = T.outerElementType, Q = T.outerTagName, re = T.style, te = T.useIsScrolling, J = T.width, ne = this.state.isScrolling, se = A === "horizontal" || V === "horizontal", ce = se ? this._onScrollHorizontal : this._onScrollVertical, he = this._getRangeToRender(), ae = he[0], me = he[1], pe = [];
+      var T = this.props, _ = T.children, O = T.className, A = T.direction, M = T.height, P = T.innerRef, N = T.innerElementType, z = T.innerTagName, B = T.itemCount, W = T.itemData, U = T.itemKey, k = U === void 0 ? t2e : U, V = T.layout, $ = T.outerElementType, Q = T.outerTagName, re = T.style, te = T.useIsScrolling, J = T.width, ne = this.state.isScrolling, se = A === "horizontal" || V === "horizontal", ce = se ? this._onScrollHorizontal : this._onScrollVertical, he = this._getRangeToRender(), ae = he[0], me = he[1], pe = [];
       if (B > 0)
         for (var Te = ae; Te <= me; Te++)
           pe.push(ds(_, {
@@ -103762,7 +103775,7 @@ function e2e(e) {
     useIsScrolling: !1
   }, t;
 }
-var t2e = function(t, n) {
+var r2e = function(t, n) {
   var r = t.children, i = t.direction, o = t.height, s = t.layout, u = t.innerTagName, f = t.outerTagName, p = t.width, m = n.instance;
   if (ww.NODE_ENV !== "production") {
     (u != null || f != null) && N1 && !N1.has(m) && (N1.add(m), console.warn("The innerTagName and outerTagName props have been deprecated. Please use the innerElementType and outerElementType props instead."));
@@ -103792,7 +103805,7 @@ var t2e = function(t, n) {
     if (!v && typeof o != "number")
       throw Error('An invalid "height" prop has been specified. Vertical lists must specify a number for height. ' + ('"' + (o === null ? "null" : typeof o) + '" was specified.'));
   }
-}, n2e = 50, _0 = function(t, n, r) {
+}, i2e = 50, _0 = function(t, n, r) {
   var i = t, o = i.itemSize, s = r.itemMetadataMap, u = r.lastMeasuredIndex;
   if (n > u) {
     var f = 0;
@@ -103810,9 +103823,9 @@ var t2e = function(t, n) {
     r.lastMeasuredIndex = n;
   }
   return s[n];
-}, r2e = function(t, n, r) {
+}, o2e = function(t, n, r) {
   var i = n.itemMetadataMap, o = n.lastMeasuredIndex, s = o > 0 ? i[o].offset : 0;
-  return s >= r ? uoe(t, n, o, 0, r) : i2e(t, n, Math.max(0, o), r);
+  return s >= r ? uoe(t, n, o, 0, r) : a2e(t, n, Math.max(0, o), r);
 }, uoe = function(t, n, r, i, o) {
   for (; i <= r; ) {
     var s = i + Math.floor((r - i) / 2), u = _0(t, s, n).offset;
@@ -103821,7 +103834,7 @@ var t2e = function(t, n) {
     u < o ? i = s + 1 : u > o && (r = s - 1);
   }
   return i > 0 ? i - 1 : 0;
-}, i2e = function(t, n, r, i) {
+}, a2e = function(t, n, r, i) {
   for (var o = t.itemCount, s = 1; r < o && _0(t, r, n).offset < i; )
     r += s, s *= 2;
   return uoe(t, n, Math.min(r, o - 1), Math.floor(r / 2), i);
@@ -103833,7 +103846,7 @@ var t2e = function(t, n) {
   }
   var p = r - s - 1, m = p * o;
   return u + m;
-}, o2e = /* @__PURE__ */ e2e({
+}, s2e = /* @__PURE__ */ n2e({
   getItemOffset: function(t, n, r) {
     return _0(t, n, r).offset;
   },
@@ -103856,7 +103869,7 @@ var t2e = function(t, n) {
     }
   },
   getStartIndexForOffset: function(t, n, r) {
-    return r2e(t, r, n);
+    return o2e(t, r, n);
   },
   getStopIndexForStartIndex: function(t, n, r, i) {
     for (var o = t.direction, s = t.height, u = t.itemCount, f = t.layout, p = t.width, m = o === "horizontal" || f === "horizontal", v = m ? p : s, y = _0(t, n, i), x = r + v, E = y.offset + y.size, T = n; T < u - 1 && E < x; )
@@ -103866,7 +103879,7 @@ var t2e = function(t, n) {
   initInstanceProps: function(t, n) {
     var r = t, i = r.estimatedItemSize, o = {
       itemMetadataMap: {},
-      estimatedItemSize: i || n2e,
+      estimatedItemSize: i || i2e,
       lastMeasuredIndex: -1
     };
     return n.resetAfterIndex = function(s, u) {
@@ -103889,12 +103902,12 @@ function cY(e, t) {
       return !0;
   return !1;
 }
-var a2e = ["style"], s2e = ["style"];
-function l2e(e, t) {
-  var n = e.style, r = Ks(e, a2e), i = t.style, o = Ks(t, s2e);
+var l2e = ["style"], c2e = ["style"];
+function u2e(e, t) {
+  var n = e.style, r = Ks(e, l2e), i = t.style, o = Ks(t, c2e);
   return !cY(n, i) && !cY(r, o);
 }
-const xz = 500, c2e = 2, u2e = ge("div", { name: "GalleryView", slot: "thumbnail" })(
+const xz = 500, d2e = 2, f2e = ge("div", { name: "GalleryView", slot: "thumbnail" })(
   ({ ownerState: e, theme: t }) => ({
     "&:focus": { outline: "none" },
     "&:hover": { backgroundColor: t.palette.action.hover },
@@ -103932,13 +103945,13 @@ const xz = 500, c2e = 2, u2e = ge("div", { name: "GalleryView", slot: "thumbnail
       }
     }
   })
-), d2e = ge("div")(({ theme: e }) => ({
+), p2e = ge("div")(({ theme: e }) => ({
   display: "flex",
   gap: e.spacing(0.5),
   position: "absolute",
   right: e.spacing(1),
   bottom: e.spacing(1)
-})), f2e = ge("div")(({ theme: e }) => ({
+})), h2e = ge("div")(({ theme: e }) => ({
   position: "absolute",
   left: e.spacing(1),
   top: e.spacing(1),
@@ -103985,7 +103998,7 @@ function QF({
   } : void 0, $ = m === "l" || m === "fit" || typeof U == "number" && U > xz, Q = $ ? 1 : Math.max(
     1,
     Math.min(
-      c2e,
+      d2e,
       typeof window < "u" && Number(window.devicePixelRatio) || 1
     )
   ), re = typeof W == "number" && W > 0 ? Math.round(W * Q) : null, te = typeof U == "number" && U > 0 ? Math.round(U * Q) : U, J = x && typeof W == "number" ? Math.min(re || W, xz) : null, ne = typeof te == "number" && te > 0 ? Math.min(te, xz) : te, se = (pe) => {
@@ -104000,7 +104013,7 @@ function QF({
     pe.key === "Enter" || pe.key === " " || pe.code === "Enter" || pe.code === "Space" ? he() : (r(e.id), ce());
   }, me = { selected: t, highlighted: n, isMobileStrip: x, isVerticalStrip: E };
   return /* @__PURE__ */ R.jsx(IIe, { onChange: se, children: /* @__PURE__ */ R.jsx(
-    u2e,
+    f2e,
     {
       ownerState: me,
       onClick: he,
@@ -104021,7 +104034,7 @@ function QF({
           preferFullRes: $,
           style: V,
           children: [
-            u > 0 && /* @__PURE__ */ R.jsx(f2e, { children: /* @__PURE__ */ R.jsx(Mv, { title: M("searchHitsCount", { count: u }), arrow: !0, children: /* @__PURE__ */ R.jsx(
+            u > 0 && /* @__PURE__ */ R.jsx(h2e, { children: /* @__PURE__ */ R.jsx(Mv, { title: M("searchHitsCount", { count: u }), arrow: !0, children: /* @__PURE__ */ R.jsx(
               Ff,
               {
                 icon: /* @__PURE__ */ R.jsx(Wt, { name: "search", size: "0.7rem" }),
@@ -104097,7 +104110,7 @@ function QF({
                 }
               )
             ] }),
-            /* @__PURE__ */ R.jsx(d2e, { children: o > 0 && /* @__PURE__ */ R.jsx(Ff, { icon: /* @__PURE__ */ R.jsx(Wt, { name: "chat-dots", size: 12 }), label: o, size: "small" }) })
+            /* @__PURE__ */ R.jsx(p2e, { children: o > 0 && /* @__PURE__ */ R.jsx(Ff, { icon: /* @__PURE__ */ R.jsx(Wt, { name: "chat-dots", size: 12 }), label: o, size: "small" }) })
           ]
         }
       )
@@ -104126,7 +104139,7 @@ dt.memo(QF, (e, t) => {
   var n, r, i, o, s, u, f, p;
   return e.selected === t.selected && e.highlighted === t.highlighted && e.searchAnnotationsCount === t.searchAnnotationsCount && e.annotationsCount === t.annotationsCount && ((n = e.config) == null ? void 0 : n.height) === ((r = t.config) == null ? void 0 : r.height) && ((i = e.config) == null ? void 0 : i.width) === ((o = t.config) == null ? void 0 : o.width) && (((s = e.canvas) == null ? void 0 : s.id) || ((u = e.canvas) == null ? void 0 : u.index)) === (((f = t.canvas) == null ? void 0 : f.id) || ((p = t.canvas) == null ? void 0 : p.index)) && e.isMobileStrip === t.isMobileStrip && e.thumbSize === t.thumbSize && e.tileW === t.tileW && e.tileH === t.tileH;
 });
-const Th = (e) => (e || "").toString().split("#")[0], p2e = (e, { canvas: t, windowId: n }) => {
+const Th = (e) => (e || "").toString().split("#")[0], g2e = (e, { canvas: t, windowId: n }) => {
   var _, O, A, M, P, N, z, B;
   if (!t)
     return {
@@ -104167,13 +104180,13 @@ const Th = (e) => (e || "").toString().split("#")[0], p2e = (e, { canvas: t, win
     searchSnippets: v,
     matchingTerms: x
   };
-}, h2e = (e, { canvas: t, windowId: n }) => ({
+}, m2e = (e, { canvas: t, windowId: n }) => ({
   focusOnCanvas: () => e(XE(n, "single")),
   requestCanvasAnnotations: () => e(jH(n, t == null ? void 0 : t.id)),
   setCanvas: (...r) => e(ro(n, ...r))
-}), g2e = _t(
-  Mt(p2e, h2e)
-), Tz = g2e(QF), m2e = ge($F, { name: "WindowViewSettings", slot: "option" })(({ theme: e }) => ({
+}), v2e = _t(
+  Mt(g2e, m2e)
+), Tz = v2e(QF), y2e = ge($F, { name: "WindowViewSettings", slot: "option" })(({ theme: e }) => ({
   display: "inline-flex",
   alignItems: "center",
   gap: e.spacing(1.35),
@@ -104253,7 +104266,7 @@ function doe({
     single: "app"
   };
   return !Array.isArray(u) || u.length <= 1 ? null : /* @__PURE__ */ R.jsx(
-    m2e,
+    y2e,
     {
       exclusive: !0,
       size: "small",
@@ -104284,13 +104297,13 @@ doe.propTypes = {
   windowId: c.string.isRequired,
   windowViewType: c.string.isRequired
 };
-const v2e = { setWindowViewType: XE }, y2e = (e, { windowId: t }) => ({
+const b2e = { setWindowViewType: XE }, w2e = (e, { windowId: t }) => ({
   viewTypes: EX(e, { windowId: t }),
   windowViewType: Kh(e, { windowId: t })
-}), b2e = _t(
-  Mt(y2e, v2e, null, { forwardRef: !0 }),
+}), x2e = _t(
+  Mt(w2e, b2e, null, { forwardRef: !0 }),
   Ot("WindowViewSettings")
-), foe = b2e(doe), w2e = ge("div", { name: "GalleryView", slot: "root" })(({ theme: e }) => ({
+), foe = x2e(doe), T2e = ge("div", { name: "GalleryView", slot: "root" })(({ theme: e }) => ({
   height: "100%",
   width: "100%",
   backgroundColor: e.palette.background.paper,
@@ -104299,7 +104312,7 @@ const v2e = { setWindowViewType: XE }, y2e = (e, { windowId: t }) => ({
   minHeight: 0,
   overflow: "hidden",
   borderRadius: e.shape.borderRadius * 1.5
-})), x2e = ge("div", { name: "GalleryView", slot: "bar" })(({ theme: e, ownerState: t }) => ({
+})), S2e = ge("div", { name: "GalleryView", slot: "bar" })(({ theme: e, ownerState: t }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-end",
@@ -104307,7 +104320,7 @@ const v2e = { setWindowViewType: XE }, y2e = (e, { windowId: t }) => ({
   gap: e.spacing(1),
   padding: "2px",
   borderBottom: t != null && t.isMobileStrip ? "none" : `1px solid ${e.palette.divider}`
-})), T2e = ge("div")(({ theme: e }) => ({
+})), E2e = ge("div")(({ theme: e }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-end",
@@ -104323,13 +104336,13 @@ const v2e = { setWindowViewType: XE }, y2e = (e, { windowId: t }) => ({
     textTransform: "uppercase",
     whiteSpace: "nowrap"
   }
-})), S2e = ge("div")(() => ({
+})), C2e = ge("div")(() => ({
   position: "relative",
   flex: "1 1 0",
   minHeight: 0,
   minWidth: 0,
   overflow: "hidden"
-})), E2e = ge("div")(({ theme: e }) => ({
+})), _2e = ge("div")(({ theme: e }) => ({
   display: "flex",
   alignItems: "center",
   gap: e.spacing(1.5),
@@ -104340,7 +104353,7 @@ const v2e = { setWindowViewType: XE }, y2e = (e, { windowId: t }) => ({
   boxShadow: e.shadows[2],
   padding: "6px 10px",
   minWidth: 0
-})), C2e = ge(_U)(({ theme: e }) => ({
+})), R2e = ge(_U)(({ theme: e }) => ({
   color: e.palette.mode === "dark" ? "rgba(255,255,255,0.65)" : "rgba(0,0,0,0.55)",
   height: 6,
   padding: "6px 0",
@@ -104362,16 +104375,16 @@ const v2e = { setWindowViewType: XE }, y2e = (e, { windowId: t }) => ({
   s: { tileW: 150 },
   m: { tileW: 200 },
   l: { tileW: 390 }
-}, b0 = 8, Lf = 10, poe = 4, _2e = 96, R2e = 180, O2e = 72, A2e = 10, I2e = 8, uY = 4, D2e = 4, M2e = 7, dY = 16, N2e = 12, P2e = 40, k2e = 44, fY = 2, hoe = 30, L2e = Math.floor(hoe / 2), j2e = 24, goe = 16, z2e = 2, moe = 12, B2e = 8, W2e = 16, H2e = ge("div")({
+}, b0 = 8, Lf = 10, poe = 4, O2e = 96, A2e = 180, I2e = 72, D2e = 10, M2e = 8, uY = 4, N2e = 4, P2e = 7, dY = 16, k2e = 12, L2e = 40, j2e = 44, fY = 2, hoe = 30, z2e = Math.floor(hoe / 2), B2e = 24, goe = 16, W2e = 2, moe = 12, H2e = 8, U2e = 16, F2e = ge("div")({
   display: "flex",
   width: "100%",
   height: "100%",
   alignItems: "flex-start"
-}), U2e = ge("div")({
+}), V2e = ge("div")({
   flex: "1 1 0",
   minWidth: 0,
   height: "100%"
-}), $B = (e) => (e || "").toString().split("#")[0], pY = (e) => $B(e == null ? void 0 : e.id) || `index-${e == null ? void 0 : e.index}`, F2e = (e = [], t = []) => e.length === t.length && e.every((n, r) => n === t[r]), V2e = (e) => {
+}), $B = (e) => (e || "").toString().split("#")[0], pY = (e) => $B(e == null ? void 0 : e.id) || `index-${e == null ? void 0 : e.index}`, q2e = (e = [], t = []) => e.length === t.length && e.every((n, r) => n === t[r]), G2e = (e) => {
   var t, n;
   try {
     const r = typeof (e == null ? void 0 : e.getWidth) == "function" ? e.getWidth() : (e == null ? void 0 : e.width) || ((t = e == null ? void 0 : e.__jsonld) == null ? void 0 : t.width), i = typeof (e == null ? void 0 : e.getHeight) == "function" ? e.getHeight() : (e == null ? void 0 : e.height) || ((n = e == null ? void 0 : e.__jsonld) == null ? void 0 : n.height), o = Number(r) / Number(i);
@@ -104404,7 +104417,7 @@ const yoe = dt.forwardRef(({ style: e, ...t }, n) => /* @__PURE__ */ R.jsx(
   }
 ));
 yoe.displayName = "HorizontalStripOuter";
-const q2e = dt.memo(({ columnIndex: e, rowIndex: t, style: n, data: r }) => {
+const $2e = dt.memo(({ columnIndex: e, rowIndex: t, style: n, data: r }) => {
   const {
     items: i,
     windowId: o,
@@ -104419,12 +104432,12 @@ const q2e = dt.memo(({ columnIndex: e, rowIndex: t, style: n, data: r }) => {
   if (x >= i.length) return null;
   const E = i[x] || [], T = !m && s === 1, _ = Number.isFinite(y) ? y : m ? Lf : T ? poe : b0, O = s > 1 ? _ : 0, A = m ? 2 : 0, M = !m && u === "fit", P = !m && !M && s === 1, N = {
     ...n,
-    left: n.left + (M ? goe : P ? L2e : O / 2),
+    left: n.left + (M ? goe : P ? z2e : O / 2),
     top: n.top + _ / 2 + A,
-    width: n.width - O - (M ? z2e : 0),
+    width: n.width - O - (M ? W2e : 0),
     height: n.height - _ - A
   }, z = f(), B = (U = 0) => p(x, U), W = v && E.length === 1;
-  return v && E.length > 1 ? /* @__PURE__ */ R.jsx("div", { style: N, children: /* @__PURE__ */ R.jsx(H2e, { className: "mirador-book-pair-group", style: { gap: moe }, children: E.map((U, k) => /* @__PURE__ */ R.jsx(U2e, { children: /* @__PURE__ */ R.jsx(
+  return v && E.length > 1 ? /* @__PURE__ */ R.jsx("div", { style: N, children: /* @__PURE__ */ R.jsx(F2e, { className: "mirador-book-pair-group", style: { gap: moe }, children: E.map((U, k) => /* @__PURE__ */ R.jsx(V2e, { children: /* @__PURE__ */ R.jsx(
     Tz,
     {
       windowId: o,
@@ -104458,7 +104471,7 @@ const q2e = dt.memo(({ columnIndex: e, rowIndex: t, style: n, data: r }) => {
       isVerticalStrip: T
     }
   ) });
-}, l2e);
+}, u2e);
 function boe({
   canvases: e = [],
   windowId: t,
@@ -104473,7 +104486,7 @@ function boe({
     columnCount: 1,
     columnWidth: 0,
     rowHeights: []
-  }), M = Ii(() => m.reduce((W, U) => (W[pY(U)] = V2e(U), W), {}), [m]), P = Ii(() => v.map((W) => W.map((U) => M[pY(U)] || 0.7)), [v, M]);
+  }), M = Ii(() => m.reduce((W, U) => (W[pY(U)] = G2e(U), W), {}), [m]), P = Ii(() => v.map((W) => W.map((U) => M[pY(U)] || 0.7)), [v, M]);
   fn(() => {
     Cfe(y);
   }, [y]), fn(() => {
@@ -104495,11 +104508,11 @@ function boe({
     _.current = U;
   }, [n, y, v]);
   const [N, z] = oU.useElementSize(), B = !f || s;
-  return /* @__PURE__ */ R.jsxs(w2e, { children: [
-    B && /* @__PURE__ */ R.jsxs(x2e, { ref: N, ownerState: { isMobileStrip: f }, children: [
+  return /* @__PURE__ */ R.jsxs(T2e, { children: [
+    B && /* @__PURE__ */ R.jsxs(S2e, { ref: N, ownerState: { isMobileStrip: f }, children: [
       !f && (() => {
         const W = { s: 0, m: 1, l: 2, fit: 3 }, U = ["s", "m", "l", "fit"], k = W[y] ?? 0, V = (te) => x(U[Math.min(3, Math.max(0, te))]), $ = r || 160, Q = Math.max(80, Math.floor(((z == null ? void 0 : z.width) || $) - 120)), re = Math.min($, Q);
-        return /* @__PURE__ */ R.jsxs(E2e, { children: [
+        return /* @__PURE__ */ R.jsxs(_2e, { children: [
           /* @__PURE__ */ R.jsx(
             Rr,
             {
@@ -104517,7 +104530,7 @@ function boe({
             }
           ),
           /* @__PURE__ */ R.jsx(
-            C2e,
+            R2e,
             {
               "aria-label": "Thumbnail size",
               min: 0,
@@ -104546,42 +104559,42 @@ function boe({
           )
         ] });
       })(),
-      s && /* @__PURE__ */ R.jsx(T2e, { children: /* @__PURE__ */ R.jsx(foe, { windowId: t }) })
+      s && /* @__PURE__ */ R.jsx(E2e, { children: /* @__PURE__ */ R.jsx(foe, { windowId: t }) })
     ] }),
-    /* @__PURE__ */ R.jsx(S2e, { children: /* @__PURE__ */ R.jsx(ooe, { children: ({ width: W, height: U }) => {
+    /* @__PURE__ */ R.jsx(C2e, { children: /* @__PURE__ */ R.jsx(ooe, { children: ({ width: W, height: U }) => {
       if (!W || !U) return null;
       let k, V, $ = [];
-      const Q = y === "s" ? P2e : k2e, re = dY + Q + fY, te = Math.max(
-        D2e,
+      const Q = y === "s" ? L2e : j2e, re = dY + Q + fY, te = Math.max(
+        N2e,
         Math.min(
-          M2e,
+          P2e,
           Math.round(W / 120)
         )
       ), J = Math.max(1, Math.min(te, v.length || te)), ne = Math.floor((W - Math.max(0, J - 1) * Lf) / J), se = Math.max(
-        _2e,
-        Math.min(R2e, ne)
+        O2e,
+        Math.min(A2e, ne)
       ), ce = Math.max(
         re + 1,
         Math.max(1, U - Lf)
-      ), he = f ? Math.max(1, Math.floor(W)) : Math.max(1, Math.floor(W - W2e));
+      ), he = f ? Math.max(1, Math.floor(W)) : Math.max(1, Math.floor(W - U2e));
       if (f) {
         k = Math.max(1, v.length);
         const Ve = Q + fY, j = Math.max(
           1,
-          ce - A2e - Ve - uY
+          ce - D2e - Ve - uY
         );
         $ = v.map((Z, fe) => {
           var we;
           const Le = ((we = P[fe]) == null ? void 0 : we[0]) || 0.7, Ue = Math.max(1, Math.round(j * Le));
-          return Math.max(O2e, Ue + I2e + uY) + Lf;
+          return Math.max(I2e, Ue + M2e + uY) + Lf;
         }), V = $[0] || se + Lf;
       } else if (y === "fit")
-        k = 1, V = Math.max(1, he - j2e - goe);
+        k = 1, V = Math.max(1, he - B2e - goe);
       else {
         const Ve = (hS[y] || hS.m).tileW, j = he;
         k = Math.max(1, Math.floor((j + b0) / (Ve + b0))), k > 1 ? V = Math.max(1, Math.floor((j - (k - 1) * b0) / k)) + b0 : V = Math.max(1, j - hoe);
       }
-      const ae = !f && k === 1, pe = (ae ? N2e : dY) + Q, Te = f ? Lf : ae ? poe : b0, de = k > 1 ? Te : 0, xe = Math.max(1, V - de), je = p ? Math.max(1, Math.floor((xe - moe) / 2)) : xe, _e = f ? 1 : Math.ceil(v.length / k), Me = (Ve) => {
+      const ae = !f && k === 1, pe = (ae ? k2e : dY) + Q, Te = f ? Lf : ae ? poe : b0, de = k > 1 ? Te : 0, xe = Math.max(1, V - de), je = p ? Math.max(1, Math.floor((xe - moe) / 2)) : xe, _e = f ? 1 : Math.ceil(v.length / k), Me = (Ve) => {
         const j = P[Ve] || [0.7];
         if (p)
           return j.reduce((fe, Le) => Math.max(fe, Math.round(je / (Le || 0.7)) + pe), 0);
@@ -104596,8 +104609,8 @@ function boe({
           ee > Z && (Z = ee);
         }
         const fe = Math.max(1, Z + Te);
-        return j === _e - 1 ? fe + B2e : fe;
-      }), He = A.current, Fe = He.width !== W || He.columnCount !== k || He.columnWidth !== V || !F2e(He.rowHeights, Ce);
+        return j === _e - 1 ? fe + H2e : fe;
+      }), He = A.current, Fe = He.width !== W || He.columnCount !== k || He.columnWidth !== V || !q2e(He.rowHeights, Ce);
       He.width = W, He.columnCount = k, He.columnWidth = V, He.rowHeights = Ce, O.current = O.current || Fe;
       const ye = (Ve = 0) => {
         if (f) {
@@ -104624,7 +104637,7 @@ function boe({
         cellGap: Te
       };
       return /* @__PURE__ */ R.jsx(
-        Kqe,
+        Jqe,
         {
           ref: E,
           width: W,
@@ -104641,7 +104654,7 @@ function boe({
             const { columnIndex: j, rowIndex: Z } = Ve;
             return Z * k + j;
           },
-          children: q2e
+          children: $2e
         }
       );
     } }) })
@@ -104656,7 +104669,7 @@ boe.propTypes = {
   viewType: c.oneOf(["single", "book", "scroll"]),
   showDeepZoomLayoutControls: c.bool
 };
-function G2e(e) {
+function Y2e(e) {
   return new Promise((t, n) => {
     const r = new FileReader();
     r.addEventListener("load", () => {
@@ -104688,7 +104701,7 @@ const hY = (e, t, n) => {
     })), s = e.files.filter(({ type: f }) => f.startsWith("image/"));
     let u;
     if (s.length > 0) {
-      const f = Ba(), p = s.map((m) => G2e(m));
+      const f = Ba(), p = s.map((m) => Y2e(m));
       u = Promise.all(p).then((m) => {
         const v = {
           "@context": "http://iiif.io/api/presentation/3/context.json",
@@ -104786,23 +104799,23 @@ woe.propTypes = {
     })
   ).isRequired
 };
-var $2e = {};
+var Z2e = {};
 const YB = /* @__PURE__ */ G.createContext();
-$2e.NODE_ENV !== "production" && (YB.displayName = "GridContext");
-function Y2e(e) {
+Z2e.NODE_ENV !== "production" && (YB.displayName = "GridContext");
+function X2e(e) {
   return zt("MuiGrid", e);
 }
-const Z2e = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], X2e = ["column-reverse", "column", "row-reverse", "row"], K2e = ["nowrap", "wrap-reverse", "wrap"], gS = ["auto", !0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], CE = Ht("MuiGrid", [
+const K2e = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], Q2e = ["column-reverse", "column", "row-reverse", "row"], J2e = ["nowrap", "wrap-reverse", "wrap"], gS = ["auto", !0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], CE = Ht("MuiGrid", [
   "root",
   "container",
   "item",
   "zeroMinWidth",
   // spacings
-  ...Z2e.map((e) => `spacing-xs-${e}`),
+  ...K2e.map((e) => `spacing-xs-${e}`),
   // direction values
-  ...X2e.map((e) => `direction-xs-${e}`),
+  ...Q2e.map((e) => `direction-xs-${e}`),
   // wrap values
-  ...K2e.map((e) => `wrap-xs-${e}`),
+  ...J2e.map((e) => `wrap-xs-${e}`),
   // grid sizes for all breakpoints
   ...gS.map((e) => `grid-xs-${e}`),
   ...gS.map((e) => `grid-sm-${e}`),
@@ -104811,7 +104824,7 @@ const Z2e = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], X2e = ["column-reverse", "column
   ...gS.map((e) => `grid-xl-${e}`)
 ]);
 var xoe = {};
-function Q2e({
+function e6e({
   theme: e,
   ownerState: t
 }) {
@@ -104863,7 +104876,7 @@ function Q2e({
     return e.breakpoints.values[i] === 0 ? Object.assign(r, o) : r[e.breakpoints.up(i)] = o, r;
   }, {});
 }
-function J2e({
+function t6e({
   theme: e,
   ownerState: t
 }) {
@@ -104893,7 +104906,7 @@ function Toe({
   const r = Object.keys(e).sort((i, o) => e[i] - e[o]);
   return r.slice(0, r.indexOf(n));
 }
-function e6e({
+function n6e({
   theme: e,
   ownerState: t
 }) {
@@ -104930,7 +104943,7 @@ function e6e({
   }
   return i;
 }
-function t6e({
+function r6e({
   theme: e,
   ownerState: t
 }) {
@@ -104973,7 +104986,7 @@ function t6e({
   }
   return i;
 }
-function n6e(e, t, n = {}) {
+function i6e(e, t, n = {}) {
   if (!e || e <= 0)
     return [];
   if (typeof e == "string" && !Number.isNaN(Number(e)) || typeof e == "number")
@@ -104984,7 +104997,7 @@ function n6e(e, t, n = {}) {
     Number(o) > 0 && r.push(n[`spacing-${i}-${String(o)}`]);
   }), r;
 }
-const r6e = ge("div", {
+const o6e = ge("div", {
   name: "MuiGrid",
   slot: "Root",
   overridesResolver: (e, t) => {
@@ -105000,7 +105013,7 @@ const r6e = ge("div", {
       breakpoints: p
     } = n;
     let m = [];
-    r && (m = n6e(s, p, t));
+    r && (m = i6e(s, p, t));
     const v = [];
     return p.forEach((y) => {
       const x = n[y];
@@ -105029,12 +105042,12 @@ const r6e = ge("div", {
       flexWrap: e.wrap
     }
   }),
-  J2e,
-  e6e,
   t6e,
-  Q2e
+  n6e,
+  r6e,
+  e6e
 );
-function i6e(e, t) {
+function a6e(e, t) {
   if (!e || e <= 0)
     return [];
   if (typeof e == "string" && !Number.isNaN(Number(e)) || typeof e == "number")
@@ -105048,7 +105061,7 @@ function i6e(e, t) {
     }
   }), n;
 }
-const o6e = (e) => {
+const s6e = (e) => {
   const {
     classes: t,
     container: n,
@@ -105060,7 +105073,7 @@ const o6e = (e) => {
     breakpoints: f
   } = e;
   let p = [];
-  n && (p = i6e(o, f));
+  n && (p = a6e(o, f));
   const m = [];
   f.forEach((y) => {
     const x = e[y];
@@ -105069,7 +105082,7 @@ const o6e = (e) => {
   const v = {
     root: ["root", n && "container", i && "item", u && "zeroMinWidth", ...p, r !== "row" && `direction-xs-${String(r)}`, s !== "wrap" && `wrap-xs-${String(s)}`, ...m]
   };
-  return Bt(v, Y2e, t);
+  return Bt(v, X2e, t);
 }, nl = /* @__PURE__ */ G.forwardRef(function(t, n) {
   const r = Vt({
     props: t,
@@ -105108,10 +105121,10 @@ const o6e = (e) => {
     spacing: E,
     ...z,
     breakpoints: i.keys
-  }, U = o6e(W);
+  }, U = s6e(W);
   return /* @__PURE__ */ R.jsx(YB.Provider, {
     value: N,
-    children: /* @__PURE__ */ R.jsx(r6e, {
+    children: /* @__PURE__ */ R.jsx(o6e, {
       ownerState: W,
       className: bt(U.root, s),
       as: p,
@@ -105322,13 +105335,13 @@ Soe.propTypes = {
   onCancel: c.func,
   onSubmit: c.func
 };
-const a6e = _K(), s6e = (e, t) => e.filter((n) => t.includes(n)), xw = (e, t, n) => {
+const l6e = _K(), c6e = (e, t) => e.filter((n) => t.includes(n)), xw = (e, t, n) => {
   const r = e.keys[0];
   Array.isArray(t) ? t.forEach((i, o) => {
     n((s, u) => {
       o <= e.keys.length - 1 && (o === 0 ? Object.assign(s, u) : s[e.up(e.keys[o])] = u);
     }, i);
-  }) : t && typeof t == "object" ? (Object.keys(t).length > e.keys.length ? e.keys : s6e(e.keys, Object.keys(t))).forEach((o) => {
+  }) : t && typeof t == "object" ? (Object.keys(t).length > e.keys.length ? e.keys : c6e(e.keys, Object.keys(t))).forEach((o) => {
     if (e.keys.includes(o)) {
       const s = t[o];
       s !== void 0 && n((u, f) => {
@@ -105345,7 +105358,7 @@ function SO(e) {
 function FI(e) {
   return `--Grid-parent-${e}Spacing`;
 }
-const gY = "--Grid-columns", P0 = "--Grid-parent-columns", l6e = ({
+const gY = "--Grid-columns", P0 = "--Grid-parent-columns", u6e = ({
   theme: e,
   ownerState: t
 }) => {
@@ -105368,7 +105381,7 @@ const gY = "--Grid-columns", P0 = "--Grid-parent-columns", l6e = ({
       width: `calc(100% * ${i} / var(${P0}) - (var(${P0}) - ${i}) * (var(${FI("column")}) / var(${P0})))`
     }), r(n, o);
   }), n;
-}, c6e = ({
+}, d6e = ({
   theme: e,
   ownerState: t
 }) => {
@@ -105381,7 +105394,7 @@ const gY = "--Grid-columns", P0 = "--Grid-parent-columns", l6e = ({
       marginLeft: i === 0 ? "0px" : `calc(100% * ${i} / var(${P0}) + var(${FI("column")}) * ${i} / var(${P0}))`
     }), r(n, o);
   }), n;
-}, u6e = ({
+}, f6e = ({
   theme: e,
   ownerState: t
 }) => {
@@ -105399,7 +105412,7 @@ const gY = "--Grid-columns", P0 = "--Grid-parent-columns", l6e = ({
       }
     });
   }), n;
-}, d6e = ({
+}, p6e = ({
   theme: e,
   ownerState: t
 }) => {
@@ -105416,7 +105429,7 @@ const gY = "--Grid-columns", P0 = "--Grid-parent-columns", l6e = ({
       }
     });
   }), n;
-}, f6e = ({
+}, h6e = ({
   theme: e,
   ownerState: t
 }) => {
@@ -105433,7 +105446,7 @@ const gY = "--Grid-columns", P0 = "--Grid-parent-columns", l6e = ({
       }
     });
   }), n;
-}, p6e = ({
+}, g6e = ({
   theme: e,
   ownerState: t
 }) => {
@@ -105445,7 +105458,7 @@ const gY = "--Grid-columns", P0 = "--Grid-parent-columns", l6e = ({
       flexDirection: i
     });
   }), n;
-}, h6e = ({
+}, m6e = ({
   ownerState: e
 }) => ({
   minWidth: 0,
@@ -105458,12 +105471,12 @@ const gY = "--Grid-columns", P0 = "--Grid-parent-columns", l6e = ({
     },
     gap: `var(${SO("row")}) var(${SO("column")})`
   }
-}), g6e = (e) => {
+}), v6e = (e) => {
   const t = [];
   return Object.entries(e).forEach(([n, r]) => {
     r !== !1 && r !== void 0 && t.push(`grid-${n}-${String(r)}`);
   }), t;
-}, m6e = (e, t = "xs") => {
+}, y6e = (e, t = "xs") => {
   function n(r) {
     return r === void 0 ? !1 : typeof r == "string" && !Number.isNaN(Number(r)) || typeof r == "number" && r > 0;
   }
@@ -105476,36 +105489,36 @@ const gY = "--Grid-columns", P0 = "--Grid-parent-columns", l6e = ({
     }), r;
   }
   return [];
-}, v6e = (e) => e === void 0 ? [] : typeof e == "object" ? Object.entries(e).map(([t, n]) => `direction-${t}-${n}`) : [`direction-xs-${String(e)}`];
-var y6e = {};
-const b6e = (e) => ["item", "zeroMinWidth"].includes(e) ? `The \`${e}\` prop has been removed and is no longer necessary. You can safely remove it.` : `The \`${e}\` prop has been removed. See https://mui.com/material-ui/migration/upgrade-to-grid-v2/ for migration instructions.`, mY = [];
-function w6e(e, t) {
+}, b6e = (e) => e === void 0 ? [] : typeof e == "object" ? Object.entries(e).map(([t, n]) => `direction-${t}-${n}`) : [`direction-xs-${String(e)}`];
+var w6e = {};
+const x6e = (e) => ["item", "zeroMinWidth"].includes(e) ? `The \`${e}\` prop has been removed and is no longer necessary. You can safely remove it.` : `The \`${e}\` prop has been removed. See https://mui.com/material-ui/migration/upgrade-to-grid-v2/ for migration instructions.`, mY = [];
+function T6e(e, t) {
   const n = [];
   e.item !== void 0 && (delete e.item, n.push("item")), e.zeroMinWidth !== void 0 && (delete e.zeroMinWidth, n.push("zeroMinWidth")), t.keys.forEach((r) => {
     e[r] !== void 0 && (n.push(r), delete e[r]);
-  }), y6e.NODE_ENV !== "production" && n.forEach((r) => {
-    mY.includes(r) || (mY.push(r), console.warn(`MUI Grid2: ${b6e(r)}
+  }), w6e.NODE_ENV !== "production" && n.forEach((r) => {
+    mY.includes(r) || (mY.push(r), console.warn(`MUI Grid2: ${x6e(r)}
 `));
   });
 }
-var x6e = {};
-const T6e = EA(), S6e = a6e("div", {
+var S6e = {};
+const E6e = EA(), C6e = l6e("div", {
   name: "MuiGrid",
   slot: "Root",
   overridesResolver: (e, t) => t.root
 });
-function E6e(e) {
+function _6e(e) {
   return pQ({
     props: e,
     name: "MuiGrid",
-    defaultTheme: T6e
+    defaultTheme: E6e
   });
 }
-function C6e(e = {}) {
+function R6e(e = {}) {
   const {
     // This will allow adding custom styled fn (for example for custom sx style function)
-    createStyledComponent: t = S6e,
-    useThemeProps: n = E6e,
+    createStyledComponent: t = C6e,
+    useThemeProps: n = _6e,
     useTheme: r = fQ,
     componentName: i = "MuiGrid"
   } = e, o = (p, m) => {
@@ -105516,7 +105529,7 @@ function C6e(e = {}) {
       wrap: E,
       size: T
     } = p, _ = {
-      root: ["root", v && "container", E !== "wrap" && `wrap-xs-${String(E)}`, ...v6e(y), ...g6e(T), ...v ? m6e(x, m.breakpoints.keys[0]) : []]
+      root: ["root", v && "container", E !== "wrap" && `wrap-xs-${String(E)}`, ...b6e(y), ...v6e(T), ...v ? y6e(x, m.breakpoints.keys[0]) : []]
     };
     return Bt(_, (O) => zt(i, O), {});
   };
@@ -105529,9 +105542,9 @@ function C6e(e = {}) {
       E != null && v(E) && (y[x] = E);
     }) : y[m.keys[0]] = p), y;
   }
-  const u = t(u6e, f6e, d6e, l6e, p6e, h6e, c6e), f = /* @__PURE__ */ G.forwardRef(function(m, v) {
+  const u = t(f6e, h6e, p6e, u6e, g6e, m6e, d6e), f = /* @__PURE__ */ G.forwardRef(function(m, v) {
     const y = r(), x = n(m), E = bH(x);
-    w6e(E, y.breakpoints);
+    T6e(E, y.breakpoints);
     const {
       className: T,
       children: _,
@@ -105574,7 +105587,7 @@ function C6e(e = {}) {
       })
     });
   });
-  return x6e.NODE_ENV !== "production" && (f.propTypes = {
+  return S6e.NODE_ENV !== "production" && (f.propTypes = {
     children: c.node,
     className: c.string,
     columns: c.oneOfType([c.arrayOf(c.number), c.number, c.object]),
@@ -105591,7 +105604,7 @@ function C6e(e = {}) {
   }), f.muiName = "Grid", f;
 }
 var Eoe = {};
-const yi = C6e({
+const yi = R6e({
   createStyledComponent: ge("div", {
     name: "MuiGrid2",
     slot: "Root",
@@ -105737,13 +105750,13 @@ Coe.propTypes = {
   onDismissClick: c.func.isRequired,
   onTryAgainClick: c.func.isRequired
 };
-const _6e = {
+const O6e = {
   onDismissClick: uQ,
   onTryAgainClick: MH
-}, R6e = _t(
-  Mt(null, _6e),
+}, A6e = _t(
+  Mt(null, O6e),
   Ot("ManifestListItemError")
-), O6e = R6e(Coe), vY = ge(nI, { name: "ManifestListItem", slot: "root" })(({ ownerState: e, theme: t }) => ({
+), I6e = A6e(Coe), vY = ge(nI, { name: "ManifestListItem", slot: "root" })(({ ownerState: e, theme: t }) => ({
   "&:hover,&:focus-within": {
     backgroundColor: t.palette.action.hover,
     borderLeftColor: e != null && e.active ? t.palette.primary.main : t.palette.action.hover
@@ -105756,15 +105769,15 @@ const _6e = {
     paddingLeft: t.spacing(3),
     paddingRight: t.spacing(3)
   }
-})), A6e = ge(xU, { name: "ManifestListItem", slot: "thumbnail" })(({ theme: e }) => ({
+})), D6e = ge(xU, { name: "ManifestListItem", slot: "thumbnail" })(({ theme: e }) => ({
   maxWidth: "100%",
   objectFit: "contain"
-})), I6e = ge(xU, { name: "ManifestListItem", slot: "logo" })(({ theme: e }) => ({
+})), M6e = ge(xU, { name: "ManifestListItem", slot: "logo" })(({ theme: e }) => ({
   height: "2.5rem",
   maxWidth: "100%",
   objectFit: "contain",
   paddingRight: 1
-})), D6e = () => /* @__PURE__ */ R.jsxs(yi, { container: !0, className: dn("manifest-list-item"), spacing: 2, children: [
+})), N6e = () => /* @__PURE__ */ R.jsxs(yi, { container: !0, className: sn("manifest-list-item"), spacing: 2, children: [
   /* @__PURE__ */ R.jsx(yi, { xs: 3, sm: 2, children: /* @__PURE__ */ R.jsx(Lo, { sx: { bgcolor: "grey[300]" }, variant: "rectangular", height: 80, width: 120 }) }),
   /* @__PURE__ */ R.jsx(yi, { xs: 9, sm: 6, children: /* @__PURE__ */ R.jsx(Lo, { sx: { bgcolor: "grey[300]" }, variant: "text" }) }),
   /* @__PURE__ */ R.jsxs(yi, { xs: 8, sm: 2, children: [
@@ -105807,7 +105820,7 @@ function _oe({
       selected: i,
       className: i ? "active" : "",
       "data-manifestid": s,
-      children: /* @__PURE__ */ R.jsx(O6e, { manifestId: s })
+      children: /* @__PURE__ */ R.jsx(I6e, { manifestId: s })
     }
   ) : /* @__PURE__ */ R.jsx(
     vY,
@@ -105817,12 +105830,12 @@ function _oe({
       className: i ? "active" : "",
       "data-manifestid": s,
       "data-active": i,
-      children: u ? /* @__PURE__ */ R.jsxs(yi, { container: !0, className: dn("manifest-list-item"), spacing: 2, children: [
+      children: u ? /* @__PURE__ */ R.jsxs(yi, { container: !0, className: sn("manifest-list-item"), spacing: 2, children: [
         /* @__PURE__ */ R.jsx(yi, { xs: 12, sm: 6, children: /* @__PURE__ */ R.jsx(
           gs,
           {
             ref: o,
-            className: dn("manifest-list-item-title"),
+            className: sn("manifest-list-item-title"),
             style: { width: "100%" },
             onClick: A,
             children: /* @__PURE__ */ R.jsxs(
@@ -105837,9 +105850,9 @@ function _oe({
                 component: "span",
                 children: [
                   /* @__PURE__ */ R.jsx(yi, { xs: 4, sm: 3, component: "span", children: p ? /* @__PURE__ */ R.jsx(
-                    A6e,
+                    D6e,
                     {
-                      className: [dn("manifest-list-item-thumb")],
+                      className: [sn("manifest-list-item-thumb")],
                       src: [p],
                       alt: "",
                       height: "80",
@@ -105865,11 +105878,11 @@ function _oe({
           }
         ) }),
         /* @__PURE__ */ R.jsxs(yi, { xs: 8, sm: 4, children: [
-          /* @__PURE__ */ R.jsx(Nt, { className: dn("manifest-list-item-provider"), children: y }),
+          /* @__PURE__ */ R.jsx(Nt, { className: sn("manifest-list-item-provider"), children: y }),
           /* @__PURE__ */ R.jsx(Nt, { children: _("numItems", { count: v, number: v }) })
         ] }),
         /* @__PURE__ */ R.jsx(yi, { xs: 4, sm: 2, children: m && /* @__PURE__ */ R.jsx(
-          I6e,
+          M6e,
           {
             src: [m],
             alt: "",
@@ -105886,7 +105899,7 @@ function _oe({
             )
           }
         ) })
-      ] }) : /* @__PURE__ */ R.jsx(D6e, {})
+      ] }) : /* @__PURE__ */ R.jsx(N6e, {})
     }
   );
 }
@@ -105954,7 +105967,7 @@ Ooe.propTypes = {
   icon: c.element,
   label: c.string.isRequired
 };
-const M6e = (e, { windowId: t }) => {
+const P6e = (e, { windowId: t }) => {
   var o, s;
   const n = WE(e, { windowId: t }), r = Array.isArray(n) ? n.map((u) => ({ resources: [u] })) : [], i = du(e, { windowId: t });
   return {
@@ -105964,20 +105977,20 @@ const M6e = (e, { windowId: t }) => {
     // ✅ Add currentCanvasId here
     drawAnnotations: Xn(e).window.forceDrawAnnotations || L0(e, { content: "annotations", windowId: t }).length > 0,
     drawSearchAnnotations: Xn(e).window.forceDrawAnnotations || L0(e, { content: "search", windowId: t }).length > 0,
-    highlightAllAnnotations: (o = Gn(e, { windowId: t })) == null ? void 0 : o.highlightAllAnnotations,
-    hoveredAnnotationIds: (s = Gn(e, { windowId: t })) == null ? void 0 : s.hoveredAnnotationIds,
+    highlightAllAnnotations: (o = $n(e, { windowId: t })) == null ? void 0 : o.highlightAllAnnotations,
+    hoveredAnnotationIds: (s = $n(e, { windowId: t })) == null ? void 0 : s.hoveredAnnotationIds,
     palette: UW(e).palette,
     searchAnnotations: r,
     selectedAnnotationId: Ov(e, { windowId: t })
   };
-}, N6e = {
+}, k6e = {
   deselectAnnotation: BH,
   hoverAnnotation: WH,
   selectAnnotation: rg
-}, P6e = _t(
-  Mt(M6e, N6e),
+}, L6e = _t(
+  Mt(P6e, k6e),
   Ot("AnnotationsOverlay")
-)(_qe), k6e = {}, n1 = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==", L6e = Object.fromEntries(
+)(Oqe), j6e = {}, n1 = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==", z6e = Object.fromEntries(
   ["zoomIn", "zoomOut", "home", "fullpage", "rotateleft", "rotateright", "flip", "previous", "next"].map((e) => [e, {
     DOWN: n1,
     GROUP: n1,
@@ -105988,7 +106001,7 @@ const M6e = (e, { windowId: t }) => {
 function yY(e) {
   return e.type.startsWith("touch") || e.pointerType === "touch" || e.pointerType === "pen";
 }
-function j6e(e, t) {
+function B6e(e, t) {
   const n = e.zoomPerClick || 1.3, r = e.rotationIncrement || 90;
   return {
     "Flip horizontal": () => {
@@ -106025,11 +106038,11 @@ function j6e(e, t) {
     }
   }[t];
 }
-function z6e(e) {
+function W6e(e) {
   var r;
   const t = Array.from(((r = e.container) == null ? void 0 : r.querySelectorAll("div[title]")) || []), n = [];
   return t.forEach((i) => {
-    const o = j6e(e, i.getAttribute("title"));
+    const o = B6e(e, i.getAttribute("title"));
     if (!o) return;
     let s = 0;
     const u = (p) => {
@@ -106046,7 +106059,7 @@ function z6e(e) {
     });
   }), () => n.forEach((i) => i());
 }
-const B6e = ge("section")({
+const H6e = ge("section")({
   cursor: "grab",
   flex: 1,
   position: "relative",
@@ -106055,7 +106068,7 @@ const B6e = ge("section")({
     pointerEvents: "auto"
   }
 });
-function W6e(e, t, n = 0.35, r = 0.2) {
+function U6e(e, t, n = 0.35, r = 0.2) {
   if (!e) return null;
   const i = e.x + e.width / 2, o = e.y + e.height / 2, s = e.width * (1 + n * 2), u = e.height * (1 + n * 2), f = t ? t.width * r : 0, p = t ? t.height * r : 0, m = Math.max(s, f), v = Math.max(u, p);
   return {
@@ -106069,7 +106082,7 @@ function Aoe({
   children: e = null,
   label: t = null,
   windowId: n,
-  osdConfig: r = k6e,
+  osdConfig: r = j6e,
   drawAnnotations: i = !1,
   canvases: o = [],
   visibleCanvases: s = [],
@@ -106163,7 +106176,7 @@ function Aoe({
       navImages: r.navImages,
       prefixUrl: r.prefixUrl || "/openseadragon/images/"
     } : r.prefixUrl ? {} : {
-      navImages: L6e,
+      navImages: z6e,
       prefixUrl: ""
     }, xe = C0({
       element: U.current,
@@ -106189,7 +106202,7 @@ function Aoe({
       ...de
     });
     W.current = xe, V(xe), aE.set(n, xe);
-    const je = z6e(xe);
+    const je = W6e(xe);
     xe.addHandler("viewport-change", () => {
       const Ce = xe.viewport;
       Ce && v(n, {
@@ -106265,7 +106278,7 @@ function Aoe({
         return !0;
       const [Z, fe, Le, Ue] = ye, ee = de.world.getItemAt(j);
       if (!ee || !ee.imageToViewportRectangle) return !1;
-      const we = ee.imageToViewportRectangle(new C0.Rect(Z, fe, Le, Ue)), Be = ee.getBounds ? ee.getBounds() : null, Oe = W6e(we, Be);
+      const we = ee.imageToViewportRectangle(new C0.Rect(Z, fe, Le, Ue)), Be = ee.getBounds ? ee.getBounds() : null, Oe = U6e(we, Be);
       if (!Oe) return !1;
       const Ye = new C0.Rect(
         Oe.x,
@@ -106324,14 +106337,14 @@ function Aoe({
     ...z
   }, Te = ZB.map(e, (de) => ov(de) ? fd(de, { viewer: k, windowId: n, zoomToWorld: me }) : de);
   return /* @__PURE__ */ R.jsxs(
-    B6e,
+    H6e,
     {
       ref: U,
       "aria-label": ae,
-      className: Zn(dn("osd-container")),
+      className: Fn(sn("osd-container")),
       children: [
         i && k && /* @__PURE__ */ R.jsx(
-          P6e,
+          L6e,
           {
             viewer: k,
             windowId: n,
@@ -106408,10 +106421,10 @@ function Doe({ label: e }) {
 Doe.propTypes = {
   label: c.string.isRequired
 };
-const H6e = _t(
+const F6e = _t(
   Mt(null, null),
   Ot("SidebarIndexItem")
-), U6e = H6e(Doe);
+), V6e = F6e(Doe);
 function Moe({
   canvas: e,
   height: t = void 0,
@@ -106438,19 +106451,19 @@ Moe.propTypes = {
   label: c.string.isRequired,
   width: c.number
 };
-const F6e = (e, { data: t }) => ({
+const q6e = (e, { data: t }) => ({
   ...Xn(e).canvasNavigation || {}
-}), V6e = _t(
-  Mt(F6e, null),
+}), G6e = _t(
+  Mt(q6e, null),
   Ot("SidebarIndexThumbnail")
-), q6e = V6e(Moe), G6e = ge(Wa, { name: "SidebarIndexList", slot: "item" })(({ theme: e }) => ({
+), $6e = G6e(Moe), Y6e = ge(Wa, { name: "SidebarIndexList", slot: "item" })(({ theme: e }) => ({
   alignItems: "flex-start",
   paddingLeft: e.spacing(2),
   paddingRight: e.spacing(1),
   position: "initial",
   whiteSpace: "normal"
 }));
-function $6e(e) {
+function Z6e(e) {
   return e.map((t) => ({
     id: t.id,
     label: new LW(t).getLabel()
@@ -106464,14 +106477,14 @@ function Noe({
   variant: i = "item",
   windowId: o
 }) {
-  const s = Ii(() => $6e(e), [e]);
+  const s = Ii(() => Z6e(e), [e]);
   let u;
   switch (i) {
     case "thumbnail":
-      u = q6e;
+      u = $6e;
       break;
     default:
-      u = U6e;
+      u = V6e;
   }
   return /* @__PURE__ */ R.jsx(sw, { variant: "selectedMenu", children: s.map((f, p) => {
     const m = () => {
@@ -106485,7 +106498,7 @@ function Noe({
         selected: n.includes(f.id),
         scrollTo: n.includes(f.id),
         children: /* @__PURE__ */ R.jsx(
-          G6e,
+          Y6e,
           {
             divider: !0,
             onClick: m,
@@ -106511,7 +106524,7 @@ Noe.propTypes = {
   variant: c.oneOf(["item", "thumbnail"]),
   windowId: c.string.isRequired
 };
-const Y6e = ge("div")(() => ({
+const X6e = ge("div")(() => ({
   overflow: "hidden",
   paddingBottom: 0.5,
   textOverflow: "ellipsis",
@@ -106524,14 +106537,14 @@ function Poe({
   canvasLabel: n = void 0
 }) {
   const { t: r } = jt();
-  return /* @__PURE__ */ R.jsx(Y6e, { className: Zn(dn("osd-info")), children: /* @__PURE__ */ R.jsx(Nt, { display: "inline", variant: "caption", className: Zn(dn("canvas-count")), children: ` / ${e}` }) });
+  return /* @__PURE__ */ R.jsx(X6e, { className: Fn(sn("osd-info")), children: /* @__PURE__ */ R.jsx(Nt, { display: "inline", variant: "caption", className: Fn(sn("canvas-count")), children: ` / ${e}` }) });
 }
 Poe.propTypes = {
   canvasCount: c.number.isRequired,
   canvasIndex: c.number.isRequired,
   canvasLabel: c.string
 };
-const Z6e = (e, t) => {
+const K6e = (e, t) => {
   const { windowId: n } = t, r = Bo(e, { windowId: n }), i = _v(e, { windowId: n }), o = (du(e, { windowId: n }) || {}).id;
   return {
     canvasCount: r.length,
@@ -106541,10 +106554,10 @@ const Z6e = (e, t) => {
       windowId: n
     })
   };
-}, X6e = _t(
-  Mt(Z6e, null),
+}, Q6e = _t(
+  Mt(K6e, null),
   Ot("ViewerInfo")
-), bY = X6e(Poe), wY = {
+), bY = Q6e(Poe), wY = {
   borderRadius: "3px",
   flex: "0 0 40px",
   height: 40,
@@ -106559,7 +106572,7 @@ const Z6e = (e, t) => {
     minWidth: 44,
     width: 44
   }
-}, K6e = {
+}, J6e = {
   display: "inline-block",
   flex: "0 0 140px",
   height: 40,
@@ -106647,7 +106660,7 @@ function koe({
   return /* @__PURE__ */ R.jsxs(
     "div",
     {
-      className: Zn(dn("osd-navigation")),
+      className: Fn(sn("osd-navigation")),
       style: { display: "inline-flex", alignItems: "center" },
       dir: p,
       children: [
@@ -106655,7 +106668,7 @@ function koe({
           Rr,
           {
             "aria-label": f("previousCanvas"),
-            className: dn("previous-canvas-button"),
+            className: sn("previous-canvas-button"),
             disabled: !r,
             onClick: () => {
               r && o();
@@ -106669,7 +106682,7 @@ function koe({
           Rr,
           {
             "aria-label": f("nextCanvas"),
-            className: dn("next-canvas-button"),
+            className: sn("next-canvas-button"),
             disabled: !n,
             onClick: () => {
               n && i();
@@ -106724,7 +106737,7 @@ function koe({
                 }
               }
             },
-            sx: K6e,
+            sx: J6e,
             renderInput: (v) => /* @__PURE__ */ R.jsx(tI, { ...v, label: f("canvasIndex") })
           }
         )
@@ -106742,21 +106755,21 @@ koe.propTypes = {
   setPreviousCanvas: c.func,
   viewingDirection: c.string
 };
-const Q6e = (e, { windowId: t }) => ({
+const eGe = (e, { windowId: t }) => ({
   canvases: Bo(e, { windowId: t }),
   canvasIndex: _v(e, { windowId: t }),
   hasNextCanvas: !!eA(e, { windowId: t }),
   hasPreviousCanvas: !!tA(e, { windowId: t }),
   viewingDirection: ME(e, { windowId: t })
-}), J6e = (e, { windowId: t }) => ({
+}), tGe = (e, { windowId: t }) => ({
   setNextCanvas: (...n) => e(NH(t)),
   setPreviousCanvas: (...n) => e(PH(t)),
   setCanvas: (...n) => e(ro(t, ...n))
-}), eGe = _t(
-  Mt(Q6e, J6e),
+}), nGe = _t(
+  Mt(eGe, tGe),
   Ot("ViewerNavigation")
   // further HOC go here
-), tGe = eGe(koe), nGe = ge(Ui, { name: "WindowCanvasNavigationControls", slot: "root" })(({ theme: e }) => ({
+), rGe = nGe(koe), iGe = ge(Ui, { name: "WindowCanvasNavigationControls", slot: "root" })(({ theme: e }) => ({
   alignItems: "center",
   backgroundColor: e.palette.background.paper,
   bottom: "0.5rem",
@@ -106790,12 +106803,12 @@ const Q6e = (e, { windowId: t }) => ({
     ...n
   }, u = o && o.width && o.width <= 253;
   return e ? /* @__PURE__ */ R.jsx(
-    nGe,
+    iGe,
     {
       square: !0,
-      className: Zn(
-        dn("canvas-nav"),
-        u ? dn("canvas-nav-stacked") : null
+      className: Fn(
+        sn("canvas-nav"),
+        u ? sn("canvas-nav-stacked") : null
       ),
       elevation: 0,
       ref: $Q(r, i),
@@ -106811,7 +106824,7 @@ const Q6e = (e, { windowId: t }) => ({
             direction: u ? "column" : "row",
             divider: /* @__PURE__ */ R.jsx(X1, { orientation: u ? "horizontal" : "vertical", variant: "middle", flexItem: !0 }),
             spacing: 0,
-            children: /* @__PURE__ */ R.jsx(tGe, { windowId: t })
+            children: /* @__PURE__ */ R.jsx(rGe, { windowId: t })
           }
         ),
         /* @__PURE__ */ R.jsx(bY, { windowId: t }),
@@ -106831,22 +106844,22 @@ VI.defaultProps = {
   visible: !0
 };
 VI.displayName = "WindowCanvasNavigationControls";
-const rGe = (e, { windowId: t }) => ({
+const oGe = (e, { windowId: t }) => ({
   //showZoomControls: getShowZoomControlsConfig(state),
   visible: !0
-}), iGe = _t(
-  Mt(rGe),
+}), aGe = _t(
+  Mt(oGe),
   Ot("WindowCanvasNavigationControls")
-), Loe = iGe(VI), oGe = ge("div")(() => ({
+), Loe = aGe(VI), sGe = ge("div")(() => ({
   alignItems: "center",
   display: "flex",
   width: "100%"
-})), aGe = ge("div")(() => ({
+})), lGe = ge("div")(() => ({
   maxHeight: "100%",
   width: "100%"
 }));
 function joe({ textOptions: e = {}, textResources: t = [], windowId: n }) {
-  return /* @__PURE__ */ R.jsx(oGe, { children: /* @__PURE__ */ R.jsxs(aGe, { ...e, children: [
+  return /* @__PURE__ */ R.jsx(sGe, { children: /* @__PURE__ */ R.jsxs(lGe, { ...e, children: [
     t.map((r) => /* @__PURE__ */ R.jsx("source", { src: r.id, type: r.getFormat() }, r.id)),
     /* @__PURE__ */ R.jsx(Loe, { windowId: n })
   ] }) });
@@ -106858,7 +106871,7 @@ joe.propTypes = {
   // eslint-disable-line react/forbid-prop-types
   windowId: c.string.isRequired
 };
-const sGe = ge("div")(({ theme: e }) => ({
+const cGe = ge("div")(({ theme: e }) => ({
   boxSizing: "border-box",
   color: e.palette.common.white,
   cursor: "pointer",
@@ -106908,11 +106921,11 @@ let zoe = class extends _O {
           top: n.top + y,
           width: Number.isInteger(n.width) ? n.width - v : null
         },
-        className: dn("thumbnail-nav-container"),
+        className: sn("thumbnail-nav-container"),
         role: "gridcell",
         "aria-colindex": t + 1,
         children: /* @__PURE__ */ R.jsx(
-          sGe,
+          cGe,
           {
             role: "button",
             "data-canvas-id": m[0].id,
@@ -106932,8 +106945,8 @@ let zoe = class extends _O {
               },
               width: u === "far-bottom" ? "auto" : `${n.width}px`
             }),
-            className: Zn(
-              dn(["thumbnail-nav-canvas", `thumbnail-nav-canvas-${t}`, this.currentCanvasClass(m.map((E) => E.index))])
+            className: Fn(
+              sn(["thumbnail-nav-canvas", `thumbnail-nav-canvas-${t}`, this.currentCanvasClass(m.map((E) => E.index))])
             ),
             children: m.map((E, T) => /* @__PURE__ */ R.jsx(
               uC,
@@ -106961,15 +106974,15 @@ zoe.propTypes = {
   style: c.object.isRequired
   // eslint-disable-line react/forbid-prop-types
 };
-const lGe = (e, { data: t }) => ({
+const uGe = (e, { data: t }) => ({
   setCanvas: (...n) => e(ro(t.windowId, ...n))
-}), cGe = (e, { data: t }) => ({
+}), dGe = (e, { data: t }) => ({
   currentCanvasId: (du(e, { windowId: t.windowId }) || {}).id,
   showThumbnailLabels: Xn(e).thumbnailNavigation.showThumbnailLabels
-}), uGe = _t(
-  Mt(cGe, lGe),
+}), fGe = _t(
+  Mt(dGe, uGe),
   Ot("ThumbnailCanvasGrouping")
-), dGe = uGe(zoe);
+), pGe = fGe(zoe);
 function Boe({
   canvasGroupings: e,
   canvasIndex: t,
@@ -107061,8 +107074,8 @@ function Boe({
   return /* @__PURE__ */ R.jsx(
     Ui,
     {
-      className: Zn(
-        dn("thumb-navigation")
+      className: Fn(
+        sn("thumb-navigation")
       ),
       sx: {
         "&:focus": {
@@ -107091,7 +107104,7 @@ function Boe({
               windowId: m
             };
             return /* @__PURE__ */ R.jsx(
-              o2e,
+              s2e,
               {
                 direction: V,
                 height: re,
@@ -107101,7 +107114,7 @@ function Boe({
                 layout: i === "far-bottom" ? "horizontal" : "vertical",
                 itemData: J,
                 ref: _,
-                children: dGe
+                children: pGe
               }
             );
           }
@@ -107125,16 +107138,16 @@ Boe.propTypes = {
   viewingDirection: c.string,
   windowId: c.string.isRequired
 };
-const fGe = ge("div")(() => ({
+const hGe = ge("div")(() => ({
   alignItems: "center",
   display: "flex",
   width: "100%"
-})), pGe = ge("video")(() => ({
+})), gGe = ge("video")(() => ({
   maxHeight: "100%",
   width: "100%"
 }));
 function Woe({ captions: e = [], videoOptions: t = {}, videoResources: n = [] }) {
-  return /* @__PURE__ */ R.jsx(fGe, { children: /* @__PURE__ */ R.jsxs(pGe, { ...t, children: [
+  return /* @__PURE__ */ R.jsx(hGe, { children: /* @__PURE__ */ R.jsxs(gGe, { ...t, children: [
     n.map((r) => /* @__PURE__ */ R.jsx("source", { src: r.id, type: r.getFormat() }, r.io)),
     e.map((r) => /* @__PURE__ */ R.jsx("track", { src: r.id, label: r.getDefaultLabel(), srcLang: r.getProperty("language") }, r.id))
   ] }) });
@@ -107198,16 +107211,16 @@ Hoe.propTypes = {
   tReady: c.bool,
   windowIds: c.arrayOf(c.string).isRequired
 };
-const hGe = {
+const mGe = {
   focusWindow: YE
-}, gGe = (e) => ({
+}, vGe = (e) => ({
   focusedWindowId: ZW(e),
   titles: TX(e),
   windowIds: Yh(e)
-}), mGe = _t(
-  Mt(gGe, hGe),
+}), yGe = _t(
+  Mt(vGe, mGe),
   Ot("WindowList")
-), vGe = mGe(Hoe);
+), bGe = yGe(Hoe);
 function Uoe({ disabled: e = !1, windowCount: t }) {
   const { t: n } = jt(), [r, i] = yn(null), o = To(), s = () => {
     i(null);
@@ -107237,7 +107250,7 @@ function Uoe({ disabled: e = !1, windowCount: t }) {
       }
     ),
     !!r && /* @__PURE__ */ R.jsx(
-      vGe,
+      bGe,
       {
         anchorEl: r,
         id: o,
@@ -107251,12 +107264,12 @@ Uoe.propTypes = {
   disabled: c.bool,
   windowCount: c.number.isRequired
 };
-function yGe(e) {
+function wGe(e) {
   return zt("MuiFormControlLabel", e);
 }
 const RS = Ht("MuiFormControlLabel", ["root", "labelPlacementStart", "labelPlacementTop", "labelPlacementBottom", "disabled", "label", "error", "required", "asterisk"]);
-var bGe = {};
-const wGe = (e) => {
+var xGe = {};
+const TGe = (e) => {
   const {
     classes: t,
     disabled: n,
@@ -107268,8 +107281,8 @@ const wGe = (e) => {
     label: ["label", n && "disabled"],
     asterisk: ["asterisk", i && "error"]
   };
-  return Bt(s, yGe, t);
-}, xGe = ge("label", {
+  return Bt(s, wGe, t);
+}, SGe = ge("label", {
   name: "MuiFormControlLabel",
   slot: "Root",
   overridesResolver: (e, t) => {
@@ -107331,7 +107344,7 @@ const wGe = (e) => {
       // used for row presentation of radio/checkbox
     }
   }]
-}))), TGe = ge("span", {
+}))), EGe = ge("span", {
   name: "MuiFormControlLabel",
   slot: "Asterisk",
   overridesResolver: (e, t) => t.asterisk
@@ -107379,7 +107392,7 @@ const wGe = (e) => {
     labelPlacement: y,
     required: z,
     error: W.error
-  }, k = wGe(U), V = {
+  }, k = TGe(U), V = {
     slots: _,
     slotProps: {
       ...s,
@@ -107396,13 +107409,13 @@ const wGe = (e) => {
     ...Q,
     className: bt(k.label, Q == null ? void 0 : Q.className),
     children: re
-  })), /* @__PURE__ */ R.jsxs(xGe, {
+  })), /* @__PURE__ */ R.jsxs(SGe, {
     className: bt(k.root, o),
     ownerState: U,
     ref: n,
     ...M,
     children: [/* @__PURE__ */ G.cloneElement(u, B), z ? /* @__PURE__ */ R.jsxs("div", {
-      children: [re, /* @__PURE__ */ R.jsxs(TGe, {
+      children: [re, /* @__PURE__ */ R.jsxs(EGe, {
         ownerState: U,
         "aria-hidden": !0,
         className: k.asterisk,
@@ -107411,7 +107424,7 @@ const wGe = (e) => {
     }) : re]
   });
 });
-bGe.NODE_ENV !== "production" && (P1.propTypes = {
+xGe.NODE_ENV !== "production" && (P1.propTypes = {
   // ┌────────────────────────────── Warning ──────────────────────────────┐
   // │ These PropTypes are generated from the TypeScript type definitions. │
   // │    To update them, edit the d.ts file and run `pnpm proptypes`.     │
@@ -107517,7 +107530,7 @@ const Sz = ge(Wa, { name: "WindowThumbnailSettings", slot: "option" })(({ select
     color: e ? t.palette.secondary.main : void 0,
     display: "inline-flex"
   }
-})), SGe = ge(sw, { name: "WindowViewSettings", slot: "option" })(() => ({
+})), CGe = ge(sw, { name: "WindowViewSettings", slot: "option" })(() => ({
   display: "inline-flex"
 }));
 function Foe({
@@ -107531,7 +107544,7 @@ function Foe({
   const { t: o } = jt(), s = (u) => {
     i(r, u), e();
   };
-  return /* @__PURE__ */ R.jsx(R.Fragment, { children: /* @__PURE__ */ R.jsxs(SGe, { role: "menubar", children: [
+  return /* @__PURE__ */ R.jsx(R.Fragment, { children: /* @__PURE__ */ R.jsxs(CGe, { role: "menubar", children: [
     /* @__PURE__ */ R.jsx(
       Sz,
       {
@@ -107601,14 +107614,14 @@ Foe.propTypes = {
   thumbnailNavigationPosition: c.string.isRequired,
   windowId: c.string.isRequired
 };
-const EGe = { setWindowThumbnailPosition: WK }, CGe = (e, { windowId: t }) => ({
+const _Ge = { setWindowThumbnailPosition: WK }, RGe = (e, { windowId: t }) => ({
   direction: iw(e),
   thumbnailNavigationPosition: zW(e, { windowId: t })
-}), _Ge = _t(
-  Mt(CGe, EGe, null, { forwardRef: !0 }),
+}), OGe = _t(
+  Mt(RGe, _Ge, null, { forwardRef: !0 }),
   Ot("WindowThumbnailSettings")
   // further HOC go here
-), Q7e = _Ge(Foe);
+), e9e = OGe(Foe);
 function Voe({
   handleClose: e,
   showThumbnailNavigationSettings: t = !1,
@@ -107637,15 +107650,15 @@ Voe.propTypes = {
   viewMode: c.oneOf(["both", "gallery"]),
   windowId: c.string.isRequired
 };
-const RGe = (e) => ({
+const AGe = (e) => ({
   showThumbnailNavigationSettings: Xn(e).thumbnailNavigation.displaySettings
-}), OGe = (e) => ({
+}), IGe = (e) => ({
   toggleDraggingEnabled: () => e(JK())
-}), AGe = _t(
-  Mt(RGe, OGe),
+}), DGe = _t(
+  Mt(AGe, IGe),
   Ot("WindowTopMenu")
-), IGe = AGe(Voe);
-function DGe(e) {
+), MGe = DGe(Voe);
+function NGe(e) {
   return /* @__PURE__ */ R.jsx(Ea, { ...e, children: /* @__PURE__ */ R.jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", children: [
     /* @__PURE__ */ R.jsx("path", { d: "M0,0H24V24H0Z", fill: "none" }),
     /* @__PURE__ */ R.jsx("path", { d: "M24.852,17.981,3,18V15.945l21.852-.019Z", transform: "translate(-2 5)" }),
@@ -107668,11 +107681,11 @@ function qoe({ classes: e = {}, windowId: t }) {
         className: o ? e.ctrlBtnSelected : void 0,
         selected: o,
         onClick: f,
-        children: /* @__PURE__ */ R.jsx(DGe, {})
+        children: /* @__PURE__ */ R.jsx(NGe, {})
       }
     ),
     /* @__PURE__ */ R.jsx(
-      IGe,
+      MGe,
       {
         windowId: t,
         anchorEl: r,
@@ -107698,7 +107711,7 @@ const r1 = [
   '.mirador-osd-container .openseadragon-container div[title="Rotate right"]',
   '.mirador-osd-container .openseadragon-container div[title="Flip Horizontally"]',
   '.mirador-osd-container .openseadragon-container div[title="Flip horizontal"]'
-].join(", "), MGe = [
+].join(", "), PGe = [
   '.mirador-osd-container .openseadragon-container div[title="Zoom in"]::before',
   '.mirador-osd-container .openseadragon-container div[title="Zoom out"]::before',
   '.mirador-osd-container .openseadragon-container div[title="Go home"]::before',
@@ -107709,7 +107722,7 @@ const r1 = [
   '.mirador-osd-container .openseadragon-container div[title="Rotate right"]::before',
   '.mirador-osd-container .openseadragon-container div[title="Flip Horizontally"]::before',
   '.mirador-osd-container .openseadragon-container div[title="Flip horizontal"]::before'
-].join(", "), NGe = {
+].join(", "), kGe = {
   ".mirador-osd-container": {
     height: "100%",
     marginTop: "0.5rem"
@@ -107874,7 +107887,7 @@ const r1 = [
   [`${r1}:active`]: {
     transform: "scale(0.96)"
   },
-  [MGe]: {
+  [PGe]: {
     alignItems: "center",
     background: "none",
     color: "currentColor",
@@ -108056,13 +108069,13 @@ const r1 = [
       width: "44px"
     }
   }
-}, PGe = Kf(() => Promise.resolve().then(() => t7e));
+}, LGe = Kf(() => Promise.resolve().then(() => r7e));
 function Goe({ windowId: e }) {
   return /* @__PURE__ */ R.jsxs(R.Fragment, { children: [
-    /* @__PURE__ */ R.jsx(_A, { styles: { ...NGe } }),
+    /* @__PURE__ */ R.jsx(_A, { styles: { ...kGe } }),
     /* @__PURE__ */ R.jsx(VF, { fallback: null, children: /* @__PURE__ */ R.jsx(XB, { fallback: /* @__PURE__ */ R.jsx("div", {}), children: /* @__PURE__ */ R.jsxs("div", { className: "viewer-wrap", children: [
       /* @__PURE__ */ R.jsx(Loe, { windowId: e }),
-      /* @__PURE__ */ R.jsx(PGe, { windowId: e })
+      /* @__PURE__ */ R.jsx(LGe, { windowId: e })
     ] }) }) })
   ] });
 }
@@ -108070,7 +108083,7 @@ Goe.propTypes = {
   windowId: c.string.isRequired
 };
 var Ez, xY;
-function kGe() {
+function jGe() {
   if (xY) return Ez;
   xY = 1;
   var e = LX(), t = $O(), n = sH(), r = lH(), i = n(function(o, s) {
@@ -108078,10 +108091,10 @@ function kGe() {
   });
   return Ez = i, Ez;
 }
-var LGe = kGe();
-const TY = /* @__PURE__ */ sr(LGe);
+var zGe = jGe();
+const TY = /* @__PURE__ */ sr(zGe);
 var Cz, SY;
-function jGe() {
+function BGe() {
   if (SY) return Cz;
   SY = 1;
   var e = PW();
@@ -108090,15 +108103,15 @@ function jGe() {
   }
   return Cz = t, Cz;
 }
-var zGe = jGe();
-const BGe = /* @__PURE__ */ sr(zGe), WGe = (e, { windowId: t }) => ({
+var WGe = BGe();
+const HGe = /* @__PURE__ */ sr(WGe), UGe = (e, { windowId: t }) => ({
   title: Zh(e, { windowId: t })
-}), HGe = _t(
-  Mt(WGe, null),
+}), FGe = _t(
+  Mt(UGe, null),
   Ot("MosaicRenderPreview")
-), UGe = HGe(Roe);
+), VGe = FGe(Roe);
 var _z, EY;
-function FGe() {
+function qGe() {
   if (EY) return _z;
   EY = 1;
   var e = Qne(), t = TW();
@@ -108108,9 +108121,9 @@ function FGe() {
   }
   return _z = n, _z;
 }
-var VGe = FGe();
-const qGe = /* @__PURE__ */ sr(VGe);
-class GGe {
+var GGe = qGe();
+const $Ge = /* @__PURE__ */ sr(GGe);
+class YGe {
   /** */
   constructor(t) {
     this.layout = t;
@@ -108121,7 +108134,7 @@ class GGe {
   }
   /** */
   pathToParent(t) {
-    return WB(this.layout, qGe(t));
+    return WB(this.layout, $Ge(t));
   }
   /** */
   nodeAtPath(t) {
@@ -108162,7 +108175,7 @@ class GGe {
     this.layout = vO(this.layout, r);
   }
 }
-const $Ge = {
+const ZGe = {
   ".mosaic": {
     height: "100%",
     width: "100%"
@@ -108459,7 +108472,7 @@ const $Ge = {
   ".MuiChip-icon::before": {
     fontSize: "12px !important"
   }
-}, YGe = ge(pie)({
+}, XGe = ge(pie)({
   "& .mosaic-preview": {
     boxShadow: "none"
   },
@@ -108473,12 +108486,12 @@ const $Ge = {
   "& .mosaic-window-toolbar": {
     display: "none !important"
   }
-}), $oe = ({ windowId: e }) => /* @__PURE__ */ R.jsx("div", { className: "mosaic-preview", "aria-hidden": !0, children: /* @__PURE__ */ R.jsx(UGe, { windowId: e }) });
+}), $oe = ({ windowId: e }) => /* @__PURE__ */ R.jsx("div", { className: "mosaic-preview", "aria-hidden": !0, children: /* @__PURE__ */ R.jsx(VGe, { windowId: e }) });
 $oe.propTypes = {
   windowId: c.string.isRequired
 };
-const ZGe = () => /* @__PURE__ */ R.jsx("div", {}), XGe = (e, t, n = {}) => {
-  const r = SE(e), i = new GGe(e), o = TY(t, r);
+const KGe = () => /* @__PURE__ */ R.jsx("div", {}), QGe = (e, t, n = {}) => {
+  const r = SE(e), i = new YGe(e), o = TY(t, r);
   o.length > 0 && i.addWindows(o);
   const s = TY(r, t);
   if (s.every((u) => n[u]))
@@ -108502,8 +108515,8 @@ function Yoe({
     }
     if (n.every((y) => m.includes(y)) && m.every((y) => n.includes(y)))
       return;
-    const v = XGe(e, n, s.current);
-    BGe(v, e) || t(v);
+    const v = QGe(e, n, s.current);
+    HGe(v, e) || t(v);
   }, [e, n, s, t]);
   const f = (m, v) => n.includes(m) ? (s.current[m] = v, /* @__PURE__ */ R.jsx(
     O5e,
@@ -108525,16 +108538,16 @@ function Yoe({
     t(m);
   };
   return /* @__PURE__ */ R.jsxs(R.Fragment, { children: [
-    /* @__PURE__ */ R.jsx(_A, { styles: { ...$Ge } }),
+    /* @__PURE__ */ R.jsx(_A, { styles: { ...ZGe } }),
     /* @__PURE__ */ R.jsx(
-      YGe,
+      XGe,
       {
         dragAndDropManager: u.dragDropManager,
         renderTile: f,
         initialValue: e || BB(n),
         onChange: p,
-        className: Zn("mirador-mosaic"),
-        zeroStateView: /* @__PURE__ */ R.jsx(ZGe, {})
+        className: Fn("mirador-mosaic"),
+        zeroStateView: /* @__PURE__ */ R.jsx(KGe, {})
       }
     )
   ] });
@@ -108548,18 +108561,18 @@ Yoe.propTypes = {
   windowIds: c.arrayOf(c.string),
   workspaceId: c.string.isRequired
 };
-const KGe = (e) => ({
+const JGe = (e) => ({
   layout: jo(e).layout,
   windowIds: jo(e).windowIds,
   workspaceId: jo(e).id
-}), QGe = { updateWorkspaceMosaicLayout: KK }, JGe = _t(
-  Mt(KGe, QGe),
+}), e$e = { updateWorkspaceMosaicLayout: KK }, t$e = _t(
+  Mt(JGe, e$e),
   Ot("WorkspaceMosaic")
   // further HOC go here
-), e$e = JGe(Yoe), t$e = (e) => ({
+), n$e = t$e(Yoe), r$e = (e) => ({
   elasticLayout: JO(e),
   workspace: jo(e)
-}), n$e = (e, t) => ({
+}), i$e = (e, t) => ({
   setWorkspaceViewportDimensions: (n) => {
     e(
       QK(n)
@@ -108575,11 +108588,11 @@ const KGe = (e) => ({
       VH(n, r)
     );
   }
-}), r$e = _t(
-  Mt(t$e, n$e),
+}), o$e = _t(
+  Mt(r$e, i$e),
   Ot("WorkspaceElastic")
   // further HOC go here
-), i$e = r$e(Kie), Zoe = ge("div", { name: "Workspace", slot: "root" })(() => ({
+), a$e = o$e(Kie), Zoe = ge("div", { name: "Workspace", slot: "root" })(() => ({
   height: "100%",
   position: "relative",
   width: "100%"
@@ -108630,16 +108643,16 @@ function Koe({
         wO,
         {
           windowId: m,
-          className: Zn(dn("workspace-maximized-window"))
+          className: Fn(sn("workspace-maximized-window"))
         },
         `${m}-${i}`
       ));
     if (r.length === 0) return /* @__PURE__ */ R.jsx(Xoe, {});
     switch (o) {
       case "elastic":
-        return /* @__PURE__ */ R.jsx(i$e, {});
+        return /* @__PURE__ */ R.jsx(a$e, {});
       case "mosaic":
-        return /* @__PURE__ */ R.jsx(e$e, {});
+        return /* @__PURE__ */ R.jsx(n$e, {});
       default:
         return r.map((m) => /* @__PURE__ */ R.jsx(
           wO,
@@ -108660,8 +108673,8 @@ function Koe({
     Zoe,
     {
       ownerState: p,
-      className: Zn(
-        dn("workspace-viewport")
+      className: Fn(
+        sn("workspace-viewport")
       ),
       children: [
         /* @__PURE__ */ R.jsx(Nt, { style: TA, component: "h1", children: s("miradorViewer") }),
@@ -108678,12 +108691,12 @@ Koe.propTypes = {
   workspaceId: c.string.isRequired,
   workspaceType: c.string.isRequired
 };
-function o$e(e) {
+function s$e(e) {
   return zt("MuiFab", e);
 }
 const CY = Ht("MuiFab", ["root", "primary", "secondary", "extended", "circular", "focusVisible", "disabled", "colorInherit", "sizeSmall", "sizeMedium", "sizeLarge", "info", "error", "warning", "success"]);
-var a$e = {};
-const s$e = (e) => {
+var l$e = {};
+const c$e = (e) => {
   const {
     color: t,
     variant: n,
@@ -108691,13 +108704,13 @@ const s$e = (e) => {
     size: i
   } = e, o = {
     root: ["root", n, `size${Je(i)}`, t === "inherit" ? "colorInherit" : t]
-  }, s = Bt(o, o$e, r);
+  }, s = Bt(o, s$e, r);
   return {
     ...r,
     // forward the focused, disabled, etc. classes to the ButtonBase
     ...s
   };
-}, l$e = ge(gs, {
+}, u$e = ge(gs, {
   name: "MuiFab",
   slot: "Root",
   shouldForwardProp: (e) => sa(e) || e === "classes",
@@ -108851,8 +108864,8 @@ const s$e = (e) => {
     disableFocusRipple: p,
     size: v,
     variant: y
-  }, T = s$e(E);
-  return /* @__PURE__ */ R.jsx(l$e, {
+  }, T = c$e(E);
+  return /* @__PURE__ */ R.jsx(u$e, {
     className: bt(T.root, o),
     component: u,
     disabled: f,
@@ -108865,7 +108878,7 @@ const s$e = (e) => {
     children: i
   });
 });
-a$e.NODE_ENV !== "production" && (eV.propTypes = {
+l$e.NODE_ENV !== "production" && (eV.propTypes = {
   // ┌────────────────────────────── Warning ──────────────────────────────┐
   // │ These PropTypes are generated from the TypeScript type definitions. │
   // │    To update them, edit the d.ts file and run `pnpm proptypes`.     │
@@ -108933,10 +108946,10 @@ a$e.NODE_ENV !== "production" && (eV.propTypes = {
    */
   variant: c.oneOfType([c.oneOf(["circular", "extended"]), c.string])
 });
-const c$e = { addResource: qH }, u$e = _t(
-  Mt(null, c$e),
+const d$e = { addResource: qH }, f$e = _t(
+  Mt(null, d$e),
   Ot("ManifestForm")
-), d$e = u$e(Soe), f$e = (e, { manifestId: t, provider: n }) => {
+), p$e = f$e(Soe), h$e = (e, { manifestId: t, provider: n }) => {
   const r = lu(e, { manifestId: t }) || {}, i = Or(e, { manifestId: t }), o = (i || { isCollection: () => !1 }).isCollection(), s = o ? i.getTotalItems() : Bo(e, { manifestId: t }).length;
   return {
     active: FZ(e).includes(t),
@@ -108951,18 +108964,18 @@ const c$e = { addResource: qH }, u$e = _t(
     thumbnail: cX(e, { manifestId: t }),
     title: Zh(e, { manifestId: t })
   };
-}, p$e = {
+}, g$e = {
   addWindow: ZE,
   fetchManifest: MH
-}, h$e = _t(
-  Mt(f$e, p$e),
+}, m$e = _t(
+  Mt(h$e, g$e),
   Ot("ManifestListItem")
-), g$e = h$e(_oe), m$e = ge("div")(() => ({
+), v$e = m$e(_oe), y$e = ge("div")(() => ({
   boxSizing: "border-box",
   height: "100%",
   overflowX: "hidden",
   overflowY: "auto"
-})), v$e = ge(Rr)(() => ({
+})), b$e = ge(Rr)(() => ({
   marginLeft: -12,
   marginRight: 20
 }));
@@ -108982,7 +108995,7 @@ function Qoe({
   }, x = () => {
     u.current && u.current.scrollTo({ behavior: "smooth", left: 0, top: 0 });
   }, E = t.map((_, O) => /* @__PURE__ */ ds(
-    g$e,
+    v$e,
     {
       ...O === 0 && { buttonRef: (A) => A && A.focus() },
       key: _.manifestId,
@@ -108999,7 +109012,7 @@ function Qoe({
   };
   return fn(() => (window.addEventListener("resize", m), m(), () => {
     window.removeEventListener("resize", m);
-  }), []), /* @__PURE__ */ R.jsx(JF, { onDrop: v, children: /* @__PURE__ */ R.jsxs(m$e, { className: Zn(dn("workspace-add")), ref: u, children: [
+  }), []), /* @__PURE__ */ R.jsx(JF, { onDrop: v, children: /* @__PURE__ */ R.jsxs(y$e, { className: Fn(sn("workspace-add")), ref: u, children: [
     t.length < 1 ? /* @__PURE__ */ R.jsx(
       nl,
       {
@@ -109040,7 +109053,7 @@ function Qoe({
           position: "absolute",
           right: _.spacing(2)
         }),
-        className: Zn(dn("add-resource-button")),
+        className: Fn(sn("add-resource-button")),
         "aria-label": i("addResource"),
         color: "primary",
         onClick: () => s(!0),
@@ -109086,7 +109099,7 @@ function Qoe({
             children: [
               /* @__PURE__ */ R.jsx(gC, { position: "absolute", color: "primary", enableColorOnDark: !0, onClick: () => s(!1), children: /* @__PURE__ */ R.jsxs(cw, { variant: "dense", children: [
                 /* @__PURE__ */ R.jsx(
-                  v$e,
+                  b$e,
                   {
                     "aria-label": i("closeAddResourceForm"),
                     color: "inherit",
@@ -109096,7 +109109,7 @@ function Qoe({
                 /* @__PURE__ */ R.jsx(Nt, { variant: "h2", noWrap: !0, color: "inherit", sx: { flexGrow: 1 }, children: i("addResource") })
               ] }) }),
               /* @__PURE__ */ R.jsx(
-                d$e,
+                p$e,
                 {
                   addResourcesOpen: o,
                   onSubmit: y,
@@ -109118,14 +109131,14 @@ Qoe.propTypes = {
   })),
   setWorkspaceAddVisibility: c.func.isRequired
 };
-function y$e() {
+function w$e() {
   const e = Ga();
   return [...e.breakpoints.keys].reverse().reduce((n, r) => {
     const i = V0(e.breakpoints.up(r));
     return !n && i ? r : n;
   }, null) || "xs";
 }
-const b$e = ge(eV, { name: "WorkspaceAddButton", slot: "root" })(({ theme: e }) => ({
+const x$e = ge(eV, { name: "WorkspaceAddButton", slot: "root" })(({ theme: e }) => ({
   marginBottom: e.spacing(1)
 }));
 function Joe({
@@ -109133,9 +109146,9 @@ function Joe({
   isWorkspaceAddVisible: t = !1,
   useExtendedFab: n
 }) {
-  const r = y$e(), { t: i } = jt();
+  const r = w$e(), { t: i } = jt();
   return /* @__PURE__ */ R.jsx(Mv, { title: i(t ? "closeAddResourceMenu" : "addResource"), children: /* @__PURE__ */ R.jsxs(
-    b$e,
+    x$e,
     {
       size: "medium",
       color: "primary",
@@ -109157,33 +109170,33 @@ Joe.propTypes = {
   setWorkspaceAddVisibility: c.func.isRequired,
   useExtendedFab: c.bool.isRequired
 };
-const w$e = (e) => ({
+const T$e = (e) => ({
   error: mX(e)
-}), x$e = {
+}), S$e = {
   removeError: kK
-}, T$e = _t(
-  Mt(w$e, x$e),
+}, E$e = _t(
+  Mt(T$e, S$e),
   Ot("ErrorDialog")
-), S$e = T$e(ioe), E$e = (e, { width: t }) => {
+), C$e = E$e(ioe), _$e = (e, { width: t }) => {
   const { isWorkspaceAddVisible: n } = jo(e);
   return {
     isWorkspaceAddVisible: n,
     useExtendedFab: !n && Yh(e).length === 0
   };
-}, C$e = { setWorkspaceAddVisibility: IA }, _$e = _t(
-  Mt(E$e, C$e),
+}, R$e = { setWorkspaceAddVisibility: IA }, O$e = _t(
+  Mt(_$e, R$e),
   Ot("WorkspaceAddButton")
-), R$e = _$e(Joe), O$e = (e) => ({
+), A$e = O$e(Joe), I$e = (e) => ({
   languages: WW(e)
-}), A$e = (e, { afterSelect: t }) => ({
+}), D$e = (e, { afterSelect: t }) => ({
   handleClick: (n) => {
     e(IH({ language: n })), t && t();
   }
-}), I$e = _t(
-  Mt(O$e, A$e),
+}), M$e = _t(
+  Mt(I$e, D$e),
   Ot("LanguageSettings")
 )(woe);
-function D$e(e) {
+function N$e(e) {
   return /* @__PURE__ */ R.jsx(Ea, { ...e, children: /* @__PURE__ */ R.jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", width: "120", height: "90", viewBox: "0 0 300 225", children: [
     /* @__PURE__ */ R.jsxs("defs", { children: [
       /* @__PURE__ */ R.jsxs("linearGradient", { id: "linear-gradient", x1: "0.5", y1: "1", x2: "0.5", gradientUnits: "objectBoundingBox", children: [
@@ -109251,7 +109264,7 @@ function D$e(e) {
     ] })
   ] }) });
 }
-function M$e(e) {
+function P$e(e) {
   return /* @__PURE__ */ R.jsx(Ea, { ...e, children: /* @__PURE__ */ R.jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", width: "120", height: "90", viewBox: "0 0 300 225", children: [
     /* @__PURE__ */ R.jsxs("defs", { children: [
       /* @__PURE__ */ R.jsxs("linearGradient", { id: "linear-gradient", x1: "0.5", y1: "1", x2: "0.5", gradientUnits: "objectBoundingBox", children: [
@@ -109381,7 +109394,7 @@ function eae({
                         },
                         children: [
                           /* @__PURE__ */ R.jsx(
-                            D$e,
+                            N$e,
                             {
                               sx: {
                                 flexShrink: 0,
@@ -109438,7 +109451,7 @@ function eae({
                         },
                         children: [
                           /* @__PURE__ */ R.jsx(
-                            M$e,
+                            P$e,
                             {
                               sx: {
                                 flexShrink: 0,
@@ -109490,20 +109503,20 @@ eae.propTypes = {
   updateWorkspace: c.func.isRequired,
   workspaceType: c.string.isRequired
 };
-const N$e = {
+const k$e = {
   updateWorkspace: ZK
-}, P$e = (e) => ({ workspaceType: PE(e) }), k$e = _t(
-  Mt(P$e, N$e),
+}, L$e = (e) => ({ workspaceType: PE(e) }), j$e = _t(
+  Mt(L$e, k$e),
   Ot("WorkspaceSelectionDialog")
-), L$e = k$e(eae), j$e = (e, { windowId: t }) => ({
+), z$e = j$e(eae), B$e = (e, { windowId: t }) => ({
   setSelectedTheme: (n) => e(IH({ selectedTheme: n }))
-}), z$e = (e) => ({
+}), W$e = (e) => ({
   selectedTheme: Xn(e).selectedTheme,
   themeIds: FW(e)
-}), B$e = _t(
-  Mt(z$e, j$e),
+}), H$e = _t(
+  Mt(W$e, B$e),
   Ot("ChangeThemeDialog")
-), W$e = B$e(noe);
+), U$e = H$e(noe);
 function tae({
   handleClose: e,
   showThemePicker: t = !1,
@@ -109560,7 +109573,7 @@ function tae({
               children: /* @__PURE__ */ R.jsx(Nt, { variant: "body1", children: u("selectWorkspaceMenu") })
             }
           ),
-          /* @__PURE__ */ R.jsx(Ooe, { label: u("language"), children: /* @__PURE__ */ R.jsx(I$e, { afterSelect: e }) }),
+          /* @__PURE__ */ R.jsx(Ooe, { label: u("language"), children: /* @__PURE__ */ R.jsx(M$e, { afterSelect: e }) }),
           t && /* @__PURE__ */ R.jsx(
             Wa,
             {
@@ -109577,7 +109590,7 @@ function tae({
       }
     ),
     p === "changeTheme" && /* @__PURE__ */ R.jsx(
-      W$e,
+      U$e,
       {
         container: f == null ? void 0 : f.current,
         handleClose: x,
@@ -109585,7 +109598,7 @@ function tae({
       }
     ),
     p === "workspaceSelection" && /* @__PURE__ */ R.jsx(
-      L$e,
+      z$e,
       {
         open: p === "workspaceSelection",
         container: f == null ? void 0 : f.current,
@@ -109602,17 +109615,17 @@ tae.propTypes = {
   toggleZoomControls: c.func,
   tReady: c.bool
 };
-const H$e = {
+const F$e = {
   toggleZoomControls: XK
-}, U$e = (e) => ({
+}, V$e = (e) => ({
   isWorkspaceAddVisible: jo(e).isWorkspaceAddVisible,
   showThemePicker: FW(e).length > 0,
   showZoomControls: HW(e)
-}), F$e = _t(
-  Mt(U$e, H$e),
+}), q$e = _t(
+  Mt(V$e, F$e),
   Ot("WorkspaceMenu")
-), V$e = F$e(tae);
-function q$e() {
+), G$e = q$e(tae);
+function $$e() {
   const { t: e } = jt(), [t, n] = yn(null), [r, i] = yn(!1), o = To(), s = (f) => {
     n(f.currentTarget), i(!0);
   }, u = () => {
@@ -109632,7 +109645,7 @@ function q$e() {
       }
     ),
     /* @__PURE__ */ R.jsx(
-      V$e,
+      G$e,
       {
         anchorEl: t,
         id: o,
@@ -109642,11 +109655,11 @@ function q$e() {
     )
   ] });
 }
-const G$e = _t(
+const Y$e = _t(
   Ot("WorkspaceMenuButton")
   // further HOC
-), $$e = G$e(q$e);
-function Y$e(e = {}) {
+), Z$e = Y$e($$e);
+function X$e(e = {}) {
   const {
     autoHideDuration: t = null,
     disableWindowBlurListener: n = !1,
@@ -109719,7 +109732,7 @@ var nae = {};
 function RY(e) {
   return e.substring(2).toLowerCase();
 }
-function Z$e(e, t) {
+function K$e(e, t) {
   return t.documentElement.clientWidth < e.clientX || t.documentElement.clientHeight < e.clientY;
 }
 function EO(e) {
@@ -109739,7 +109752,7 @@ function EO(e) {
     const T = p.current;
     p.current = !1;
     const _ = Di(u.current);
-    if (!f.current || !u.current || "clientX" in E && Z$e(E, _))
+    if (!f.current || !u.current || "clientX" in E && K$e(E, _))
       return;
     if (s.current) {
       s.current = !1;
@@ -109809,12 +109822,12 @@ nae.NODE_ENV !== "production" && (EO.propTypes = {
   touchEvent: c.oneOf(["onTouchEnd", "onTouchStart", !1])
 });
 nae.NODE_ENV !== "production" && (EO.propTypes = CH(EO.propTypes));
-function X$e(e) {
+function Q$e(e) {
   return zt("MuiSnackbarContent", e);
 }
 Ht("MuiSnackbarContent", ["root", "message", "action"]);
-var K$e = {};
-const Q$e = (e) => {
+var J$e = {};
+const e8e = (e) => {
   const {
     classes: t
   } = e;
@@ -109822,8 +109835,8 @@ const Q$e = (e) => {
     root: ["root"],
     action: ["action"],
     message: ["message"]
-  }, X$e, t);
-}, J$e = ge(Ui, {
+  }, Q$e, t);
+}, t8e = ge(Ui, {
   name: "MuiSnackbarContent",
   slot: "Root",
   overridesResolver: (e, t) => t.root
@@ -109846,13 +109859,13 @@ const Q$e = (e) => {
       minWidth: 288
     }
   };
-})), e8e = ge("div", {
+})), n8e = ge("div", {
   name: "MuiSnackbarContent",
   slot: "Message",
   overridesResolver: (e, t) => t.message
 })({
   padding: "8px 0"
-}), t8e = ge("div", {
+}), r8e = ge("div", {
   name: "MuiSnackbarContent",
   slot: "Action",
   overridesResolver: (e, t) => t.action
@@ -109872,8 +109885,8 @@ const Q$e = (e) => {
     message: s,
     role: u = "alert",
     ...f
-  } = r, p = r, m = Q$e(p);
-  return /* @__PURE__ */ R.jsxs(J$e, {
+  } = r, p = r, m = e8e(p);
+  return /* @__PURE__ */ R.jsxs(t8e, {
     role: u,
     square: !0,
     elevation: 6,
@@ -109881,18 +109894,18 @@ const Q$e = (e) => {
     ownerState: p,
     ref: n,
     ...f,
-    children: [/* @__PURE__ */ R.jsx(e8e, {
+    children: [/* @__PURE__ */ R.jsx(n8e, {
       className: m.message,
       ownerState: p,
       children: s
-    }), i ? /* @__PURE__ */ R.jsx(t8e, {
+    }), i ? /* @__PURE__ */ R.jsx(r8e, {
       className: m.action,
       ownerState: p,
       children: i
     }) : null]
   });
 });
-K$e.NODE_ENV !== "production" && (rae.propTypes = {
+J$e.NODE_ENV !== "production" && (rae.propTypes = {
   // ┌────────────────────────────── Warning ──────────────────────────────┐
   // │ These PropTypes are generated from the TypeScript type definitions. │
   // │    To update them, edit the d.ts file and run `pnpm proptypes`.     │
@@ -109923,20 +109936,20 @@ K$e.NODE_ENV !== "production" && (rae.propTypes = {
    */
   sx: c.oneOfType([c.arrayOf(c.oneOfType([c.func, c.object, c.bool])), c.func, c.object])
 });
-function n8e(e) {
+function i8e(e) {
   return zt("MuiSnackbar", e);
 }
 Ht("MuiSnackbar", ["root", "anchorOriginTopCenter", "anchorOriginBottomCenter", "anchorOriginTopRight", "anchorOriginBottomRight", "anchorOriginTopLeft", "anchorOriginBottomLeft"]);
-var r8e = {};
-const i8e = (e) => {
+var o8e = {};
+const a8e = (e) => {
   const {
     classes: t,
     anchorOrigin: n
   } = e, r = {
     root: ["root", `anchorOrigin${Je(n.vertical)}${Je(n.horizontal)}`]
   };
-  return Bt(r, n8e, t);
-}, o8e = ge("div", {
+  return Bt(r, i8e, t);
+}, s8e = ge("div", {
   name: "MuiSnackbar",
   slot: "Root",
   overridesResolver: (e, t) => {
@@ -110059,10 +110072,10 @@ const i8e = (e) => {
     disableWindowBlurListener: E,
     TransitionComponent: U,
     transitionDuration: k
-  }, J = i8e(te), {
+  }, J = a8e(te), {
     getRootProps: ne,
     onClickAway: se
-  } = Y$e({
+  } = X$e({
     ...te
   }), [ce, he] = G.useState(!0), ae = (ye) => {
     he(!0), $ && $(ye);
@@ -110082,7 +110095,7 @@ const i8e = (e) => {
   }, [Te, de] = tn("root", {
     ref: n,
     className: [J.root, v],
-    elementType: o8e,
+    elementType: s8e,
     getSlotProps: ne,
     externalForwardedProps: {
       ...pe,
@@ -110148,7 +110161,7 @@ const i8e = (e) => {
     })
   });
 });
-r8e.NODE_ENV !== "production" && (iae.propTypes = {
+o8e.NODE_ENV !== "production" && (iae.propTypes = {
   // ┌────────────────────────────── Warning ──────────────────────────────┐
   // │ These PropTypes are generated from the TypeScript type definitions. │
   // │    To update them, edit the d.ts file and run `pnpm proptypes`.     │
@@ -110310,7 +110323,7 @@ r8e.NODE_ENV !== "production" && (iae.propTypes = {
   TransitionProps: c.object
 });
 var Rz, OY;
-function a8e() {
+function l8e() {
   return OY || (OY = 1, Rz = function() {
     var e = document.getSelection();
     if (!e.rangeCount)
@@ -110336,10 +110349,10 @@ function a8e() {
   }), Rz;
 }
 var Oz, AY;
-function s8e() {
+function c8e() {
   if (AY) return Oz;
   AY = 1;
-  var e = a8e(), t = {
+  var e = l8e(), t = {
     "text/plain": "Text",
     "text/html": "Url",
     default: "Text"
@@ -110380,8 +110393,8 @@ function s8e() {
   }
   return Oz = i, Oz;
 }
-var l8e = s8e();
-const c8e = /* @__PURE__ */ sr(l8e);
+var u8e = c8e();
+const d8e = /* @__PURE__ */ sr(u8e);
 function oae({
   children: e = null,
   container: t = null,
@@ -110391,7 +110404,7 @@ function oae({
   exportableState: o
 }) {
   const { t: s } = jt(), [u, f] = yn(!1), p = To(), m = Ii(() => JSON.stringify(o, null, 2), [o]), v = ci(() => {
-    c8e(m), f(!0);
+    d8e(m), f(!0);
   }, [m, f]);
   return u ? /* @__PURE__ */ R.jsx(
     iae,
@@ -110450,12 +110463,12 @@ oae.propTypes = {
   id: c.string,
   open: c.bool
 };
-const u8e = (e) => ({
+const f8e = (e) => ({
   exportableState: XZ(e)
-}), d8e = _t(
-  Mt(u8e, {}),
+}), p8e = _t(
+  Mt(f8e, {}),
   Ot("WorkspaceExport")
-), f8e = d8e(oae);
+), h8e = p8e(oae);
 function aae({
   addError: e,
   id: t = void 0,
@@ -110518,13 +110531,13 @@ aae.propTypes = {
   importConfig: c.func.isRequired,
   open: c.bool
 };
-const p8e = {
+const g8e = {
   addError: PK,
   importConfig: NK
-}, h8e = _t(
-  Mt(null, p8e),
+}, m8e = _t(
+  Mt(null, g8e),
   Ot("WorkspaceImport")
-), g8e = h8e(aae);
+), v8e = m8e(aae);
 function sae({
   anchorEl: e = null,
   handleClose: t,
@@ -110594,7 +110607,7 @@ function sae({
       }
     ),
     s === "exportWorkspace" && /* @__PURE__ */ R.jsx(
-      f8e,
+      h8e,
       {
         id: f,
         open: s === "exportWorkspace",
@@ -110603,7 +110616,7 @@ function sae({
       }
     ),
     s === "importWorkspace" && /* @__PURE__ */ R.jsx(
-      g8e,
+      v8e,
       {
         id: p,
         open: s === "importWorkspace",
@@ -110619,7 +110632,7 @@ sae.propTypes = {
   handleClose: c.func.isRequired,
   open: c.bool
 };
-function m8e() {
+function y8e() {
   const { t: e } = jt(), [t, n] = yn(null), [r, i] = yn(!1), o = (u) => {
     n(u.currentTarget), i(!0);
   }, s = () => {
@@ -110645,27 +110658,27 @@ function m8e() {
     )
   ] });
 }
-const v8e = _t(
+const b8e = _t(
   Ot("WorkspaceOptionsButton")
-), y8e = v8e(m8e), b8e = (e) => ({
+), w8e = b8e(y8e), x8e = (e) => ({
   disabled: jo(e).isWorkspaceAddVisible,
   windowCount: Yh(e).length
-}), w8e = _t(
-  Mt(b8e, null),
+}), T8e = _t(
+  Mt(x8e, null),
   Ot("WindowListButton")
-), x8e = w8e(Uoe);
-function T8e({ ...e }) {
+), S8e = T8e(Uoe);
+function E8e({ ...e }) {
   return /* @__PURE__ */ R.jsxs(R.Fragment, { children: [
-    /* @__PURE__ */ R.jsx(x8e, {}),
-    /* @__PURE__ */ R.jsx($$e, {}),
-    /* @__PURE__ */ R.jsx(y8e, {}),
+    /* @__PURE__ */ R.jsx(S8e, {}),
+    /* @__PURE__ */ R.jsx(Z$e, {}),
+    /* @__PURE__ */ R.jsx(w8e, {}),
     /* @__PURE__ */ R.jsx(HB, {}),
     /* @__PURE__ */ R.jsx(Wo, { ...e })
   ] });
 }
-const S8e = _t(
+const C8e = _t(
   Ot("WorkspaceControlPanelButtons")
-), E8e = S8e(T8e), C8e = Ot("Branding")(toe), _8e = ge(gC, { name: "WorkspaceControlPanel", slot: "root" })(({ ownerState: e, theme: t }) => ({
+), _8e = C8e(E8e), R8e = Ot("Branding")(toe), O8e = ge(gC, { name: "WorkspaceControlPanel", slot: "root" })(({ ownerState: e, theme: t }) => ({
   display: "flex",
   height: 64,
   padding: t.spacing(1),
@@ -110678,7 +110691,7 @@ const S8e = _t(
   ...e.variant === "wide" && {
     width: "auto"
   }
-})), R8e = ge(cw, { name: "WorkspaceControlPanel", slot: "toolbar" })(({ theme: e }) => ({
+})), A8e = ge(cw, { name: "WorkspaceControlPanel", slot: "toolbar" })(({ theme: e }) => ({
   display: "flex",
   flexGrow: 1,
   justifyContent: "space-between",
@@ -110687,7 +110700,7 @@ const S8e = _t(
     justifyContent: "flex-start",
     minHeight: 0
   }
-})), O8e = ge("div", { name: "WorkspaceControlPanel", slot: "buttonArea" })(({ theme: e }) => ({
+})), I8e = ge("div", { name: "WorkspaceControlPanel", slot: "buttonArea" })(({ theme: e }) => ({
   [e.breakpoints.up("sm")]: {
     display: "flex",
     flexDirection: "column",
@@ -110695,7 +110708,7 @@ const S8e = _t(
     marginBottom: e.spacing(1),
     marginTop: e.spacing(1)
   }
-})), A8e = ge(C8e, { name: "WorkspaceControlPanel", slot: "branding" })(({ theme: e }) => ({
+})), D8e = ge(R8e, { name: "WorkspaceControlPanel", slot: "branding" })(({ theme: e }) => ({
   [e.breakpoints.up("xs")]: {
     display: "none"
   },
@@ -110706,10 +110719,10 @@ const S8e = _t(
 function lae({ variant: e = "default", ...t }) {
   const { t: n } = jt();
   return /* @__PURE__ */ R.jsxs(
-    _8e,
+    O8e,
     {
       ownerState: { t: n, variant: e, ...t },
-      className: Zn(dn("workspace-control-panel")),
+      className: Fn(sn("workspace-control-panel")),
       color: "default",
       enableColorOnDark: !0,
       position: "absolute",
@@ -110717,16 +110730,16 @@ function lae({ variant: e = "default", ...t }) {
       "aria-label": n("workspaceNavigation"),
       children: [
         /* @__PURE__ */ R.jsxs(
-          R8e,
+          A8e,
           {
             disableGutters: !0,
             children: [
-              /* @__PURE__ */ R.jsx(R$e, {}),
-              /* @__PURE__ */ R.jsx(O8e, { children: /* @__PURE__ */ R.jsx(E8e, {}) })
+              /* @__PURE__ */ R.jsx(A$e, {}),
+              /* @__PURE__ */ R.jsx(I8e, { children: /* @__PURE__ */ R.jsx(_8e, {}) })
             ]
           }
         ),
-        /* @__PURE__ */ R.jsx(A8e, { variant: e })
+        /* @__PURE__ */ R.jsx(D8e, { variant: e })
       ]
     }
   );
@@ -110734,28 +110747,28 @@ function lae({ variant: e = "default", ...t }) {
 lae.propTypes = {
   variant: c.oneOf(["default", "wide"])
 };
-const I8e = _t(
+const M8e = _t(
   Ot("WorkspaceControlPanel")
   // further HOC go here
-), D8e = I8e(lae), M8e = (e) => ({
+), N8e = M8e(lae), P8e = (e) => ({
   allowNewWindows: Xn(e).workspace.allowNewWindows,
   maximizedWindowIds: SX(e),
   windowIds: Yh(e),
   workspaceId: jo(e).id,
   workspaceType: PE(e)
-}), N8e = {
+}), k8e = {
   addWindow: ZE
-}, P8e = _t(
-  Mt(M8e, N8e),
+}, L8e = _t(
+  Mt(P8e, k8e),
   Ot("Workspace")
   // further HOC go here
-), k8e = P8e(Koe), L8e = (e) => ({ catalog: VZ(e) }), j8e = {
+), j8e = L8e(Koe), z8e = (e) => ({ catalog: VZ(e) }), B8e = {
   addResource: qH,
   setWorkspaceAddVisibility: IA
-}, z8e = _t(
-  Mt(L8e, j8e),
+}, W8e = _t(
+  Mt(z8e, B8e),
   Ot("WorkspaceAdd")
-), B8e = z8e(Qoe), W8e = Ot("BackgroundPluginArea")(eoe), H8e = ge("div", { name: "WorkspaceArea", slot: "root" })(({ theme: e }) => ({
+), H8e = W8e(Qoe), U8e = Ot("BackgroundPluginArea")(eoe), F8e = ge("div", { name: "WorkspaceArea", slot: "root" })(({ theme: e }) => ({
   background: Ase(e.palette.shades.light, 0.1),
   ...e.applyStyles("dark", {
     background: Ise(e.palette.shades.light, 0.1)
@@ -110770,7 +110783,7 @@ const I8e = _t(
   [e.breakpoints.up("sm")]: {
     flexDirection: "row"
   }
-})), U8e = ge("main", { name: "WorkspaceArea", slot: "viewer" })(() => ({
+})), V8e = ge("main", { name: "WorkspaceArea", slot: "viewer" })(() => ({
   flexGrow: 1,
   position: "relative"
 }));
@@ -110782,19 +110795,19 @@ function cae({
   lang: i = void 0
 }) {
   const { t: o } = jt(), s = arguments[0];
-  return /* @__PURE__ */ R.jsxs(H8e, { ownerState: s, children: [
-    r && /* @__PURE__ */ R.jsx(D8e, { variant: t }),
+  return /* @__PURE__ */ R.jsxs(F8e, { ownerState: s, children: [
+    r && /* @__PURE__ */ R.jsx(N8e, { variant: t }),
     /* @__PURE__ */ R.jsxs(
-      U8e,
+      V8e,
       {
-        className: dn("viewer"),
+        className: sn("viewer"),
         lang: i,
         "aria-label": o("workspace"),
         ...e ? { ref: e } : {},
         children: [
-          n ? /* @__PURE__ */ R.jsx(B8e, {}) : /* @__PURE__ */ R.jsx(k8e, {}),
-          /* @__PURE__ */ R.jsx(S$e, {}),
-          /* @__PURE__ */ R.jsx(W8e, {})
+          n ? /* @__PURE__ */ R.jsx(H8e, {}) : /* @__PURE__ */ R.jsx(j8e, {}),
+          /* @__PURE__ */ R.jsx(C$e, {}),
+          /* @__PURE__ */ R.jsx(U8e, {})
         ]
       }
     )
@@ -110807,7 +110820,7 @@ cae.propTypes = {
   isWorkspaceControlPanelVisible: c.bool.isRequired,
   lang: c.string
 };
-const F8e = ge("div")(({ theme: e }) => ({
+const q8e = ge("div")(({ theme: e }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
@@ -110865,7 +110878,7 @@ function tV({
   }, p = () => {
     t && t(!1);
   };
-  return /* @__PURE__ */ R.jsxs(F8e, { children: [
+  return /* @__PURE__ */ R.jsxs(q8e, { children: [
     /* @__PURE__ */ R.jsx(Rr, { "aria-label": o("zoomIn"), onClick: u, TooltipProps: { disableTouchListener: !0 }, children: /* @__PURE__ */ R.jsx(Wt, { name: "zoom-in", size: 18 }) }),
     /* @__PURE__ */ R.jsx(Rr, { "aria-label": o("zoomOut"), onClick: f, TooltipProps: { disableTouchListener: !0 }, children: /* @__PURE__ */ R.jsx(Wt, { name: "zoom-out", size: 18 }) }),
     /* @__PURE__ */ R.jsx(Rr, { "aria-label": o("zoomReset"), onClick: p, TooltipProps: { disableTouchListener: !0 }, children: /* @__PURE__ */ R.jsx(Wt, { name: "arrow-counterclockwise", size: 18 }) })
@@ -110884,70 +110897,70 @@ tV.defaultProps = {
   windowId: void 0,
   zoomToWorld: void 0
 };
-function J7e(e) {
+function t9e(e) {
   return /* @__PURE__ */ R.jsx(Ea, { ...e, children: /* @__PURE__ */ R.jsx("svg", { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", children: /* @__PURE__ */ R.jsx("path", { d: "M1,4V21H22.853V4.1ZM3,19V6h8V19Zm18,0H13V6h8ZM14,9.5h6V11H14ZM14,12h6v1.5H14Zm0,2.5h6V16H14Z" }) }) });
 }
-function e9e(e) {
+function n9e(e) {
   return /* @__PURE__ */ R.jsx(Ea, { ...e, children: /* @__PURE__ */ R.jsx("svg", { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", children: /* @__PURE__ */ R.jsx("path", { d: "M6.924,21H21V19H6.924ZM3,17H21V15H3Zm3.924-4H21V11H6.924Zm0-4H21V7H6.924ZM3,3V5H21V3Z" }) }) });
 }
-function t9e(e) {
+function r9e(e) {
   return /* @__PURE__ */ R.jsx(Ea, { ...e, children: /* @__PURE__ */ R.jsx("svg", { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", children: /* @__PURE__ */ R.jsx("path", { d: "M19.974,2H2V19.974H19.974V2ZM7.392,18.177H3.8V14.582H7.392Zm0-5.392H3.8V9.19H7.392Zm0-5.392H3.8V3.8H7.392Zm5.392,10.785H9.19V14.582h3.595Zm0-5.392H9.19V9.19h3.595Zm0-5.392H9.19V3.8h3.595Zm5.392,10.785H14.582V14.582h3.595Zm0-5.392H14.582V9.19h3.595Zm0-5.392H14.582V3.8h3.595Z", transform: "translate(1 1)" }) }) });
 }
-function n9e(e) {
+function i9e(e) {
   return /* @__PURE__ */ R.jsx(Ea, { ...e, children: /* @__PURE__ */ R.jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", children: [
     /* @__PURE__ */ R.jsx("path", { d: "M6,15H9v3h2V13H6Zm9-6V6H13v5h5V9Z" }),
     /* @__PURE__ */ R.jsx("path", { d: "M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8,8,8,0,0,1-8,8Z" })
   ] }) });
 }
-function r9e(e) {
+function o9e(e) {
   return /* @__PURE__ */ R.jsx(Ea, { ...e, children: /* @__PURE__ */ R.jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", children: [
     /* @__PURE__ */ R.jsx("path", { d: "M3,3H21V5H3Z", transform: "translate(0 16)" }),
     /* @__PURE__ */ R.jsx("path", { d: "M21,5H3V19H21ZM19,17H5V7H19Z", transform: "translate(0 -2)" })
   ] }) });
 }
-function i9e(e) {
+function a9e(e) {
   return /* @__PURE__ */ R.jsx(Ea, { ...e, children: /* @__PURE__ */ R.jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", children: [
     /* @__PURE__ */ R.jsx("path", { d: "M0,0H24V24H0Z", transform: "translate(24) rotate(90)", fill: "none" }),
     /* @__PURE__ */ R.jsx("path", { d: "M3,3H21V5H3Z", transform: "translate(24) rotate(90)" }),
     /* @__PURE__ */ R.jsx("path", { d: "M19,3H5V21H19ZM17,19H7V5H17Z", transform: "translate(-2)" })
   ] }) });
 }
-function o9e(e) {
+function s9e(e) {
   return /* @__PURE__ */ R.jsx(Ea, { ...e, children: /* @__PURE__ */ R.jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", children: [
     /* @__PURE__ */ R.jsx("path", { d: "M7,14H5v5h5V17H7Zm7-9V7h3v3h2V5Z" }),
     /* @__PURE__ */ R.jsx("path", { d: "M22.517,1.524H1.736V22.37H22.517Zm-2,18.845H3.736V3.524H20.517Z" })
   ] }) });
 }
-function a9e(e) {
+function l9e(e) {
   return /* @__PURE__ */ R.jsx(Ea, { ...e, children: /* @__PURE__ */ R.jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", children: [
     /* @__PURE__ */ R.jsx("path", { d: "M5,16H8v3h2V14H5ZM16,8V5H14v5h5V8Z" }),
     /* @__PURE__ */ R.jsx("path", { d: "M22.517,1.524H1.736V22.37H22.517Zm-2,18.845H3.736V3.524H20.517Z" })
   ] }) });
 }
-const V8e = (e, { windowId: t }) => ({
+const G8e = (e, { windowId: t }) => ({
   audioOptions: Xn(e).audioOptions,
   audioResources: tH(e, { windowId: t }) || [],
   captions: eH(e, { windowId: t }) || []
-}), q8e = _t(
-  Mt(V8e, null),
+}), $8e = _t(
+  Mt(G8e, null),
   Ot("AudioViewer")
-), G8e = q8e(Jie), $8e = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+), Y8e = $8e(Jie), Z8e = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: G8e
-}, Symbol.toStringTag, { value: "Module" })), Y8e = (e, { windowId: t }) => ({
+  default: Y8e
+}, Symbol.toStringTag, { value: "Module" })), X8e = (e, { windowId: t }) => ({
   canvases: (Bo(e, { windowId: t }) || []).filter((i) => i && (i.id || typeof i.index < "u")),
   viewingDirection: ME(e, { windowId: t }),
   viewType: Kh(e, { windowId: t }),
   // Force updates when selection changes
-  currentCanvasId: (Gn(e, { windowId: t }) || {}).canvasId
-}), Z8e = _t(
-  Mt(Y8e),
+  currentCanvasId: ($n(e, { windowId: t }) || {}).canvasId
+}), K8e = _t(
+  Mt(X8e),
   Ot("GalleryView")
   // further HOC go here
-), X8e = Z8e(boe), uae = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+), Q8e = K8e(boe), uae = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: X8e
-}, Symbol.toStringTag, { value: "Module" })), K8e = (e, { windowId: t }) => {
+  default: Q8e
+}, Symbol.toStringTag, { value: "Module" })), J8e = (e, { windowId: t }) => {
   const n = gH(e, { windowId: t }), r = Bo(e, { windowId: t }) || [], i = gu(e, { windowId: t }) || [], o = wo(), s = du(e, { windowId: t });
   return {
     canvasWorld: n,
@@ -110969,103 +110982,103 @@ const V8e = (e, { windowId: t }) => ({
     viewerConfig: ZO(e, { windowId: t }),
     canvasIndex: _v(e, { windowId: t })
   };
-}, Q8e = (e, { windowId: t }) => ({
+}, e7e = (e, { windowId: t }) => ({
   updateViewport: kH,
   setCanvas: (...n) => e(ro(t, ...n))
-}), J8e = _t(
-  Mt(K8e, Q8e),
+}), t7e = _t(
+  Mt(J8e, e7e),
   Ot("OpenSeadragonViewer")
-), e7e = J8e(Aoe), t7e = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+), n7e = t7e(Aoe), r7e = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: e7e
-}, Symbol.toStringTag, { value: "Module" })), n7e = (e, { windowId: t }) => {
-  const { collectionPath: n, manifestId: r } = Gn(e, { windowId: t }) || {};
+  default: n7e
+}, Symbol.toStringTag, { value: "Module" })), i7e = (e, { windowId: t }) => {
+  const { collectionPath: n, manifestId: r } = $n(e, { windowId: t }) || {};
   return {
     collectionPath: n,
     manifestId: r
   };
-}, r7e = {
+}, o7e = {
   showCollectionDialog: KE
-}, i7e = _t(
-  Mt(n7e, r7e),
+}, a7e = _t(
+  Mt(i7e, o7e),
   Ot("SelectCollection")
-), o7e = i7e(Ioe), a7e = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+), s7e = a7e(Ioe), l7e = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: o7e
-}, Symbol.toStringTag, { value: "Module" })), s7e = (e, { id: t, windowId: n }) => ({
+  default: s7e
+}, Symbol.toStringTag, { value: "Module" })), c7e = (e, { id: t, windowId: n }) => ({
   canvases: Bo(e, { windowId: n }),
   selectedCanvasIds: hu(e, { windowId: n }),
   variant: pu(e, { companionWindowId: t, windowId: n }).variant
-}), l7e = (e, { id: t, windowId: n }) => ({
+}), u7e = (e, { id: t, windowId: n }) => ({
   setCanvas: (...r) => e(ro(...r))
-}), c7e = _t(
-  Mt(s7e, l7e),
+}), d7e = _t(
+  Mt(c7e, u7e),
   Ot("SidebarIndexList")
-), s9e = c7e(Noe), u7e = (e, { windowId: t }) => ({
+), c9e = d7e(Noe), f7e = (e, { windowId: t }) => ({
   textOptions: Xn(e).textOptions,
   textResources: QW(e, { windowId: t }) || []
-}), d7e = _t(
-  Mt(u7e, null),
+}), p7e = _t(
+  Mt(f7e, null),
   Ot("TextViewer")
   // further HOC go here
-), f7e = d7e(joe), p7e = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+), h7e = p7e(joe), g7e = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: f7e
-}, Symbol.toStringTag, { value: "Module" })), h7e = (e, { windowId: t }) => ({
+  default: h7e
+}, Symbol.toStringTag, { value: "Module" })), m7e = (e, { windowId: t }) => ({
   canvasGroupings: LE(e, { windowId: t }),
   canvasIndex: _v(e, { windowId: t }),
   hasNextCanvas: !!eA(e, { windowId: t }),
   hasPreviousCanvas: !!tA(e, { windowId: t }),
   position: pu(e, {
-    companionWindowId: Gn(e, { windowId: t }).thumbnailNavigationId
+    companionWindowId: $n(e, { windowId: t }).thumbnailNavigationId
   }).position,
   thumbnailNavigation: Xn(e).thumbnailNavigation,
   view: Kh(e, { windowId: t }),
   viewingDirection: ME(e, { windowId: t })
-}), g7e = (e, { windowId: t }) => ({
+}), v7e = (e, { windowId: t }) => ({
   setNextCanvas: (...n) => e(NH(t)),
   setPreviousCanvas: (...n) => e(PH(t))
-}), m7e = _t(
-  Mt(h7e, g7e),
+}), y7e = _t(
+  Mt(m7e, v7e),
   Ot("ThumbnailNavigation")
-), l9e = m7e(Boe), v7e = (e, { windowId: t }) => ({
+), u9e = y7e(Boe), b7e = (e, { windowId: t }) => ({
   captions: eH(e, { windowId: t }) || [],
   videoOptions: Xn(e).videoOptions,
   videoResources: JW(e, { windowId: t }) || []
-}), y7e = _t(
-  Mt(v7e, null),
+}), w7e = _t(
+  Mt(b7e, null),
   Ot("VideoViewer")
-), b7e = y7e(Woe), w7e = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+), x7e = w7e(Woe), T7e = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: b7e
-}, Symbol.toStringTag, { value: "Module" })), x7e = _t(
+  default: x7e
+}, Symbol.toStringTag, { value: "Module" })), S7e = _t(
   Ot("WindowTopMenuButton")
-), c9e = x7e(qoe), T7e = _t(
+), d9e = S7e(qoe), E7e = _t(
   Ot("WindowViewer")
   // further HOC go here
-), S7e = T7e(Goe), E7e = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+), C7e = E7e(Goe), _7e = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: S7e
-}, Symbol.toStringTag, { value: "Module" })), C7e = (e) => ({
+  default: C7e
+}, Symbol.toStringTag, { value: "Module" })), R7e = (e) => ({
   controlPanelVariant: jo(e).isWorkspaceAddVisible || Yh(e).length > 0 ? void 0 : "wide",
   isWorkspaceAddVisible: jo(e).isWorkspaceAddVisible,
   isWorkspaceControlPanelVisible: Xn(e).workspaceControlPanel.enabled,
   lang: Xn(e).language
-}), _7e = _t(
-  Mt(C7e),
+}), O7e = _t(
+  Mt(R7e),
   Ot("WorkspaceArea")
-), R7e = _7e(cae), O7e = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+), A7e = O7e(cae), I7e = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: R7e
-}, Symbol.toStringTag, { value: "Module" })), A7e = (e, { windowId: t }) => ({
+  default: A7e
+}, Symbol.toStringTag, { value: "Module" })), D7e = (e, { windowId: t }) => ({
   viewer: ZO(e, { windowId: t }),
   showZoomControls: HW(e),
   visible: !0
-}), I7e = { updateViewport: kH }, D7e = _t(
-  Mt(A7e, I7e),
+}), M7e = { updateViewport: kH }, N7e = _t(
+  Mt(D7e, M7e),
   Ot("ZoomControls")
-), u9e = D7e(tV);
-class d9e {
+), f9e = N7e(tV);
+class p9e {
   /** */
   constructor({
     resource: t,
@@ -111120,7 +111133,7 @@ class d9e {
     return new DOMParser().parseFromString(this.svgString, "text/xml").getElementsByTagName("path");
   }
 }
-class f9e {
+class h9e {
   constructor(t, n) {
     this.viewer = t, this.ref = n, this.containerWidth = 0, this.containerHeight = 0, this.imgAspectRatio = 1, this.clearBeforeRedraw = !0;
   }
@@ -111168,7 +111181,7 @@ class f9e {
     m !== 0 && (n.translate(f.x, f.y), n.rotate(m * Math.PI / 180), n.translate(-f.x, -f.y)), t == null || t(), n.setTransform(1, 0, 0, 1, 0, 0);
   }
 }
-const p9e = {
+const g9e = {
   ...zze,
   ...Bze
 };
@@ -111181,18 +111194,18 @@ export {
   yde as AnnotationPage,
   mde as AnnotationResource,
   AQ as AnnotationSettings,
-  _qe as AnnotationsOverlay,
+  Oqe as AnnotationsOverlay,
   lne as App,
   sne as AppProviders,
   ZJ as AttributionPanel,
   Jie as AudioViewer,
   eoe as BackgroundPluginArea,
-  J7e as BookViewIcon,
+  t9e as BookViewIcon,
   toe as Branding,
-  d9e as CanvasAnnotationDisplay,
+  p9e as CanvasAnnotationDisplay,
   WQ as CanvasAnnotations,
   jZ as CanvasGroupings,
-  e9e as CanvasIndexIcon,
+  n9e as CanvasIndexIcon,
   ZQ as CanvasInfo,
   yte as CanvasLayers,
   sv as CanvasWorld,
@@ -111206,43 +111219,43 @@ export {
   vB as CompanionWindowRegistry,
   nv as CompanionWindowSection,
   tbe as ConnectedAnnotationSettings,
-  P6e as ConnectedAnnotationsOverlay,
+  L6e as ConnectedAnnotationsOverlay,
   dke as ConnectedAppProviders,
   UEe as ConnectedAttributionPanel,
-  G8e as ConnectedAudioViewer,
-  W8e as ConnectedBackgroundPluginArea,
-  C8e as ConnectedBranding,
+  Y8e as ConnectedAudioViewer,
+  U8e as ConnectedBackgroundPluginArea,
+  R8e as ConnectedBranding,
   s0e as ConnectedCanvasAnnotations,
   Swe as ConnectedCanvasInfo,
   VIe as ConnectedCanvasLayers,
-  W$e as ConnectedChangeThemeDialog,
+  U$e as ConnectedChangeThemeDialog,
   uw as ConnectedCollapsibleSection,
-  M3e as ConnectedCollectionDialog,
+  N3e as ConnectedCollectionDialog,
   xTe as ConnectedCollectionInfo,
   VS as ConnectedCompanionArea,
   ep as ConnectedCompanionWindow,
-  f3e as ConnectedCompanionWindowFactory,
+  p3e as ConnectedCompanionWindowFactory,
   XIe as ConnectedCustomPanel,
   UB as ConnectedErrorContent,
-  S$e as ConnectedErrorDialog,
+  C$e as ConnectedErrorDialog,
   HB as ConnectedFullScreenButton,
-  X8e as ConnectedGalleryView,
+  Q8e as ConnectedGalleryView,
   Tz as ConnectedGalleryViewThumbnail,
-  tqe as ConnectedIIIFAuthentication,
+  rqe as ConnectedIIIFAuthentication,
   uC as ConnectedIIIFThumbnail,
-  I$e as ConnectedLanguageSettings,
+  M$e as ConnectedLanguageSettings,
   $Ie as ConnectedLayersPanel,
   cJ as ConnectedLocalePicker,
-  d$e as ConnectedManifestForm,
+  p$e as ConnectedManifestForm,
   dJ as ConnectedManifestInfo,
-  g$e as ConnectedManifestListItem,
-  O6e as ConnectedManifestListItemError,
+  v$e as ConnectedManifestListItem,
+  I6e as ConnectedManifestListItemError,
   NTe as ConnectedManifestRelatedLinks,
   Uie as ConnectedMinimalWindow,
   Rr as ConnectedMiradorMenuButton,
-  UGe as ConnectedMosaicRenderPreview,
-  e7e as ConnectedOpenSeadragonViewer,
-  B3e as ConnectedPrimaryWindow,
+  VGe as ConnectedMosaicRenderPreview,
+  n7e as ConnectedOpenSeadragonViewer,
+  W3e as ConnectedPrimaryWindow,
   us as ConnectedSanitizedHtml,
   mC as ConnectedScrollIndicatedDialogContent,
   A$ as ConnectedSearchHit,
@@ -111250,54 +111263,54 @@ export {
   tee as ConnectedSearchPanelControls,
   kCe as ConnectedSearchPanelNavigation,
   f_e as ConnectedSearchResults,
-  o7e as ConnectedSelectCollection,
-  U6e as ConnectedSidebarIndexItem,
-  s9e as ConnectedSidebarIndexList,
+  s7e as ConnectedSelectCollection,
+  V6e as ConnectedSidebarIndexItem,
+  c9e as ConnectedSidebarIndexList,
   bEe as ConnectedSidebarIndexTableOfContents,
-  q6e as ConnectedSidebarIndexThumbnail,
-  f7e as ConnectedTextViewer,
-  dGe as ConnectedThumbnailCanvasGrouping,
-  l9e as ConnectedThumbnailNavigation,
-  b7e as ConnectedVideoViewer,
+  $6e as ConnectedSidebarIndexThumbnail,
+  h7e as ConnectedTextViewer,
+  pGe as ConnectedThumbnailCanvasGrouping,
+  u9e as ConnectedThumbnailNavigation,
+  x7e as ConnectedVideoViewer,
   bY as ConnectedViewerInfo,
-  tGe as ConnectedViewerNavigation,
+  rGe as ConnectedViewerNavigation,
   wO as ConnectedWindow,
   mz as ConnectedWindowAuthenticationBar,
   Loe as ConnectedWindowCanvasNavigationControls,
-  vGe as ConnectedWindowList,
-  x8e as ConnectedWindowListButton,
-  r3e as ConnectedWindowSideBar,
+  bGe as ConnectedWindowList,
+  S8e as ConnectedWindowListButton,
+  i3e as ConnectedWindowSideBar,
   Q0e as ConnectedWindowSideBarAnnotationsPanel,
-  Y7e as ConnectedWindowSideBarButtons,
+  X7e as ConnectedWindowSideBarButtons,
   SEe as ConnectedWindowSideBarCanvasPanel,
   eDe as ConnectedWindowSideBarCollectionPanel,
   jTe as ConnectedWindowSideBarInfoPanel,
-  Q7e as ConnectedWindowThumbnailSettings,
-  g4e as ConnectedWindowTopBar,
+  e9e as ConnectedWindowThumbnailSettings,
+  m4e as ConnectedWindowTopBar,
   j5e as ConnectedWindowTopBarPluginArea,
   B5e as ConnectedWindowTopBarPluginMenu,
   F5e as ConnectedWindowTopBarTitle,
-  IGe as ConnectedWindowTopMenu,
-  c9e as ConnectedWindowTopMenuButton,
+  MGe as ConnectedWindowTopMenu,
+  d9e as ConnectedWindowTopMenuButton,
   foe as ConnectedWindowViewSettings,
-  S7e as ConnectedWindowViewer,
-  k8e as ConnectedWorkspace,
-  B8e as ConnectedWorkspaceAdd,
-  R$e as ConnectedWorkspaceAddButton,
-  R7e as ConnectedWorkspaceArea,
-  D8e as ConnectedWorkspaceControlPanel,
-  E8e as ConnectedWorkspaceControlPanelButtons,
-  i$e as ConnectedWorkspaceElastic,
-  xqe as ConnectedWorkspaceElasticWindow,
-  f8e as ConnectedWorkspaceExport,
-  g8e as ConnectedWorkspaceImport,
-  V$e as ConnectedWorkspaceMenu,
-  $$e as ConnectedWorkspaceMenuButton,
-  e$e as ConnectedWorkspaceMosaic,
-  y8e as ConnectedWorkspaceOptionsButton,
+  C7e as ConnectedWindowViewer,
+  j8e as ConnectedWorkspace,
+  H8e as ConnectedWorkspaceAdd,
+  A$e as ConnectedWorkspaceAddButton,
+  A7e as ConnectedWorkspaceArea,
+  N8e as ConnectedWorkspaceControlPanel,
+  _8e as ConnectedWorkspaceControlPanelButtons,
+  a$e as ConnectedWorkspaceElastic,
+  Sqe as ConnectedWorkspaceElasticWindow,
+  h8e as ConnectedWorkspaceExport,
+  v8e as ConnectedWorkspaceImport,
+  G$e as ConnectedWorkspaceMenu,
+  Z$e as ConnectedWorkspaceMenuButton,
+  n$e as ConnectedWorkspaceMosaic,
+  w8e as ConnectedWorkspaceOptionsButton,
   sae as ConnectedWorkspaceOptionsMenu,
-  L$e as ConnectedWorkspaceSelectionDialog,
-  u9e as ConnectedZoomControls,
+  z$e as ConnectedWorkspaceSelectionDialog,
+  f9e as ConnectedZoomControls,
   wte as CustomPanel,
   Mi as EMPTY_ARRAY,
   Ha as EMPTY_OBJECT,
@@ -111306,7 +111319,7 @@ export {
   bie as FullScreenButton,
   rne as FullScreenContext,
   boe as GalleryView,
-  t9e as GalleryViewIcon,
+  r9e as GalleryViewIcon,
   QF as GalleryViewThumbnail,
   $ie as IIIFAuthentication,
   JF as IIIFDropTarget,
@@ -111323,22 +111336,22 @@ export {
   mJ as ManifestRelatedLinks,
   Hie as MinimalWindow,
   LW as MiradorCanvas,
-  Aqe as MiradorIcon,
+  Dqe as MiradorIcon,
   UZ as MiradorManifest,
   OQ as MiradorMenuButton,
   Lze as MiradorViewer,
-  GGe as MosaicLayout,
+  YGe as MosaicLayout,
   Roe as MosaicRenderPreview,
   Ooe as NestedMenu,
   qie as NewBrowserWindow,
   aE as OSDReferences,
-  f9e as OpenSeadragonCanvasOverlay,
+  h9e as OpenSeadragonCanvasOverlay,
   Aoe as OpenSeadragonViewer,
   XY as PluginContext,
   Wo as PluginHook,
   Tte as PluginProvider,
   Wie as PrimaryWindow,
-  n9e as RestoreZoomIcon,
+  i9e as RestoreZoomIcon,
   us as SanitizedHtml,
   mC as ScrollIndicatedDialogContent,
   lw as ScrollTo,
@@ -111356,8 +111369,8 @@ export {
   zoe as ThumbnailCanvasGrouping,
   _h as ThumbnailFactory,
   Boe as ThumbnailNavigation,
-  r9e as ThumbnailNavigationBottomIcon,
-  i9e as ThumbnailNavigationRightIcon,
+  o9e as ThumbnailNavigationBottomIcon,
+  a9e as ThumbnailNavigationRightIcon,
   n_e as TruncatedHit,
   Woe as VideoViewer,
   Poe as ViewerInfo,
@@ -111367,9 +111380,9 @@ export {
   VI as WindowCanvasNavigationControls,
   Hoe as WindowList,
   Uoe as WindowListButton,
-  o9e as WindowMaxIcon,
-  a9e as WindowMinIcon,
-  DGe as WindowOptionsIcon,
+  s9e as WindowMaxIcon,
+  l9e as WindowMinIcon,
+  NGe as WindowOptionsIcon,
   Iie as WindowSideBar,
   YQ as WindowSideBarAnnotationsPanel,
   Aie as WindowSideBarButtons,
@@ -111391,20 +111404,20 @@ export {
   cae as WorkspaceArea,
   og as WorkspaceContext,
   lae as WorkspaceControlPanel,
-  T8e as WorkspaceControlPanelButtons,
+  E8e as WorkspaceControlPanelButtons,
   UI as WorkspaceDialog,
   Kie as WorkspaceElastic,
   Xie as WorkspaceElasticWindow,
   oae as WorkspaceExport,
   aae as WorkspaceImport,
   tae as WorkspaceMenu,
-  q$e as WorkspaceMenuButton,
+  $$e as WorkspaceMenuButton,
   Yoe as WorkspaceMosaic,
-  m8e as WorkspaceOptionsButton,
+  y8e as WorkspaceOptionsButton,
   sae as WorkspaceOptionsMenu,
   eae as WorkspaceSelectionDialog,
-  D$e as WorkspaceTypeElasticIcon,
-  M$e as WorkspaceTypeMosaicIcon,
+  N$e as WorkspaceTypeElasticIcon,
+  P$e as WorkspaceTypeMosaicIcon,
   tV as ZoomControls,
   tre as accessTokensReducer,
   HH as addAuthenticationRequest,
@@ -111424,12 +111437,12 @@ export {
   kze as createPluggableStore,
   xre as createStore,
   tDe as createTargetToPluginMapping,
-  p9e as default,
+  g9e as default,
   BH as deselectAnnotation,
   pre as elasticLayoutReducer,
   ire as errorsReducer,
   DK as expandNodes,
-  W6e as expandSearchHitRect,
+  U6e as expandSearchHitRect,
   YK as fetchInfoResponse,
   MH as fetchManifest,
   gv as fetchSearch,
@@ -111442,7 +111455,7 @@ export {
   nA as getAnnotations,
   UE as getAuth,
   hH as getAuthProfiles,
-  U7e as getBestThumbnail,
+  V7e as getBestThumbnail,
   Rd as getCanvas,
   _X as getCanvasDescription,
   lA as getCanvasForAnnotation,
@@ -111552,7 +111565,7 @@ export {
   JW as getVisibleCanvasVideoResources,
   gu as getVisibleCanvases,
   uH as getVisibleNodeIds,
-  Gn as getWindow,
+  $n as getWindow,
   _d as getWindowConfig,
   CX as getWindowDraggability,
   Yh as getWindowIds,
@@ -111577,7 +111590,7 @@ export {
   So as miradorSlice,
   zh as normalizeAnnotationId,
   hn as normalizeCanvasId,
-  G2e as readImageMetadata,
+  Y2e as readImageMetadata,
   nQ as receiveAccessToken,
   rQ as receiveAccessTokenFailure,
   zH as receiveAnnotation,
@@ -111640,13 +111653,13 @@ export {
   xd as updateWindow,
   ZK as updateWorkspace,
   KK as updateWorkspaceMosaicLayout,
-  m9e as useTranslation,
+  y9e as useTranslation,
   K8 as validatePlugin,
   jze as viewer,
   ure as viewersReducer,
   are as windowsReducer,
   Ot as withPlugins,
-  v9e as withTranslation,
+  b9e as withTranslation,
   ore as workspaceReducer
 };
 //# sourceMappingURL=mirador.es.js.map
