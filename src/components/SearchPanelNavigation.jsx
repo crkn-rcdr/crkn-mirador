@@ -95,13 +95,20 @@ const NavPill = styled('div')(({ theme }) => ({
     backgroundColor: 'transparent',
     color: theme.palette.primary.main,
   },
-  '&& .MuiIconButton-root.Mui-disabled': {
-    color: theme.palette.action.disabled,
-    cursor: 'not-allowed',
-    pointerEvents: 'auto',
+  '&& .MuiIconButton-root:disabled, && .MuiIconButton-root.Mui-disabled': {
+    color: 'rgba(0, 0, 0, 0.26) !important',
+    cursor: 'not-allowed !important',
+    pointerEvents: 'auto !important',
+    opacity: '0.38 !important',
+    '& i, & svg': {
+      color: 'rgba(0, 0, 0, 0.26) !important',
+      opacity: '0.38 !important',
+      cursor: 'not-allowed !important',
+      pointerEvents: 'none !important',
+    },
     '&:hover': {
-      backgroundColor: 'transparent',
-      color: theme.palette.action.disabled,
+      backgroundColor: 'transparent !important',
+      color: 'rgba(0, 0, 0, 0.26) !important',
     },
   },
 }));
@@ -323,9 +330,7 @@ export function SearchPanelNavigation({
         <BiIcon name="chevron-left" size={16} style={iconStyle} />
       </MiradorMenuButton>
       <Typography component="span" variant="body2" className="count" sx={{ unicodeBidi: 'plaintext' }}>
-        {isV2
-          ? (safeHitIndex + 1)
-          : `${safeHitIndex + 1} / ${lengthText}`}
+        {`${safeHitIndex + 1} / ${lengthText}`}
       </Typography>
       <MiradorMenuButton
         aria-label={t('searchNextResult')}

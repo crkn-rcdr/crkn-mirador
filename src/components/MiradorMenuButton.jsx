@@ -51,7 +51,24 @@ export function MiradorMenuButton({
     </Root>
   );
 
-  if (iconButtonProps.disabled) return button;
+  if (iconButtonProps.disabled) {
+    return (
+      <Root
+        selected={selected}
+        aria-label={ariaLabel}
+        {...iconButtonProps}
+        sx={{
+          cursor: 'not-allowed !important',
+          pointerEvents: 'auto !important',
+          opacity: '0.38 !important',
+          ...sx,
+        }}
+        size="large"
+      >
+        {children}
+      </Root>
+    );
+  }
 
   return (
     <Tooltip

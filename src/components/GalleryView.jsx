@@ -327,6 +327,27 @@ export function GalleryView({
     }
   });
 
+  // When the current canvas changes (e.g., from a SearchHit, canvas nav, or index input),
+  // scroll the virtualized grid to bring its thumbnail into view.
+  useEffect(() => {
+    if (!currentCanvasId || !gridRef.current || items.length === 0) return;
+
+    const currentId = normalizeCanvasId(currentCanvasId);
+    const idx = items.findIndex((group) => (
+      group.some(canvas => normalizeCanvasId(canvas?.id) === currentId)
+    ));
+    if (idx < 0) return;
+    const cc = Math.max(1, layoutRef.current.columnCount || 1);
+    const rowIndex = Math.floor(idx / cc);
+    const columnIndex = idx % cc;
+
+    if (typeof gridRef.current.scrollToItem === 'function') {
+      try {
+        gridRef.current.scrollToItem({ rowIndex, columnIndex, align: 'center' });
+      } catch (e) {}
+    }
+  }, [currentCanvasId, items, thumbSize]);
+
   const setGridRef = React.useCallback((grid) => {
     gridRef.current = grid;
     if (!currentCanvasId || !grid || items.length === 0) return;
@@ -340,7 +361,9 @@ export function GalleryView({
     const rowIndex = Math.floor(idx / cc);
     const columnIndex = idx % cc;
 
-    grid.scrollToItem({ rowIndex, columnIndex, align: 'center' });
+    try {
+      grid.scrollToItem({ rowIndex, columnIndex, align: 'center' });
+    } catch (e) {}
   }, [currentCanvasId, thumbSize, items, isMobileStrip]);
   //<CompactToggleButton value="fit" aria-label="Fit width">F</CompactToggleButton> - todo with search term highlighting
 
