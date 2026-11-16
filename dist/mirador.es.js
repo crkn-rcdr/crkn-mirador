@@ -30788,8 +30788,7 @@ function GO(e) {
   if (typeof window > "u" || !window.location || typeof e != "string") return e;
   try {
     const t = new URL(e, window.location.origin), n = window.location.hostname;
-    if (n.includes("-dev.canadiana.ca") || n.endsWith(".local") || t.hostname.includes("-dev.canadiana.ca") || t.hostname.endsWith(".local"))
-      return n.startsWith("www-") && t.hostname.startsWith("www2-") ? t.hostname = t.hostname.replace("www2-", "www-") : n.startsWith("www2-") && t.hostname.startsWith("www-") && (t.hostname = t.hostname.replace("www-", "www2-")), window.location.port && !t.port && t.protocol.startsWith("http") && (t.port = window.location.port), t.toString();
+    return n.startsWith("www-") && t.hostname.startsWith("www2-") ? t.hostname = t.hostname.replace("www2-", "www-") : n.startsWith("www2") && t.hostname.startsWith("www-") && (t.hostname = t.hostname.replace("www-", "www2-")), (n.includes("-dev.canadiana.ca") || n.endsWith(".local") || t.hostname.includes("-dev.canadiana.ca") || t.hostname.endsWith(".local")) && window.location.port && !t.port && t.protocol.startsWith("http") && (t.port = window.location.port), t.toString();
   } catch {
   }
   return e;

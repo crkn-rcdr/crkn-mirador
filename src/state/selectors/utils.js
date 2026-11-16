@@ -65,19 +65,22 @@ export function normalizeDevUrl(url) {
   try {
     const parsed = new URL(url, window.location.origin);
     const winHost = window.location.hostname;
+
+    // Align cluster prefix (www- vs www2-) across dev, beta, and prod environments
+    if (winHost.startsWith('www-') && parsed.hostname.startsWith('www2-')) {
+      parsed.hostname = parsed.hostname.replace('www2-', 'www-');
+    } else if (winHost.startsWith('www2') && parsed.hostname.startsWith('www-')) {
+      parsed.hostname = parsed.hostname.replace('www-', 'www2-');
+    }
+
     const isDev = winHost.includes('-dev.canadiana.ca') || winHost.endsWith('.local') ||
                   parsed.hostname.includes('-dev.canadiana.ca') || parsed.hostname.endsWith('.local');
     if (isDev) {
-      if (winHost.startsWith('www-') && parsed.hostname.startsWith('www2-')) {
-        parsed.hostname = parsed.hostname.replace('www2-', 'www-');
-      } else if (winHost.startsWith('www2-') && parsed.hostname.startsWith('www-')) {
-        parsed.hostname = parsed.hostname.replace('www-', 'www2-');
-      }
       if (window.location.port && !parsed.port && parsed.protocol.startsWith('http')) {
         parsed.port = window.location.port;
       }
-      return parsed.toString();
     }
+    return parsed.toString();
   } catch (e) {}
   return url;
 }
