@@ -1,4 +1,5 @@
 // Bootstrap icons used inline; removed unused MUI icon import
+import { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useTranslation } from 'react-i18next';
@@ -99,7 +100,23 @@ export function ViewerNavigation({
   let htmlDir = 'ltr';
   let previousIconStyle = {};
   let nextIconStyle = {};
-  let canvasSelectOptions = canvases.map((el, i) => { return (i+1).toString() });
+  const canvasSelectOptions = useMemo(
+    () => canvases.map((_, i) => (i + 1).toString()),
+    [canvases.length],
+  );
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      const targetVal = event.target.value?.trim();
+      if (!targetVal) return;
+      const num = parseInt(targetVal, 10);
+      if (!isNaN(num) && num >= 1 && num <= canvases.length) {
+        event.preventDefault();
+        setCanvas(canvases[num - 1].id);
+        if (event.target.blur) event.target.blur();
+      }
+    }
+  };
   
   switch (viewingDirection) {
     case 'top-to-bottom':
@@ -149,12 +166,13 @@ export function ViewerNavigation({
       <Autocomplete
         size="small"
         disableClearable
+        autoHighlight
         disablePortal={false}
         value={(canvasIndex+1).toString()}
         onChange={(event, newValue) => {
           if (!newValue) return;
           //setCanvasSelectValue(newValue);
-          setCanvas(canvases[parseInt(newValue)-1].id)
+          setCanvas(canvases[parseInt(newValue)-1].id);
         }}
         options={canvasSelectOptions}
         slotProps={{
@@ -192,7 +210,13 @@ export function ViewerNavigation({
           },
         }}
         sx={canvasIndexSelectSx}
-        renderInput={(params) => <TextField {...params} label={t('canvasIndex')} />}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label={t('canvasIndex')}
+            onKeyDown={handleKeyDown}
+          />
+        )}
       />
     </div>
   );

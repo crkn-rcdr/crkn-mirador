@@ -186,6 +186,10 @@ export function OpenSeadragonViewer({
   const lastZoomedAnnoRef = useRef(null);
 
   const canvasIndex = useSelector(state => getCanvasIndex(state, { windowId }));
+  const canvasesRef = useRef(canvases);
+  canvasesRef.current = canvases;
+  const setCanvasRef = useRef(setCanvas);
+  setCanvasRef.current = setCanvas;
 
   const canvasKeys = canvases.map(c => c.id).join('|');
   const nonTiledKeys = nonTiledImages.map(c => c.id).join('|');
@@ -207,52 +211,31 @@ export function OpenSeadragonViewer({
     currentViewer.viewport.applyConstraints?.();
   }, [canvasWorld]);
 
-  /** Fetch tile sources for 'single' view (sequence of all canvases) */
+  /** Build tile sources for 'single' view (sequence of all canvases) lazily */
   useEffect(() => {
     if (viewType !== 'single') return;
-    let cancelled = false;
-    const infoCache = {};
+    if (!canvases || canvases.length === 0) {
+      setTileSources([]);
+      return;
+    }
 
-    async function fetchInfoJson(id) {
-      if (!id) return null;
-      if (infoCache[id]) return infoCache[id];
-      try {
-        const resp = await fetch(id.replace(/\/info\.json$/, '') + '/info.json');
-        if (!resp.ok) throw new Error(`Bad response for ${id}`);
-        const json = await resp.json();
-        infoCache[id] = { id, json };
-        return infoCache[id];
-      } catch (e) {
-        console.error('Failed to fetch info.json', id, e);
-        return null;
+    // Map each canvas 1:1 to its tileSource without fetching all info.json upfront.
+    // OpenSeadragon's sequence mode lazily fetches the active canvas's info.json on demand,
+    // which prevents network saturation and viewer lockup on large reels (fixes #110).
+    const sources = canvases.map(canvas => {
+      const services = canvas.imageServiceIds || [];
+      if (services.length > 0 && services[0]) {
+        return services[0].replace(/\/info\.json$/, '') + '/info.json';
       }
-    }
+      const imgRes = canvas.imageResources || [];
+      if (imgRes.length > 0 && imgRes[0] && imgRes[0].id) {
+        return imgRes[0].id;
+      }
+      return canvas.id;
+    });
 
-    async function buildSources() {
-      const targets = canvases;
-      const sources = [];
-      const infoResponsesByCanvas = await Promise.all(
-        targets.map(async canvas => {
-          const services = canvas.imageServiceIds || [];
-          return Promise.all(services.map(fetchInfoJson));
-        })
-      );
-
-      infoResponsesByCanvas.flat().filter(Boolean).forEach(resp => sources.push(resp.json));
-
-      nonTiledImages.forEach(cr => {
-        const type = cr.getProperty('type');
-        const format = cr.getProperty('format') || '';
-        if (!(type === 'Image' || type === 'dctypes:Image' || format.startsWith('image/'))) return;
-        sources.push(cr.id);
-      });
-
-      if (!cancelled) setTileSources(sources);
-    }
-
-    buildSources();
-    return () => { cancelled = true; };
-  }, [canvasKeys, nonTiledKeys, viewType]);
+    setTileSources(sources);
+  }, [canvasKeys, viewType]);
 
   /** Fetch tile sources for 'book' and 'scroll' views */
   useEffect(() => {
@@ -358,6 +341,13 @@ export function OpenSeadragonViewer({
       });
     });
 
+    viewer.addHandler('page', event => {
+      const targetCanvas = canvasesRef.current?.[event.page];
+      if (targetCanvas && typeof setCanvasRef.current === 'function') {
+        setCanvasRef.current(targetCanvas.id);
+      }
+    });
+
     const containerEl = containerRef.current;
     if (containerEl) {
       containerEl.setAttribute('data-lenis-prevent', '');
@@ -394,14 +384,17 @@ export function OpenSeadragonViewer({
 
     // Single: open as sequence for fast page switching (no flicker)
     if (isSingle) {
-      viewer.open(tileSources);
+      const initialPage = (canvasIndex >= 0 && canvasIndex < tileSources.length) ? canvasIndex : 0;
+      viewer.open(tileSources, initialPage);
       viewer.addOnceHandler('open', () => {
         const world = viewer.world;
         if (world.getItemCount() > 0) {
           viewer.viewport.fitBounds(world.getHomeBounds(), true);
           viewer.viewport.minZoomLevel = viewer.viewport.getZoom() * 0.5;
           viewer.viewport.maxZoomLevel = viewer.viewport.getZoom() * 40;
-          if (canvasIndex >= 0) viewer.goToPage(canvasIndex);
+          if (canvasIndex >= 0 && typeof viewer.currentPage === 'function' && viewer.currentPage() !== canvasIndex) {
+            viewer.goToPage(canvasIndex);
+          }
         }
       });
       return;
@@ -569,7 +562,11 @@ export function OpenSeadragonViewer({
       if (typeof viewer.currentPage === 'function' && viewer.currentPage() === canvasIndex) {
         return;
       }
-      viewer.goToPage(canvasIndex);
+      if (canvasIndex >= 0 && viewer.tileSources && canvasIndex < viewer.tileSources.length) {
+        viewer.goToPage(canvasIndex);
+      } else if (canvasIndex >= 0 && typeof viewer.goToPage === 'function') {
+        viewer.goToPage(canvasIndex);
+      }
       return;
     }
 
