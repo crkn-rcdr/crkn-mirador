@@ -47,22 +47,13 @@ export const WindowCanvasNavigationControls = forwardRef(({ //showZoomControls =
   const pluginProps = { //showZoomControls, 
     size, visible, windowId, ...rest,
   };
-  /**
-   * Determine if canvasNavControls are stacked (based on a hard-coded width)
-  */
-  const canvasNavControlsAreStacked = (size && size.width && size.width <= 253);
 
   if (!visible) return (<Typography style={visuallyHidden} component='div'><ViewerInfo windowId={windowId} /></Typography>);
 
   return (
     <Root
       square
-      className={
-        classNames(
-          ns('canvas-nav'),
-          canvasNavControlsAreStacked ? ns('canvas-nav-stacked') : null,
-        )
-      }
+      className={classNames(ns('canvas-nav'))}
       elevation={0}
       ref={mergeRefs(ref, sizeRef)}
     >
@@ -70,12 +61,13 @@ export const WindowCanvasNavigationControls = forwardRef(({ //showZoomControls =
         width: '100%',
         display: 'flex',
         justifyContent: 'flex-start',
-        alignItems: 'center'
+        alignItems: 'center',
+        flexWrap: 'nowrap',
       }}>
         <Stack
-          direction={canvasNavControlsAreStacked ? 'column' : 'row'}
-          divider={<Divider orientation={canvasNavControlsAreStacked ? 'horizontal' : 'vertical'} variant='middle' flexItem />}
+          direction="row"
           spacing={0}
+          alignItems="center"
         >
           <ViewerNavigation windowId={windowId} />
         </Stack>

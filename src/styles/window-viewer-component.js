@@ -337,6 +337,7 @@ const globalWindowViewerStyles = {
   '@media (pointer: coarse)': {
     '.mirador-canvas-nav': {
       height: '56px !important',
+      bottom: 'max(0.5rem, env(safe-area-inset-bottom)) !important',
       right: 'max(0.5rem, env(safe-area-inset-right)) !important',
     },
     '.mirador-canvas-nav > div, .mirador-canvas-nav .MuiStack-root, .mirador-canvas-nav .mirador-osd-navigation, .mirador-canvas-nav .mirador-osd-info': {
@@ -357,6 +358,15 @@ const globalWindowViewerStyles = {
       height: '44px',
       maxHeight: '44px',
       minHeight: '44px',
+    },
+    '@media (max-width: 480px)': {
+      '.mirador-canvas-nav .mirador-osd-navigation .MuiAutocomplete-root': {
+        flex: '0 0 105px !important',
+        width: '105px !important',
+        minWidth: '105px !important',
+        maxWidth: '105px !important',
+        marginRight: '0.4rem !important',
+      },
     },
     '.mirador-osd-container .openseadragon-canvas + div': {
       left: 'max(0.5rem, env(safe-area-inset-left)) !important',

@@ -29,9 +29,15 @@ const canvasIndexSelectSx = {
   display: 'inline-block',
   flex: '0 0 140px',
   height: 40,
-  marginRight: '1rem',
+  marginRight: '0.75rem',
   width: 140,
   minWidth: 140,
+  '@media (max-width: 480px)': {
+    flex: '0 0 105px',
+    width: 105,
+    minWidth: 105,
+    marginRight: '0.4rem',
+  },
   '& .MuiAutocomplete-endAdornment': {
     top: '50%',
     transform: 'translateY(-50%)',
@@ -71,6 +77,12 @@ const canvasIndexSelectSx = {
     flex: '0 0 140px',
     width: 140,
     minWidth: 140,
+    '@media (max-width: 480px)': {
+      flex: '0 0 105px',
+      width: 105,
+      minWidth: 105,
+      marginRight: '0.4rem',
+    },
     '& .MuiFormControl-root': {
       height: 44,
     },
