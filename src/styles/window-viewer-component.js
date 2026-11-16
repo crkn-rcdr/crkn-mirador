@@ -282,6 +282,8 @@ const globalWindowViewerStyles = {
     width: 'auto',
     zIndex: '100000004',
     pointerEvents: 'auto !important',
+    opacity: '1 !important',
+    visibility: 'visible !important',
   },
 
   
@@ -296,6 +298,8 @@ const globalWindowViewerStyles = {
     overflow: 'hidden',
     padding: '6px',
     pointerEvents: 'auto !important',
+    opacity: '1 !important',
+    visibility: 'visible !important',
   },
   /* Theme-specific overrides using parent container classes */
   '.light .mirador-osd-container .openseadragon-canvas + div > div': {
@@ -374,6 +378,9 @@ const globalWindowViewerStyles = {
       top: '23% !important',
       width: 'auto',
       zIndex: '100000004',
+      opacity: '1 !important',
+      visibility: 'visible !important',
+      pointerEvents: 'auto !important',
     },
     [osdButtonSelector]: {
       height: '44px',

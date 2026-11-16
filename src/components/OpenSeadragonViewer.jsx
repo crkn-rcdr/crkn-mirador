@@ -312,6 +312,8 @@ export function OpenSeadragonViewer({
       showFlipControl: true,
       showNavigator: false,
       autoHideControls: false,
+      controlsFadeDelay: 99999999,
+      controlsFadeLength: 0,
       showSequenceControl: viewType === 'single',
       sequenceMode: viewType === 'single',
       blendTime: 0,
@@ -323,6 +325,25 @@ export function OpenSeadragonViewer({
       ...osdConfig,
       ...navImageConfig,
     });
+
+    viewer.autoHideControls = false;
+    const lockControlsVisible = () => {
+      viewer.autoHideControls = false;
+      viewer.controlsShouldFade = false;
+      if (viewer.controls) {
+        viewer.controls.forEach(control => {
+          control.autoFade = false;
+          if (control.wrapper) {
+            control.wrapper.style.opacity = '1';
+            control.wrapper.style.visibility = 'visible';
+          }
+        });
+      }
+    };
+    lockControlsVisible();
+    viewer.addHandler('open', lockControlsVisible);
+    viewer.addHandler('animation-finish', lockControlsVisible);
+    viewer.addHandler('canvas-click', lockControlsVisible);
 
     viewerRef.current = viewer;
     setViewer(viewer);
