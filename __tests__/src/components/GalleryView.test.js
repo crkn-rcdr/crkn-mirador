@@ -52,6 +52,42 @@ describe('GalleryView', () => {
     expect(screen.getAllByTestId('gallery-thumb')).toHaveLength(3);
   });
 
+  it('follows page navigation forward and backward in the virtualized thumbnails', () => {
+    const canvases = Array.from({ length: 40 }, (_, index) => ({
+      id: `http://www-iiif-pres-dev.canadiana.ca/manifest/69429/m1/canvas/69429/c${index}`,
+      index,
+      width: 100,
+      height: 140,
+    }));
+    const first = canvases[0];
+    const last = canvases[canvases.length - 1];
+    const { rerender } = createWrapper({ canvases, currentCanvasId: first.id });
+
+    rerender(<GalleryView canvases={canvases} currentCanvasId={last.id.replace('www-', 'www2-')} windowId="1234" />);
+    expect(screen.getByText(last.id)).toBeInTheDocument();
+    expect(screen.queryByText(first.id)).not.toBeInTheDocument();
+
+    rerender(<GalleryView canvases={canvases} currentCanvasId={first.id} windowId="1234" />);
+    expect(screen.getByText(first.id)).toBeInTheDocument();
+    expect(screen.queryByText(last.id)).not.toBeInTheDocument();
+  });
+
+  it('follows page navigation in the horizontal bottom strip', () => {
+    const canvases = Array.from({ length: 40 }, (_, index) => ({
+      id: `https://example.org/canvas/${index}`,
+      index,
+      width: 100,
+      height: 140,
+    }));
+    const first = canvases[0];
+    const last = canvases[canvases.length - 1];
+    const { rerender } = createWrapper({ canvases, currentCanvasId: first.id, isBottomStrip: true });
+
+    rerender(<GalleryView canvases={canvases} currentCanvasId={last.id} windowId="1234" isBottomStrip />);
+    expect(screen.getByText(last.id)).toBeInTheDocument();
+    expect(screen.queryByText(first.id)).not.toBeInTheDocument();
+  });
+
   it('shows deep zoom layout controls in split mode', () => {
     createWrapper({ showDeepZoomLayoutControls: true });
     expect(screen.queryByText('Deep zoom layout')).not.toBeInTheDocument();

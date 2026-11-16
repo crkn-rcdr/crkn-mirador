@@ -16,10 +16,12 @@ import {
   getAccessTokens,
   selectInfoResponse,
 } from '../selectors';
+import { normalizeDevUrl } from '../selectors/utils';
 
 /** */
 function fetchWrapper(url, options, { success, degraded, failure }) {
-  return fetch(url, options)
+  const targetUrl = normalizeDevUrl(url);
+  return fetch(targetUrl, options)
     .then(response => response.json().then((json) => {
       if (response.status === 401) return (degraded || success)({ json, response });
       if (response.ok) return success({ json, response });

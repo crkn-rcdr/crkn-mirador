@@ -95,6 +95,15 @@ const NavPill = styled('div')(({ theme }) => ({
     backgroundColor: 'transparent',
     color: theme.palette.primary.main,
   },
+  '&& .MuiIconButton-root.Mui-disabled': {
+    color: theme.palette.action.disabled,
+    cursor: 'not-allowed',
+    pointerEvents: 'auto',
+    '&:hover': {
+      backgroundColor: 'transparent',
+      color: theme.palette.action.disabled,
+    },
+  },
 }));
 
 export function SearchPanelNavigation({

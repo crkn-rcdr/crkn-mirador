@@ -9,6 +9,7 @@ import GalleryViewThumbnail from '../containers/GalleryViewThumbnail';
 import WindowViewSettings from '../containers/WindowViewSettings';
 import CanvasGroupings from '../lib/CanvasGroupings';
 import { persistWindowThumbnailSize, readPersistedWindowThumbnailSize } from '../lib/windowViewPreferences';
+import { normalizeCanvasId } from '../state/selectors/utils';
 import Slider from '@mui/material/Slider';
 import BiIcon from './BiIcon';
 import MiradorMenuButton from '../containers/MiradorMenuButton';
@@ -143,7 +144,6 @@ const PairItem = styled('div')({
   height: '100%',
 });
 
-const normalizeCanvasId = (id) => (id || '').toString().split('#')[0];
 const getCanvasKey = (canvas) => normalizeCanvasId(canvas?.id) || `index-${canvas?.index}`;
 const arrayEquals = (a = [], b = []) => (
   a.length === b.length && a.every((value, index) => value === b[index])
@@ -285,7 +285,10 @@ export function GalleryView({
   const { t } = useTranslation();
   const isMobileStrip = !!isBottomStrip;
   const isBookPairLayout = showDeepZoomLayoutControls && !isMobileStrip && viewType === 'book';
-  const safe = (canvases || []).filter(c => c && (c.id || typeof c.index !== 'undefined'));
+  const safe = useMemo(
+    () => (canvases || []).filter(c => c && (c.id || typeof c.index !== 'undefined')),
+    [canvases],
+  );
   const items = useMemo(() => {
     if (!isBookPairLayout) return safe.map(canvas => [canvas]);
     return new CanvasGroupings(safe, 'book').groupings();
@@ -294,7 +297,6 @@ export function GalleryView({
   const gridRef = useRef(null);
   // store latest computed layout values without re-render churn
   const layoutRef = useRef({ columnCount: 1 });
-  const lastIdxRef = useRef(-1);
   const pendingGridResetRef = useRef(false);
   const sizeCacheRef = useRef({
     width: 0,
@@ -325,36 +327,21 @@ export function GalleryView({
     }
   });
 
-  // When the current canvas changes (e.g., from a SearchHit),
-  // scroll the virtualized grid to bring its thumbnail into view.
-  useEffect(() => {
-    if (!currentCanvasId || !gridRef.current || items.length === 0) return;
+  const setGridRef = React.useCallback((grid) => {
+    gridRef.current = grid;
+    if (!currentCanvasId || !grid || items.length === 0) return;
 
     const currentId = normalizeCanvasId(currentCanvasId);
     const idx = items.findIndex((group) => (
       group.some(canvas => normalizeCanvasId(canvas?.id) === currentId)
     ));
     if (idx < 0) return;
-    if (lastIdxRef.current === idx) return; // avoid redundant scrolls that can jitter
-
     const cc = Math.max(1, layoutRef.current.columnCount || 1);
     const rowIndex = Math.floor(idx / cc);
     const columnIndex = idx % cc;
 
-    // Prefer scrollToItem if available (FixedSizeGrid supports it)
-    if (typeof gridRef.current.scrollToItem === 'function') {
-      try { gridRef.current.scrollToItem({ rowIndex, columnIndex, align: 'smart' }); }
-      catch (_) { /* no-op; fall back below */ }
-    }
-
-    // Fallback: approximate using rowHeight if needed
-    if (typeof gridRef.current.scrollToItem !== 'function' && typeof gridRef.current.scrollTo === 'function') {
-      const rowHeight = (thumbSize === 's' ? SIZE_PRESETS.s.tileW : thumbSize === 'm' ? SIZE_PRESETS.m.tileW : SIZE_PRESETS.l.tileW);
-      gridRef.current.scrollTo({ scrollTop: Math.max(0, rowIndex * rowHeight) });
-    }
-
-    lastIdxRef.current = idx;
-  }, [currentCanvasId, thumbSize, items]);
+    grid.scrollToItem({ rowIndex, columnIndex, align: 'center' });
+  }, [currentCanvasId, thumbSize, items, isMobileStrip]);
   //<CompactToggleButton value="fit" aria-label="Fit width">F</CompactToggleButton> - todo with search term highlighting
 
   const [barRef, barSize] = useElementSize();
@@ -578,7 +565,7 @@ export function GalleryView({
 
             return (
               <Grid
-                ref={gridRef}
+                ref={setGridRef}
                 width={width}
                 height={height}
                 outerElementType={isMobileStrip ? HorizontalStripOuter : VerticalGridOuter}

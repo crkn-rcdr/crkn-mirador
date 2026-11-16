@@ -32,7 +32,10 @@ export function normalizeCanvasId(id) {
     /* ignore malformed URI */
   }
   str = str.replace(/\/+/g, '/');
-  return str.replace(/\/+$/, '');
+  str = str.replace(/\/+$/, '');
+  // ARK-backed canvas paths identify the same resource across Presentation API hosts.
+  const arkCanvasPath = str.match(/\/manifest\/\d+\/[^/?]+\/canvas\/\d+\/[^/?]+$/);
+  return arkCanvasPath ? arkCanvasPath[0] : str;
 }
 
 /**
@@ -49,4 +52,32 @@ export function normalizeAnnotationId(id) {
     /* ignore */
   }
   return str;
+}
+
+/**
+ * Normalizes development URLs to match current window hostname prefix (www- vs www2-)
+ * and active port (e.g. :8088).
+ * @param {string} url
+ * @returns {string}
+ */
+export function normalizeDevUrl(url) {
+  if (typeof window === 'undefined' || !window.location || typeof url !== 'string') return url;
+  try {
+    const parsed = new URL(url, window.location.origin);
+    const winHost = window.location.hostname;
+    const isDev = winHost.includes('-dev.canadiana.ca') || winHost.endsWith('.local') ||
+                  parsed.hostname.includes('-dev.canadiana.ca') || parsed.hostname.endsWith('.local');
+    if (isDev) {
+      if (winHost.startsWith('www-') && parsed.hostname.startsWith('www2-')) {
+        parsed.hostname = parsed.hostname.replace('www2-', 'www-');
+      } else if (winHost.startsWith('www2-') && parsed.hostname.startsWith('www-')) {
+        parsed.hostname = parsed.hostname.replace('www-', 'www2-');
+      }
+      if (window.location.port && !parsed.port && parsed.protocol.startsWith('http')) {
+        parsed.port = window.location.port;
+      }
+      return parsed.toString();
+    }
+  } catch (e) {}
+  return url;
 }

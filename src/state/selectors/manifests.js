@@ -5,6 +5,7 @@ import { getCompanionWindowLocale } from './companionWindows';
 import { getManifest } from './getters';
 import { getConfig } from './config';
 import { getThumbnailFactory } from './thumbnails';
+import { normalizeDevUrl } from './utils';
 
 /** */
 function createManifestoInstance(json, locale) {
@@ -456,7 +457,12 @@ export const getManifestSearchService = createSelector(
     const searchService = manifest.getService('http://iiif.io/api/search/0/search')
      || manifest.getService('http://iiif.io/api/search/1/search')
      || manifest.getService('http://iiif.io/api/search/2/search');
-    if (searchService) return searchService;
+    if (searchService) {
+      if (searchService.id) {
+        searchService.id = normalizeDevUrl(searchService.id);
+      }
+      return searchService;
+    }
     return null;
   },
 );
@@ -477,6 +483,13 @@ export const getManifestAutocompleteService = createSelector(
       || searchService.getService('http://iiif.io/api/search/2/autocomplete')
     );
 
-    return autocompleteService && autocompleteService;
+    if (autocompleteService) {
+      if (autocompleteService.id) {
+        autocompleteService.id = normalizeDevUrl(autocompleteService.id);
+      }
+      return autocompleteService;
+    }
+
+    return null;
   },
 );
