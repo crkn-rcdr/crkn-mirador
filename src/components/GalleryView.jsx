@@ -327,32 +327,19 @@ export function GalleryView({
     }
   });
 
-  // When the current canvas changes (e.g., from a SearchHit, canvas nav, or index input),
-  // scroll the virtualized grid to bring its thumbnail into view.
-  useEffect(() => {
-    if (!currentCanvasId || !gridRef.current || items.length === 0) return;
+  // Key of the last auto-scroll target. Unrelated re-renders (e.g. focusWindow when a
+  // thumbnail is pressed) produce new `items` arrays; re-centering on those would yank
+  // the user's manual scroll position away mid-click, so only scroll when this changes.
+  const lastScrollKeyRef = useRef(null);
 
-    const currentId = normalizeCanvasId(currentCanvasId);
-    const idx = items.findIndex((group) => (
-      group.some(canvas => normalizeCanvasId(canvas?.id) === currentId)
-    ));
-    if (idx < 0) return;
-    const cc = Math.max(1, layoutRef.current.columnCount || 1);
-    const rowIndex = Math.floor(idx / cc);
-    const columnIndex = idx % cc;
-
-    if (typeof gridRef.current.scrollToItem === 'function') {
-      try {
-        gridRef.current.scrollToItem({ rowIndex, columnIndex, align: 'center' });
-      } catch (e) {}
-    }
-  }, [currentCanvasId, items, thumbSize]);
-
-  const setGridRef = React.useCallback((grid) => {
-    gridRef.current = grid;
+  /** Center the current canvas's thumbnail, unless it was already the last auto-scroll target. */
+  const scrollToCurrentCanvas = (grid) => {
     if (!currentCanvasId || !grid || items.length === 0) return;
 
     const currentId = normalizeCanvasId(currentCanvasId);
+    const scrollKey = `${currentId}|${thumbSize}|${isMobileStrip}|${isBookPairLayout}`;
+    if (lastScrollKeyRef.current === scrollKey) return;
+
     const idx = items.findIndex((group) => (
       group.some(canvas => normalizeCanvasId(canvas?.id) === currentId)
     ));
@@ -361,10 +348,32 @@ export function GalleryView({
     const rowIndex = Math.floor(idx / cc);
     const columnIndex = idx % cc;
 
+    if (typeof grid.scrollToItem !== 'function') return;
+    lastScrollKeyRef.current = scrollKey;
     try {
-      grid.scrollToItem({ rowIndex, columnIndex, align: 'center' });
-    } catch (e) {}
-  }, [currentCanvasId, thumbSize, items, isMobileStrip]);
+      grid.scrollToItem({ align: 'center', columnIndex, rowIndex });
+    } catch (e) {
+      // Grid may be mid-layout; the next canvas change will retry.
+      lastScrollKeyRef.current = null;
+    }
+  };
+  const scrollToCurrentCanvasRef = useRef(scrollToCurrentCanvas);
+  scrollToCurrentCanvasRef.current = scrollToCurrentCanvas;
+
+  // When the current canvas changes (e.g., from a SearchHit, canvas nav, or index input),
+  // scroll the virtualized grid to bring its thumbnail into view.
+  useEffect(() => {
+    scrollToCurrentCanvasRef.current(gridRef.current);
+  }, [currentCanvasId, items, thumbSize, isMobileStrip, isBookPairLayout]);
+
+  const setGridRef = React.useCallback((grid) => {
+    gridRef.current = grid;
+    if (!grid) {
+      lastScrollKeyRef.current = null;
+      return;
+    }
+    scrollToCurrentCanvasRef.current(grid);
+  }, []);
   //<CompactToggleButton value="fit" aria-label="Fit width">F</CompactToggleButton> - todo with search term highlighting
 
   const [barRef, barSize] = useElementSize();
