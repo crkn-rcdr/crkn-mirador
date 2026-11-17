@@ -30788,7 +30788,7 @@ function GO(e) {
   if (typeof window > "u" || !window.location || typeof e != "string") return e;
   try {
     const t = new URL(e, window.location.origin), n = window.location.hostname;
-    return n.startsWith("www-") && t.hostname.startsWith("www2-") ? t.hostname = t.hostname.replace("www2-", "www-") : n.startsWith("www2") && t.hostname.startsWith("www-") && (t.hostname = t.hostname.replace("www-", "www2-")), (n.includes("-dev.canadiana.ca") || n.endsWith(".local") || t.hostname.includes("-dev.canadiana.ca") || t.hostname.endsWith(".local")) && window.location.port && !t.port && t.protocol.startsWith("http") && (t.port = window.location.port), t.toString();
+    return n.startsWith("www-") && t.hostname.startsWith("www2-") ? t.hostname = t.hostname.replace("www2-", "www-") : n.startsWith("www2") && t.hostname.startsWith("www-") && (t.hostname = t.hostname.replace("www-", "www2-")), (n.includes("-dev.canadiana.ca") || n.endsWith(".local") || t.hostname.includes("-dev.canadiana.ca") || t.hostname.endsWith(".local") || n === "localhost" || n === "127.0.0.1") && ((n.includes("-dev.canadiana.ca") || n === "localhost" || n === "127.0.0.1") && !t.hostname.includes("-dev.canadiana.ca") && t.hostname.includes("canadiana.ca") && (t.hostname = t.hostname.replace(/\.canadiana\.ca$/, "-dev.canadiana.ca")), window.location.protocol && (t.protocol = window.location.protocol), window.location.port && !t.port && t.protocol.startsWith("http") && (t.port = window.location.port)), t.toString();
   } catch {
   }
   return e;

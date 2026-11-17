@@ -74,8 +74,16 @@ export function normalizeDevUrl(url) {
     }
 
     const isDev = winHost.includes('-dev.canadiana.ca') || winHost.endsWith('.local') ||
-                  parsed.hostname.includes('-dev.canadiana.ca') || parsed.hostname.endsWith('.local');
+                  parsed.hostname.includes('-dev.canadiana.ca') || parsed.hostname.endsWith('.local') ||
+                  winHost === 'localhost' || winHost === '127.0.0.1';
     if (isDev) {
+      if ((winHost.includes('-dev.canadiana.ca') || winHost === 'localhost' || winHost === '127.0.0.1') &&
+          !parsed.hostname.includes('-dev.canadiana.ca') && parsed.hostname.includes('canadiana.ca')) {
+        parsed.hostname = parsed.hostname.replace(/\.canadiana\.ca$/, '-dev.canadiana.ca');
+      }
+      if (window.location.protocol) {
+        parsed.protocol = window.location.protocol;
+      }
       if (window.location.port && !parsed.port && parsed.protocol.startsWith('http')) {
         parsed.port = window.location.port;
       }
