@@ -5,6 +5,7 @@ import ActionTypes from '../actions/action-types';
 import MiradorManifest from '../../lib/MiradorManifest';
 import MiradorCanvas from '../../lib/MiradorCanvas';
 import {
+  deselectAnnotation,
   setContentSearchCurrentAnnotation,
   selectAnnotation,
   setWorkspaceViewportPosition,
@@ -225,6 +226,8 @@ export function* setCurrentAnnotationsOnCurrentCanvas({
   } catch (e) { /* ignore */ }
   // If an annotation is already selected, check if it belongs to one of the visible canvases.
   // If so, do NOT clobber the user's active selection (e.g. during search hit navigation).
+  // Otherwise, the user navigated away from that canvas, so clear the stale selection to prevent
+  // remounting the viewer (e.g. exiting Gallery view) from snapping back to the previous result.
   const currentlySelected = yield select(getSelectedAnnotationId, { windowId });
   if (currentlySelected) {
     const canvasForCurrent = yield select(getCanvasForAnnotation, { annotationId: currentlySelected, windowId });
@@ -234,6 +237,7 @@ export function* setCurrentAnnotationsOnCurrentCanvas({
       if (isVisible) {
         return;
       }
+      yield put(deselectAnnotation(windowId, currentlySelected));
     }
   }
 

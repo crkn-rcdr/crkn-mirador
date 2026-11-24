@@ -77,7 +77,9 @@ const TopLeft = styled('div')(({ theme }) => ({
 export function GalleryViewThumbnail({
   canvas,
   selected = false,
+  selectedAnnotationId = undefined,
   highlighted = false,
+  deselectAnnotation = undefined,
   setCanvas,
   focusOnCanvas,
   annotationsCount = undefined,
@@ -175,8 +177,14 @@ export function GalleryViewThumbnail({
   };
 
   const handleSelect = () => {
-    if (selected) focusOnCanvas();
-    else setCanvas(canvas.id);
+    if (selected) {
+      focusOnCanvas();
+    } else {
+      if (selectedAnnotationId && typeof deselectAnnotation === 'function') {
+        deselectAnnotation(selectedAnnotationId);
+      }
+      setCanvas(canvas.id);
+    }
     notifyGalleryThumbnailActivated();
   };
 
@@ -184,6 +192,9 @@ export function GalleryViewThumbnail({
     if (e.key === 'Enter' || e.key === ' ' || e.code === 'Enter' || e.code === 'Space') {
       handleSelect();
     } else {
+      if (!selected && selectedAnnotationId && typeof deselectAnnotation === 'function') {
+        deselectAnnotation(selectedAnnotationId);
+      }
       setCanvas(canvas.id);
       notifyGalleryThumbnailActivated();
     }
@@ -311,10 +322,12 @@ GalleryViewThumbnail.propTypes = {
   annotationsCount: PropTypes.number,
   canvas: PropTypes.object.isRequired,
   config: PropTypes.shape({ height: PropTypes.number, width: PropTypes.number }),
+  deselectAnnotation: PropTypes.func,
   focusOnCanvas: PropTypes.func.isRequired,
   requestCanvasAnnotations: PropTypes.func,
   searchAnnotationsCount: PropTypes.number,
   selected: PropTypes.bool,
+  selectedAnnotationId: PropTypes.string,
   highlighted: PropTypes.bool,
   setCanvas: PropTypes.func.isRequired,
   matchingTerms: PropTypes.arrayOf(PropTypes.string),
@@ -328,6 +341,7 @@ GalleryViewThumbnail.propTypes = {
 
 export default React.memo(GalleryViewThumbnail, (prev, next) => (
   prev.selected === next.selected &&
+  prev.selectedAnnotationId === next.selectedAnnotationId &&
   prev.highlighted === next.highlighted &&
   prev.searchAnnotationsCount === next.searchAnnotationsCount &&
   prev.annotationsCount === next.annotationsCount &&

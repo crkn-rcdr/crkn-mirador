@@ -552,21 +552,25 @@ export function OpenSeadragonViewer({
     if (viewType === 'single') {
       const targetIndex = canvases.findIndex(c => normalizeCanvasId(c.id || c['@id'] || c.canvas?.id) === canvasId);
       if (targetIndex < 0) return;
-      if (canvasIndex === targetIndex && (typeof viewer.currentPage !== 'function' || viewer.currentPage() === targetIndex)) {
+      // Only zoom when the currently active canvas actually matches the selected annotation's canvas.
+      // Never hijack the user's selected canvas (e.g., after choosing a page from Gallery view)
+      // back to a stale selectedAnnotationId; canvas switching is driven by Redux (setCanvas).
+      if (canvasIndex !== targetIndex) return;
+      if (typeof viewer.currentPage !== 'function' || viewer.currentPage() === targetIndex) {
         // world holds current page at item 0 in sequence mode
         if (viewer.world.getItemCount() > 0) tryZoom(0);
         else viewer.addOnceHandler('open', () => setTimeout(() => tryZoom(0), 50));
       } else {
         viewer.addOnceHandler('open', () => setTimeout(() => tryZoom(0), 50));
         viewer.goToPage(targetIndex);
-        if (typeof setCanvas === 'function') setCanvas(canvases[targetIndex].id);
       }
       return;
     }
 
     // book/scroll: zoom on the corresponding item index in the laid out world
     const vi = (visibleCanvases || []).findIndex(c => normalizeCanvasId(c.id || c['@id'] || c.canvas?.id) === canvasId);
-    if (vi >= 0 && vi < (viewer.world.getItemCount() || 0)) {
+    if (vi < 0) return;
+    if (vi < (viewer.world.getItemCount() || 0)) {
       tryZoom(vi);
     } else {
       // wait for world layout

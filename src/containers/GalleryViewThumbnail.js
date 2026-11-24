@@ -102,6 +102,7 @@ const mapStateToProps = (state, { canvas, windowId }) => {
       visibleCanvasIds.some(id => normalizeId(id) === normalizeId(canvas.id))
       || (!!currentCanvas && normalizeId(currentCanvas.id) === normalizeId(canvas.id))
     ),
+    selectedAnnotationId,
     highlighted: isHighlighted,
     searchTerms,
     searchSnippets,
@@ -110,6 +111,7 @@ const mapStateToProps = (state, { canvas, windowId }) => {
 };
 
 const mapDispatchToProps = (dispatch, { canvas, windowId }) => ({
+  deselectAnnotation: (annotationId) => dispatch(actions.deselectAnnotation(windowId, annotationId)),
   focusOnCanvas: () => dispatch(actions.setWindowViewType(windowId, 'single')),
   requestCanvasAnnotations: () => dispatch(actions.requestCanvasAnnotations(windowId, canvas?.id)),
   setCanvas: (...args) => dispatch(actions.setCanvas(windowId, ...args)),
