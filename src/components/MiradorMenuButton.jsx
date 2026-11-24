@@ -52,17 +52,20 @@ export function MiradorMenuButton({
   );
 
   if (iconButtonProps.disabled) {
+    const extraSx = Array.isArray(sx) ? sx : (sx ? [sx] : []);
     return (
       <Root
         selected={selected}
         aria-label={ariaLabel}
         {...iconButtonProps}
-        sx={{
-          cursor: 'not-allowed !important',
-          pointerEvents: 'auto !important',
-          opacity: '0.38 !important',
-          ...sx,
-        }}
+        sx={[
+          ...extraSx,
+          {
+            cursor: 'not-allowed !important',
+            pointerEvents: 'auto !important',
+            opacity: '0.38 !important',
+          },
+        ]}
         size="large"
       >
         {children}
@@ -90,6 +93,6 @@ MiradorMenuButton.propTypes = {
   children: PropTypes.element.isRequired,
   dispatch: PropTypes.func,
   selected: PropTypes.bool,
-  sx: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  sx: PropTypes.oneOfType([PropTypes.object, PropTypes.func, PropTypes.array]), // eslint-disable-line react/forbid-prop-types
   TooltipProps: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };

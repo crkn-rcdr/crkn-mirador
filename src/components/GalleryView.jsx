@@ -67,14 +67,19 @@ const Viewport = styled('div')(() => ({
 const SizeControls = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  gap: theme.spacing(1.5),
+  justifyContent: 'space-between',
+  gap: theme.spacing(1),
   background: theme.palette.mode === 'dark' ? 'rgba(30,30,30,0.72)' : 'rgba(255,255,255,0.82)',
   color: theme.palette.text.primary,
   border: 'none',
   borderRadius: 16,
   boxShadow: theme.shadows[2],
-  padding: '6px 10px',
+  padding: '4px 8px',
+  width: '100%',
+  maxWidth: 260,
+  boxSizing: 'border-box',
   minWidth: 0,
+  overflow: 'hidden',
 }));
 
 const SizeSlider = styled(Slider)(({ theme }) => ({
@@ -388,24 +393,23 @@ export function GalleryView({
           const INDEX_TO_SIZE = ['s', 'm', 'l', 'fit'];
           const idx = SIZE_TO_INDEX[thumbSize] ?? 0;
           const setIdx = (next) => setThumbSize(INDEX_TO_SIZE[Math.min(3, Math.max(0, next))]);
-          // Let the slider shrink with available bar width, but never exceed current max
-          const currentMax = controlWidth || 160;
-          // Account for paddings, two buttons, and gaps (~120px total footprint)
-          const available = Math.max(80, Math.floor((barSize?.width || currentMax) - 120));
-          const sliderWidth = Math.min(currentMax, available);
+          const stepBtnSx = (theme) => ({
+            bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)',
+            color: theme.palette.text.secondary,
+            borderRadius: 2,
+            width: 30,
+            minWidth: 30,
+            height: 28,
+            padding: 0,
+            flexShrink: 0,
+          });
           return (
             <SizeControls>
               <MiradorMenuButton
                 aria-label={t('thumbSizeSmall')}
                 onClick={() => setIdx(idx - 1)}
                 disabled={idx <= 0}
-                sx={(theme) => ({
-                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)',
-                  color: theme.palette.text.secondary,
-                  borderRadius: 2,
-                  width: 36,
-                  height: 28,
-                })}
+                sx={stepBtnSx}
               >
                 <BiIcon name="dash" size={16} />
               </MiradorMenuButton>
@@ -416,19 +420,13 @@ export function GalleryView({
                 step={1}
                 value={idx}
                 onChange={(_, v) => setIdx(Array.isArray(v) ? v[0] : v)}
-                sx={{ width: sliderWidth }}
+                sx={{ flex: '1 1 auto', minWidth: 44, mx: 0.5 }}
               />
               <MiradorMenuButton
                 aria-label={t('thumbSizeLarge')}
                 onClick={() => setIdx(idx + 1)}
                 disabled={idx >= 3}
-                sx={(theme) => ({
-                  bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)',
-                  color: theme.palette.text.secondary,
-                  borderRadius: 2,
-                  width: 36,
-                  height: 28,
-                })}
+                sx={stepBtnSx}
               >
                 <BiIcon name="plus" size={16} />
               </MiradorMenuButton>

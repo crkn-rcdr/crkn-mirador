@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { InView } from 'react-intersection-observer';
 import IIIFThumbnail from '../containers/IIIFThumbnail';
 
-const THUMBNAIL_REQUEST_MAX_DIMENSION = 500;
+const THUMBNAIL_REQUEST_MAX_DIMENSION = 600;
 const THUMBNAIL_REQUEST_DPR_CAP = 2;
 
 const Root = styled('div', { name: 'GalleryView', slot: 'thumbnail' })(
@@ -113,37 +113,33 @@ export function GalleryViewThumbnail({
       ? Math.max(1, tileW - pad - outlineReserve)
     : (config.width == null ? null : Math.max(1, Math.round(config.width * ((thumbSize === 'l') ? 4.0 : 2.0))));
   const stretchToTileWidth = !isMobileStrip && typeof tileW === 'number' && tileW > 0;
+  // Do NOT override IIIFThumbnail's aspect-ratio-computed width/height with `auto`,
+  // otherwise thumbnails collapse to a 1x1 placeholder dot while images are loading.
   const thumbnailStyle = stretchToTileWidth
     ? {
-      width: 'auto',
       maxWidth: '100%',
       maxHeight: maxHeight ? `${maxHeight}px` : '100%',
-      height: 'auto',
       objectFit: 'contain',
       objectPosition: 'left top',
+      backgroundColor: 'rgba(0, 0, 0, 0.04)',
     }
     : (maxHeight ? {
       maxHeight: `${maxHeight}px`,
       maxWidth: '100%',
-      height: 'auto',
-      width: 'auto',
       objectFit: 'contain',
+      backgroundColor: 'rgba(0, 0, 0, 0.04)',
     } : undefined);
-  const wantsFullResRequest = thumbSize === 'l'
-    || thumbSize === 'fit'
-    || (typeof maxWidth === 'number' && maxWidth > THUMBNAIL_REQUEST_MAX_DIMENSION);
 
-  // Request denser source pixels on HiDPI screens so small thumbnails
-  // stay crisp while keeping the rendered CSS size unchanged.
-  const requestScale = wantsFullResRequest
-    ? 1
-    : Math.max(
-      1,
-      Math.min(
-        THUMBNAIL_REQUEST_DPR_CAP,
-        (typeof window !== 'undefined' && Number(window.devicePixelRatio)) || 1,
-      ),
-    );
+  // Never request `/full/max/` archival scans for thumbnails (even at `l` or `fit` size);
+  // size requests proportionally to the rendered tile box capped at THUMBNAIL_REQUEST_MAX_DIMENSION
+  // so multi-thousand-page Heritage reels load thumbnails in ~200ms (~10 KB) instead of 1-4 MB scans.
+  const requestScale = Math.max(
+    1,
+    Math.min(
+      THUMBNAIL_REQUEST_DPR_CAP,
+      (typeof window !== 'undefined' && Number(window.devicePixelRatio)) || 1,
+    ),
+  );
   const scaledRequestMaxHeight = (typeof maxHeight === 'number' && maxHeight > 0)
     ? Math.round(maxHeight * requestScale)
     : null;
@@ -151,9 +147,6 @@ export function GalleryViewThumbnail({
     ? Math.round(maxWidth * requestScale)
     : maxWidth;
 
-  // Keep constrained thumbnail requests for fast/default rendering.
-  // For large modes, IIIFThumbnail will request full-res first and then
-  // gracefully fall back to constrained sizes if it errors.
   const requestMaxHeight = isMobileStrip && typeof maxHeight === 'number'
     ? Math.min(scaledRequestMaxHeight || maxHeight, THUMBNAIL_REQUEST_MAX_DIMENSION)
     : null;
@@ -206,6 +199,7 @@ export function GalleryViewThumbnail({
     <InView onChange={handleIntersection}>
       <Root
         ownerState={ownerState}
+        onMouseDown={(e) => e.preventDefault()}
         onClick={handleSelect}
         onKeyUp={handleKeyUp}
         ref={myRef}
@@ -220,7 +214,7 @@ export function GalleryViewThumbnail({
           maxWidth={maxWidth}
           requestMaxHeight={requestMaxHeight}
           requestMaxWidth={requestMaxWidth}
-          preferFullRes={wantsFullResRequest}
+          preferFullRes={false}
           style={thumbnailStyle}
         >
           {/* Search results count (top-left, high contrast) */}
